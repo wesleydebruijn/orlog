@@ -3,7 +3,7 @@ defmodule Game.Round do
   Round
   """
   @type t :: %Game{
-    players: [Game.Player.t()],
-  }
+          players: [Game.Player.t()]
+        }
   defstruct players: []
 end
