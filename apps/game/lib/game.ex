@@ -17,11 +17,11 @@ defmodule Game do
   }
 
   @type t :: %Game{
-    players: any(),
-    rounds: [Round.t()],
-    phase: Phase.t(),
-    turn: integer()
-  }
+          players: any(),
+          rounds: [Round.t()],
+          phase: Phase.t(),
+          turn: integer()
+        }
   defstruct players: %{}, rounds: [], phase: nil, turn: nil, settings: %{}
 
   @spec start(String.t(), String.t()) :: Game.t()
@@ -41,11 +41,14 @@ defmodule Game do
     apply(game.phase, :execute, action)
   end
 
+  @spec determine_next_turn(Game.t()) :: integer()
+  def determine_next_turn(game) do
+    if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
+  end
+
   @spec next_turn(Game.t()) :: Game.t()
   def next_turn(game) do
-    next_turn = if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
-
-    %{game | turn: next_turn}
+    %{game | turn: determine_next_turn(game)}
   end
 
   @spec next_phase(Game.t(), Phase.t()) :: Game.t()
@@ -56,5 +59,25 @@ defmodule Game do
   @spec next_round(Game.t()) :: Game.t()
   def next_round(game) do
     %{game | rounds: [%Round{players: game.players} | game.rounds], phase: Phase.Roll}
+  end
+
+  @spec current_player(Game.t()) :: Player.t()
+  def current_player(game) do
+    Map.get(game.players, game.turn)
+  end
+
+  @spec opponent_player(Game.t()) :: Player.t()
+  def opponent_player(game) do
+    Map.get(game.players, determine_next_turn(game))
+  end
+
+  @spec update_current_player(Game.t(), Player.t()) :: Game.t()
+  def update_current_player(game, player) do
+    %{game | players: Map.put(game.players, game.turn, player)}
+  end
+
+  @spec update_opponent_player(Game.t(), Player.t()) :: Game.t()
+  def update_opponent_player(game, player) do
+    %{game | players: Map.put(game.players, determine_next_turn(game), player)}
   end
 end

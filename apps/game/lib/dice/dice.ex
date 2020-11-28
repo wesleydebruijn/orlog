@@ -11,16 +11,17 @@ defmodule Game.Dice do
   ]
 
   @type t :: %Game.Dice{
-    face: Game.Dice.Face.t(),
-    tokens: integer(),
-    locked: boolean(),
-    keep: boolean()
-  }
+          face: Game.Dice.Face.t(),
+          tokens: integer(),
+          locked: boolean(),
+          keep: boolean()
+        }
   defstruct face: nil, tokens: 0, locked: false, keep: false
 
   @spec roll(Game.Dice.t()) :: Game.Dice.t()
   def roll, do: roll(%Game.Dice{})
   def roll(%{keep: true} = dice), do: dice
+
   def roll(dice) do
     %{dice | face: Enum.random(@faces), tokens: Enum.random(0..1)}
   end

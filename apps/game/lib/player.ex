@@ -9,28 +9,28 @@ defmodule Game.Player do
   }
 
   @type t :: %Player{
-    user: String.t(),
-    health: integer(),
-    tokens: integer(),
-    dices: [Dice.t()]
-  }
+          user: String.t(),
+          health: integer(),
+          tokens: integer(),
+          dices: [Dice.t()]
+        }
   defstruct user: nil, health: 0, tokens: 0, dices: []
 
   @spec new(String.t(), Settings.t()) :: Player.t()
   def new(user, settings) do
     %Player{user: user}
-    |> add_health(settings.health)
-    |> add_tokens(settings.tokens)
+    |> update_health(settings.health)
+    |> update_tokens(settings.tokens)
     |> add_dices(settings.dices)
   end
 
-  @spec add_health(Game.Player.t(), number) :: Player.t()
-  def add_health(player, amount) do
+  @spec update_health(Game.Player.t(), number) :: Player.t()
+  def update_health(player, amount) do
     %{player | health: player.health + amount}
   end
 
-  @spec add_tokens(Player.t(), number) :: Player.t()
-  def add_tokens(player, amount) do
+  @spec update_tokens(Player.t(), number) :: Player.t()
+  def update_tokens(player, amount) do
     %{player | tokens: player.tokens + amount}
   end
 

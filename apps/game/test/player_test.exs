@@ -8,6 +8,7 @@ defmodule Game.PlayerTest do
 
   test "new/2" do
     actual = Player.new("Wesley", %{health: 12, tokens: 99, dices: 2})
+
     expected = %Player{
       user: "Wesley",
       health: 12,
@@ -18,32 +19,32 @@ defmodule Game.PlayerTest do
     assert actual == expected
   end
 
-  describe "add_health/2" do
+  describe "update_health/2" do
     test "when health is added" do
-      actual = Player.add_health(%Player{}, 2)
+      actual = Player.update_health(%Player{}, 2)
       expected = %Player{health: 2}
 
       assert actual == expected
     end
 
     test "when health is substracted" do
-      actual = Player.add_health(%Player{}, -2)
+      actual = Player.update_health(%Player{}, -2)
       expected = %Player{health: -2}
 
       assert actual == expected
     end
   end
 
-  describe "add_tokens/2" do
+  describe "update_tokens/2" do
     test "when tokens are added" do
-      actual = Player.add_tokens(%Player{}, 2)
+      actual = Player.update_tokens(%Player{}, 2)
       expected = %Player{tokens: 2}
 
       assert actual == expected
     end
 
     test "when tokens are substracted" do
-      actual = Player.add_tokens(%Player{}, -2)
+      actual = Player.update_tokens(%Player{}, -2)
       expected = %Player{tokens: -2}
 
       assert actual == expected
