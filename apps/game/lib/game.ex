@@ -64,7 +64,7 @@ defmodule Game do
     %{turns: turns} = Map.get(game.settings.phases, phase)
 
     %{game | phase: phase}
-    |> update_players(&Player.set_turns(&1, turns))
+    |> update_players(&Player.update(&1, %{turns: turns}))
   end
 
   @spec try_next_phase(Game.t()) :: Game.t()

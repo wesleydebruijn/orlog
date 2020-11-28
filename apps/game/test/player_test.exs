@@ -19,6 +19,13 @@ defmodule Game.PlayerTest do
     assert actual == expected
   end
 
+  test "update/2" do
+    actual = Player.update(%Player{}, %{turns: 2})
+    expected = %Player{turns: 2}
+
+    assert actual == expected
+  end
+
   describe "update_health/2" do
     test "when health is added" do
       actual = Player.update_health(%Player{}, 2)
@@ -65,13 +72,6 @@ defmodule Game.PlayerTest do
 
       assert actual == expected
     end
-  end
-
-  test "set_turns/2" do
-    actual = Player.set_turns(%Player{}, 2)
-    expected = %Player{turns: 2}
-
-    assert actual == expected
   end
 
   test "set_dices/2" do

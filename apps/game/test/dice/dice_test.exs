@@ -38,14 +38,27 @@ defmodule Game.DiceTest do
     end
   end
 
-  test "lock/1" do
-    actual = Dice.lock(%Dice{locked: false})
-    assert %Dice{locked: true} = actual
+  describe "lock/1" do
+    test "when dice is kept" do
+      actual = Dice.lock(%Dice{keep: true, locked: false})
+      assert %Dice{keep: true, locked: true} = actual
+    end
+
+    test "when dice is not hold" do
+      actual = Dice.lock(%Dice{locked: false})
+      assert %Dice{locked: false} = actual
+    end
   end
 
   test "unlock/1" do
     actual = Dice.unlock(%Dice{locked: true})
 
     assert %Dice{locked: false} = actual
+  end
+
+  test "keep/1" do
+    actual = Dice.keep(%Dice{keep: false})
+
+    assert %Dice{keep: true} = actual
   end
 end
