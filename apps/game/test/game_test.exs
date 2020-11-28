@@ -11,28 +11,28 @@ defmodule GameTest do
     assert %Game{
       players: %{
         1 => %Player{
-          dices: [
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0}
-          ],
+          dices: %{
+            1 => %Dice{},
+            2 => %Dice{},
+            3 => %Dice{},
+            4 => %Dice{},
+            5 => %Dice{},
+            6 => %Dice{}
+          },
           health: 15,
           tokens: 0,
           turns: 3,
           user: "Wesley"
         },
         2 => %Player{
-          dices: [
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0},
-            %Dice{face: nil, keep: false, locked: false, tokens: 0}
-          ],
+          dices: %{
+            1 => %Dice{},
+            2 => %Dice{},
+            3 => %Dice{},
+            4 => %Dice{},
+            5 => %Dice{},
+            6 => %Dice{}
+          },
           health: 15,
           tokens: 0,
           turns: 3,
@@ -44,9 +44,9 @@ defmodule GameTest do
         dices: 6,
         health: 15,
         phases: %{
-          1 => %{module: Phase.Roll, turns: 3},
-          2 => %{module: Phase.GodFavor, turns: 1},
-          3 => %{module: Phase.Resolution, turns: 1}
+          1 => %{module: Game.Phase.Roll, turns: 3},
+          2 => %{module: Game.Phase.GodFavor, turns: 1},
+          3 => %{module: Game.Phase.Resolution, turns: 1}
         },
         tokens: 0
       },
@@ -91,9 +91,9 @@ defmodule GameTest do
       game = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         phase: 1
@@ -109,9 +109,9 @@ defmodule GameTest do
       game = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         phase: 3
@@ -127,6 +127,13 @@ defmodule GameTest do
   describe "next_turn/1" do
     test "when players have turns left" do
       game = %{
+        settings: %Settings{
+          phases: %{
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
+          }
+        },
         players: %{
           1 => %Player{user: "Wesley", turns: 3},
           2 => %Player{user: "Jeffrey", turns: 3}
@@ -138,6 +145,13 @@ defmodule GameTest do
       actual = Game.next_turn(game)
 
       expected = %{
+        settings: %Settings{
+          phases: %{
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
+          }
+        },
         players: %{
           1 => %Player{user: "Wesley", turns: 2},
           2 => %Player{user: "Jeffrey", turns: 3}
@@ -153,9 +167,9 @@ defmodule GameTest do
       game = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         players: %{
@@ -171,9 +185,9 @@ defmodule GameTest do
       expected = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         players: %{
@@ -192,7 +206,7 @@ defmodule GameTest do
     game = %{
       settings: %Settings{
         phases: %{
-          1 => %{module: Phase.Roll, turns: 3}
+          1 => %{module: Game.Phase.Roll, turns: 3}
         }
       },
       players: %{
@@ -208,7 +222,7 @@ defmodule GameTest do
     expected = %{
       settings: %Settings{
         phases: %{
-          1 => %{module: Phase.Roll, turns: 3}
+          1 => %{module: Game.Phase.Roll, turns: 3}
         }
       },
       players: %{
@@ -251,9 +265,9 @@ defmodule GameTest do
       game = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         players: %{
@@ -269,9 +283,9 @@ defmodule GameTest do
       expected = %{
         settings: %Settings{
           phases: %{
-            1 => %{module: Phase.Roll, turns: 3},
-            2 => %{module: Phase.GodFavor, turns: 1},
-            3 => %{module: Phase.Resolution, turns: 1}
+            1 => %{module: Game.Phase.Roll, turns: 3},
+            2 => %{module: Game.Phase.GodFavor, turns: 1},
+            3 => %{module: Game.Phase.Resolution, turns: 1}
           }
         },
         players: %{

@@ -13,7 +13,7 @@ defmodule Game.PlayerTest do
       user: "Wesley",
       health: 12,
       tokens: 99,
-      dices: [%Dice{}, %Dice{}]
+      dices: %{1 => %Dice{}, 2 => %Dice{}}
     }
 
     assert actual == expected
@@ -74,9 +74,28 @@ defmodule Game.PlayerTest do
     assert actual == expected
   end
 
-  test "add_dices/2" do
-    actual = Player.add_dices(%Player{}, 2)
-    expected = %Player{dices: [%Dice{}, %Dice{}]}
+  test "set_dices/2" do
+    actual = Player.set_dices(%Player{}, 2)
+    expected = %Player{dices: %{1 => %Dice{}, 2 => %Dice{}}}
+
+    assert actual == expected
+  end
+
+  test "get_dice/2" do
+    player = %Player{dices: %{1 => %Dice{}}}
+
+    actual = Player.get_dice(player, 1)
+    expected = %Dice{}
+
+    assert actual == expected
+  end
+
+  test "update_dice/2" do
+    player = %Player{dices: %{1 => %Dice{}}}
+    fun = fn dice -> %{dice | keep: true} end
+
+    actual = Player.update_dice(player, 1, fun)
+    expected = %Player{dices: %{1 => %Dice{keep: true}}}
 
     assert actual == expected
   end

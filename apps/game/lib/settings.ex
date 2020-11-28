@@ -13,8 +13,8 @@ defmodule Game.Settings do
             tokens: 0,
             dices: 6,
             phases: %{
-              1 => %{module: Phase.Roll, turns: 3},
-              2 => %{module: Phase.GodFavor, turns: 1},
-              3 => %{module: Phase.Resolution, turns: 1}
+              1 => %{module: Game.Phase.Roll, turns: 3},
+              2 => %{module: Game.Phase.GodFavor, turns: 1},
+              3 => %{module: Game.Phase.Resolution, turns: 1}
             }
 end

@@ -31,6 +31,13 @@ defmodule Game do
     |> next_phase()
   end
 
+  @spec do_action(Game.t(), any()) :: Game.t()
+  def do_action(game, action) do
+    %{module: module} = Map.get(game.settings.phases, game.phase)
+
+    apply(module, :action, [game, action])
+  end
+
   @spec determine_next_turn(Game.t()) :: integer()
   def determine_next_turn(game) do
     if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
@@ -44,13 +51,9 @@ defmodule Game do
   @spec next_turn(Game.t()) :: Game.t()
   def next_turn(game) do
     turn = determine_next_turn(game)
-    current_player =
-      game
-      |> current_player()
-      |> Player.update_turns(-1)
 
     game
-    |> update_current_player(current_player)
+    |> do_action(:end_turn)
     |> Map.put(:turn, turn)
     |> try_next_phase()
   end
