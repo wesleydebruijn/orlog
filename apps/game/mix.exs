@@ -25,7 +25,7 @@ defmodule Game.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(), do: ["lib"]
+  defp elixirc_paths(_bla), do: ["lib"]
 
   defp deps do
     [

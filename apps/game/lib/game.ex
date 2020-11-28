@@ -5,24 +5,18 @@ defmodule Game do
   alias Game.{
     Settings,
     Player,
-    Round,
-    Phase
+    Round
   }
 
-  @settings %Settings{
-    health: 15,
-    tokens: 0,
-    rolls: 3,
-    dices: 6
-  }
+  @settings %Settings{}
 
   @type t :: %Game{
           players: any(),
           rounds: [Round.t()],
-          phase: Phase.t(),
+          phase: integer(),
           turn: integer()
         }
-  defstruct players: %{}, rounds: [], phase: nil, turn: nil, settings: %{}
+  defstruct players: %{}, rounds: [], phase: 0, turn: nil, settings: %{}
 
   @spec start(String.t(), String.t()) :: Game.t()
   def start(user1, user2) do
@@ -34,11 +28,7 @@ defmodule Game do
         |> Enum.with_index(1)
         |> Enum.into(%{}, fn {user, index} -> {index, Player.new(user, @settings)} end)
     }
-  end
-
-  @spec execute(Game.t(), any()) :: Game.t()
-  def execute(game, action) do
-    apply(game.phase, :execute, action)
+    |> next_phase()
   end
 
   @spec determine_next_turn(Game.t()) :: integer()
@@ -46,19 +36,43 @@ defmodule Game do
     if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
   end
 
+  @spec determine_next_phase(Game.t()) :: integer()
+  def determine_next_phase(game) do
+    if game.phase + 1 > Enum.count(game.settings.phases), do: 1, else: game.phase + 1
+  end
+
   @spec next_turn(Game.t()) :: Game.t()
   def next_turn(game) do
-    %{game | turn: determine_next_turn(game)}
+    turn = determine_next_turn(game)
+    current_player =
+      game
+      |> current_player()
+      |> Player.update_turns(-1)
+
+    game
+    |> update_current_player(current_player)
+    |> Map.put(:turn, turn)
+    |> try_next_phase()
   end
 
-  @spec next_phase(Game.t(), Phase.t()) :: Game.t()
-  def next_phase(game, phase) do
+  @spec next_phase(Game.t()) :: Game.t()
+  def next_phase(game) do
+    phase = determine_next_phase(game)
+    %{turns: turns} = Map.get(game.settings.phases, phase)
+
     %{game | phase: phase}
+    |> update_players(&Player.set_turns(&1, turns))
   end
 
-  @spec next_round(Game.t()) :: Game.t()
-  def next_round(game) do
-    %{game | rounds: [%Round{players: game.players} | game.rounds], phase: Phase.Roll}
+  @spec try_next_phase(Game.t()) :: Game.t()
+  def try_next_phase(game) do
+    no_turns_left = Enum.all?(game.players, fn {_i, player} -> player.turns <= 0 end)
+
+    if no_turns_left do
+      next_phase(game)
+    else
+      game
+    end
   end
 
   @spec current_player(Game.t()) :: Player.t()
@@ -69,6 +83,15 @@ defmodule Game do
   @spec opponent_player(Game.t()) :: Player.t()
   def opponent_player(game) do
     Map.get(game.players, determine_next_turn(game))
+  end
+
+  @spec update_players(Game.t(), fun()) :: Game.t()
+  def update_players(game, fun) do
+    players =
+      game.players
+      |> Enum.into(%{}, fn {id, player} -> {id, fun.(player)} end)
+
+    %{game | players: players}
   end
 
   @spec update_current_player(Game.t(), Player.t()) :: Game.t()

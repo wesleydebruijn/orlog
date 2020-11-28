@@ -6,8 +6,15 @@ defmodule Game.Settings do
   @type t :: %Game.Settings{
           health: integer(),
           tokens: integer(),
-          rolls: integer(),
-          dices: integer()
+          dices: integer(),
+          phases: any()
         }
-  defstruct health: 0, tokens: 0, rolls: 0, dices: 0
+  defstruct health: 15,
+            tokens: 0,
+            dices: 6,
+            phases: %{
+              1 => %{module: Phase.Roll, turns: 3},
+              2 => %{module: Phase.GodFavor, turns: 1},
+              3 => %{module: Phase.Resolution, turns: 1}
+            }
 end

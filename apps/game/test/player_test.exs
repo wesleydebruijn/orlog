@@ -51,6 +51,29 @@ defmodule Game.PlayerTest do
     end
   end
 
+  describe "update_turns/2" do
+    test "when turns are added" do
+      actual = Player.update_turns(%Player{}, 2)
+      expected = %Player{turns: 2}
+
+      assert actual == expected
+    end
+
+    test "when turns are substracted" do
+      actual = Player.update_turns(%Player{}, -2)
+      expected = %Player{turns: -2}
+
+      assert actual == expected
+    end
+  end
+
+  test "set_turns/2" do
+    actual = Player.set_turns(%Player{}, 2)
+    expected = %Player{turns: 2}
+
+    assert actual == expected
+  end
+
   test "add_dices/2" do
     actual = Player.add_dices(%Player{}, 2)
     expected = %Player{dices: [%Dice{}, %Dice{}]}
