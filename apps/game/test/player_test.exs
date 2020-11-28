@@ -6,9 +6,14 @@ defmodule Game.PlayerTest do
     Dice
   }
 
-  test "new/1" do
-    actual = Player.new("Wesley")
-    expected = %Player{user: "Wesley"}
+  test "new/2" do
+    actual = Player.new("Wesley", %{health: 12, tokens: 99, dices: 2})
+    expected = %Player{
+      user: "Wesley",
+      health: 12,
+      tokens: 99,
+      dices: [%Dice{}, %Dice{}]
+    }
 
     assert actual == expected
   end
@@ -50,48 +55,5 @@ defmodule Game.PlayerTest do
     expected = %Player{dices: [%Dice{}, %Dice{}]}
 
     assert actual == expected
-  end
-
-  describe "assign_turn/1" do
-    test "when no players are assigned" do
-      players = [
-        %Player{turn: false},
-        %Player{turn: false}
-      ]
-
-      actual = Player.assign_turn(players)
-
-      assert Enum.any?(actual, & &1.turn)
-    end
-
-    test "when player is assigned" do
-      players = [
-        %Player{turn: true},
-        %Player{turn: false}
-      ]
-
-      actual = Player.assign_turn(players)
-      expected = [
-        %Player{turn: false},
-        %Player{turn: true}
-      ]
-
-      assert actual == expected
-    end
-
-    test "when last player is assigned" do
-      players = [
-        %Player{turn: false},
-        %Player{turn: true}
-      ]
-
-      actual = Player.assign_turn(players)
-      expected = [
-        %Player{turn: true},
-        %Player{turn: false}
-      ]
-
-      assert actual == expected
-    end
   end
 end

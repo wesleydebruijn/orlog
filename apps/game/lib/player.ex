@@ -3,6 +3,7 @@ defmodule Game.Player do
   Player
   """
   alias Game.{
+    Settings,
     Player,
     Dice
   }
@@ -11,14 +12,16 @@ defmodule Game.Player do
     user: String.t(),
     health: integer(),
     tokens: integer(),
-    dices: [Game.Dice.t()],
-    turn: boolean()
+    dices: [Dice.t()]
   }
-  defstruct user: nil, health: 0, tokens: 0, dices: [], turn: false
+  defstruct user: nil, health: 0, tokens: 0, dices: []
 
-  @spec new(String.t()) :: Player.t()
-  def new(user) do
+  @spec new(String.t(), Settings.t()) :: Player.t()
+  def new(user, settings) do
     %Player{user: user}
+    |> add_health(settings.health)
+    |> add_tokens(settings.tokens)
+    |> add_dices(settings.dices)
   end
 
   @spec add_health(Game.Player.t(), number) :: Player.t()
@@ -34,22 +37,5 @@ defmodule Game.Player do
   @spec add_dices(Player.t(), number) :: Player.t()
   def add_dices(player, amount) do
     %{player | dices: Enum.map(1..amount, fn _x -> %Dice{} end)}
-  end
-
-  @spec assign_turn([Player.t()]) :: [Player.t()]
-  def assign_turn(players) do
-    max_index = Enum.count(players) - 1
-    random_index = Enum.random(0..max_index)
-    {_player, current_index} = players
-      |> Enum.with_index()
-      |> Enum.find({nil, random_index}, fn {player, _index} -> player.turn end)
-
-    new_index = if current_index == max_index, do: 0, else: current_index + 1
-
-    players
-    |> Enum.with_index()
-    |> Enum.map(fn {player, index} ->
-      %{player | turn: index == new_index}
-    end)
   end
 end

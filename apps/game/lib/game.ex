@@ -3,12 +3,13 @@ defmodule Game do
   Game
   """
   alias Game.{
+    Settings,
     Player,
     Round,
     Phase
   }
 
-  @settings %{
+  @settings %Settings{
     health: 15,
     tokens: 0,
     rolls: 3,
@@ -16,26 +17,23 @@ defmodule Game do
   }
 
   @type t :: %Game{
-    players: [Player.t()],
+    players: any(),
     rounds: [Round.t()],
     phase: Phase.t(),
-    turns: integer()
+    turn: integer()
   }
-  defstruct players: [], rounds: [], phase: nil, turns: 0, settings: %{}
+  defstruct players: %{}, rounds: [], phase: nil, turn: nil, settings: %{}
 
   @spec start(String.t(), String.t()) :: Game.t()
   def start(user1, user2) do
-    players =
-      [user1, user2]
-      |> Enum.map(fn user ->
-        user
-        |> Player.new()
-        |> Player.add_health(@settings.health)
-        |> Player.add_tokens(@settings.tokens)
-      end)
-      |> Player.assign_turn()
-
-    %Game{settings: @settings, players: players}
+    %Game{
+      settings: @settings,
+      turn: Enum.random(1..2),
+      players:
+        [user1, user2]
+        |> Enum.with_index(1)
+        |> Enum.into(%{}, fn {user, index} -> {index, Player.new(user, @settings)} end)
+    }
   end
 
   @spec execute(Game.t(), any()) :: Game.t()
@@ -45,12 +43,14 @@ defmodule Game do
 
   @spec next_turn(Game.t()) :: Game.t()
   def next_turn(game) do
-    %{game | players: Player.assign_turn(game.players), turns: game.turns + 1}
+    next_turn = if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
+
+    %{game | turn: next_turn}
   end
 
   @spec next_phase(Game.t(), Phase.t()) :: Game.t()
   def next_phase(game, phase) do
-    %{game | phase: phase, turns: 0}
+    %{game | phase: phase}
   end
 
   @spec next_round(Game.t()) :: Game.t()
@@ -58,6 +58,3 @@ defmodule Game do
     %{game | rounds: [%Round{players: game.players} | game.rounds], phase: Phase.Roll}
   end
 end
-
-# game = Game.start("wes", "jef")
-# game = Game.next_round(game)

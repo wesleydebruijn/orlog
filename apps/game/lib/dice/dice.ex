@@ -27,9 +27,7 @@ defmodule Game.Dice do
 
   @spec swap(Game.Dice.t()) :: Game.Dice.t()
   def swap(%{locked: true} = dice), do: dice
-  def swap(dice) do
-    %{dice | keep: !dice.keep}
-  end
+  def swap(dice), do: %{dice | keep: !dice.keep}
 
   @spec lock(Game.Dice.t()) :: Game.Dice.t()
   def lock(dice), do: %{dice | locked: true}
