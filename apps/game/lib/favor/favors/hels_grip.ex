@@ -10,9 +10,8 @@ defmodule Favor.HelsGrip do
   use Favor
 
   @impl Favor
-  def invoke(game, options) do
-    %{cost: cost, damage: damage} = options
-    IO.puts("doing ThorsStrike with #{damage} damage and #{cost} cost")
+  def invoke(game, _options) do
+    # TODO: Implement
     game
   end
 end

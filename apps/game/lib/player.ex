@@ -13,9 +13,16 @@ defmodule Game.Player do
           tokens: integer(),
           turns: integer(),
           rolled: boolean(),
+          favors: [any()],
           dices: %{}
         }
-  defstruct user: nil, health: 0, tokens: 0, dices: %{}, turns: 0, rolled: false
+  defstruct user: nil,
+            health: 0,
+            tokens: 0,
+            rolled: false,
+            favors: [Favor.ThorsStrike, Favor.IdunsRejuvenation, Favor.OdinsSacrifice],
+            dices: %{},
+            turns: 0
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs) do

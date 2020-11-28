@@ -1,16 +1,16 @@
-defmodule ThorsStrikeTest do
+defmodule IdunsRejuvenationTest do
   use ExUnit.Case
 
   alias Game.{
     Player
   }
 
-  test "Thors Strike favor" do
+  test "Iduns Rejuvenation favor" do
     game = %Game{
       players: %{
         1 => %Player{
           user: "FortuinelijkeHenk",
-          health: 20
+          health: 14
         },
         2 => %Player{
           user: "OnfortuinelijkeHenk",
@@ -20,7 +20,7 @@ defmodule ThorsStrikeTest do
       turn: 1
     }
 
-    actual = Favor.ThorsStrike.invoke(game, %{damage: 6})
+    actual = Favor.IdunsRejuvenation.invoke(game, %{heal: 6})
 
     expected = %Game{
       players: %{
@@ -30,7 +30,7 @@ defmodule ThorsStrikeTest do
         },
         2 => %Player{
           user: "OnfortuinelijkeHenk",
-          health: 14
+          health: 20
         }
       },
       turn: 1
