@@ -11,6 +11,11 @@ defmodule Game.Dice.Face do
           count: integer(),
           amount: integer(),
           intersects: integer(),
+          # Health gained when succesful
+          health: integer(),
+          # Health given to opponent
+          health_opponent: integer(),
+          tokens: integer(),
           disabled: boolean(),
           type: :melee | :ranged | :token,
           stance: :attack | :block | :steal
@@ -18,6 +23,9 @@ defmodule Game.Dice.Face do
   defstruct count: 1,
             amount: 1,
             intersects: 0,
+            health: 0,
+            health_opponent: 0,
+            tokens: 0,
             disabled: false,
             type: :melee,
             stance: :block
