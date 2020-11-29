@@ -37,7 +37,7 @@ defmodule Favor.FreyrsGift do
       end)
       |> elem(0)
 
-    {die_index, die} =
+    {die_index, _die} =
       player
       |> Map.get(:dices)
       |> Enum.find(fn {_index, die} -> die.face == to_update_face end)
