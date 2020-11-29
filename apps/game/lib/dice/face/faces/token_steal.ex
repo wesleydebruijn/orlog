@@ -1,4 +1,4 @@
-defmodule Game.Dice.Face.StealToken do
+defmodule Game.Dice.Face.TokenSteal do
   @moduledoc """
   Dice face to steal token from the oponnent
   """
