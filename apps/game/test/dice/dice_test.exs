@@ -5,7 +5,7 @@ defmodule Game.DiceTest do
 
   describe "roll/1" do
     test "when dice is not kept" do
-      dice = Dice.roll()
+      dice = %Dice{}
       actual = Enum.map(0..10, fn _x -> Dice.roll(dice) end)
 
       assert Enum.any?(actual, fn x -> x != dice end)

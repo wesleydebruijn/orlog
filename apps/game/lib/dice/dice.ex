@@ -2,15 +2,17 @@ defmodule Game.Dice do
   @moduledoc """
   Dice
   """
+  alias Game.Dice
+
   @faces [
-    Game.Dice.Face.MeleeAttack,
-    Game.Dice.Face.MeleeBlock,
-    Game.Dice.Face.RangeAttack,
-    Game.Dice.Face.RangeBlock,
-    Game.Dice.Face.StealToken
+    Dice.Face.MeleeAttack.get(),
+    Dice.Face.MeleeBlock.get(),
+    Dice.Face.RangedAttack.get(),
+    Dice.Face.RangedBlock.get(),
+    Dice.Face.StealToken.get()
   ]
 
-  @type t :: %Game.Dice{
+  @type t :: %Dice{
           face: Game.Dice.Face.t(),
           tokens: integer(),
           locked: boolean(),
@@ -19,7 +21,6 @@ defmodule Game.Dice do
   defstruct face: nil, tokens: 0, locked: false, keep: false
 
   @spec roll(Game.Dice.t()) :: Game.Dice.t()
-  def roll, do: roll(%Game.Dice{})
   def roll(%{keep: true} = dice), do: dice
 
   def roll(dice) do

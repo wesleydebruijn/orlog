@@ -7,5 +7,11 @@ defmodule Game.Dice.Face.StealToken do
   @behaviour Face
 
   @impl Face
-  def perform, do: :ok
+  @spec get :: Game.Dice.Face.t()
+  def get do
+    %Face{
+      type: :token,
+      stance: :steal
+    }
+  end
 end

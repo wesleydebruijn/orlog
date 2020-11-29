@@ -1,6 +1,6 @@
-defmodule Game.Dice.Face.MeleeAttack do
+defmodule Game.Dice.Face.RangedAttack do
   @moduledoc """
-  Dice face to deal melee attack to the oponnent
+  Dice face to deal ranged attack to the oponnent
   """
   alias Game.Dice.Face
 
@@ -10,7 +10,7 @@ defmodule Game.Dice.Face.MeleeAttack do
   @spec get :: Game.Dice.Face.t()
   def get do
     %Face{
-      type: :melee,
+      type: :ranged,
       stance: :attack
     }
   end
