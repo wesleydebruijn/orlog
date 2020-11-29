@@ -56,7 +56,7 @@ defmodule Game do
 
   @spec opponent_player(Game.t()) :: Player.t()
   def opponent_player(game) do
-    Map.get(game.players, Turn.determine_next_turn(game))
+    Map.get(game.players, Turn.determine_next(game))
   end
 
   @spec update_players(Game.t(), fun()) :: Game.t()
@@ -73,6 +73,6 @@ defmodule Game do
 
   @spec update_opponent_player(Game.t(), Player.t()) :: Game.t()
   def update_opponent_player(game, player) do
-    %{game | players: Map.put(game.players, Turn.determine_next_turn(game), player)}
+    %{game | players: Map.put(game.players, Turn.determine_next(game), player)}
   end
 end
