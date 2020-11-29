@@ -176,10 +176,11 @@ defmodule Game.Dice.FaceTest do
       2 => %Face{stance: :block, type: :melee, count: 1},
       3 => %Face{stance: :block, type: :ranged, count: 3},
       4 => %Face{stance: :attack, type: :melee, count: 2},
-      5 => %Face{stance: :attack, type: :ranged, count: 1},
+      5 => %Face{stance: :attack, type: :ranged, count: 1}
     }
 
     actual = Face.resolve(faces, other)
+
     expected = %{
       1 => %Face{stance: :attack, type: :melee, count: 1, intersects: 1},
       2 => %Face{stance: :attack, type: :melee, count: 2, intersects: 1},

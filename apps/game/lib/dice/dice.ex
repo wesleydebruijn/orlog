@@ -40,4 +40,22 @@ defmodule Game.Dice do
 
   @spec unlock(Dice.t()) :: Dice.t()
   def unlock(dice), do: %{dice | locked: false}
+
+  @spec faces(map()) :: map()
+  def faces(dices) do
+    Enum.into(dices, %{}, fn {index, dice} -> {index, dice.face} end)
+  end
+
+  @spec resolve(map(), map()) :: map()
+  def resolve(dices, other_dices) do
+    faces =
+      dices
+      |> faces()
+      |> Dice.Face.resolve(faces(other_dices))
+
+    dices
+    |> Enum.into(%{}, fn {index, dice} ->
+      {index, %{dice | face: Map.get(faces, index)}}
+    end)
+  end
 end

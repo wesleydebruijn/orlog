@@ -6,19 +6,6 @@ defmodule Game.PlayerTest do
     Dice
   }
 
-  test "new/2" do
-    actual = Player.new("Wesley", %{health: 12, tokens: 99, dices: 2})
-
-    expected = %Player{
-      user: "Wesley",
-      health: 12,
-      tokens: 99,
-      dices: %{1 => %Dice{}, 2 => %Dice{}}
-    }
-
-    assert actual == expected
-  end
-
   test "update/2" do
     actual = Player.update(%Player{}, %{turns: 2})
     expected = %Player{turns: 2}
@@ -74,6 +61,28 @@ defmodule Game.PlayerTest do
     end
   end
 
+  test "collect_tokens/1" do
+    player = %Player{
+      dices: %{
+        1 => %Dice{tokens: 1},
+        2 => %Dice{tokens: 1}
+      },
+      tokens: 3
+    }
+
+    actual = Player.collect_tokens(player)
+
+    expected = %Player{
+      dices: %{
+        1 => %Dice{tokens: 1},
+        2 => %Dice{tokens: 1}
+      },
+      tokens: 5
+    }
+
+    assert actual == expected
+  end
+
   test "set_dices/2" do
     actual = Player.set_dices(%Player{}, 2)
     expected = %Player{dices: %{1 => %Dice{}, 2 => %Dice{}}}
@@ -96,6 +105,33 @@ defmodule Game.PlayerTest do
 
     actual = Player.update_dice(player, 1, fun)
     expected = %Player{dices: %{1 => %Dice{keep: true}}}
+
+    assert actual == expected
+  end
+
+  test "resolve/2" do
+    player = %Player{
+      dices: %{
+        1 => %Dice{face: %Dice.Face{stance: :attack, type: :melee}},
+        2 => %Dice{face: %Dice.Face{stance: :block, type: :ranged}}
+      }
+    }
+
+    other_player = %Player{
+      dices: %{
+        1 => %Dice{face: %Dice.Face{stance: :block, type: :melee}},
+        2 => %Dice{face: %Dice.Face{stance: :attack, type: :ranged}}
+      }
+    }
+
+    actual = Player.resolve(player, other_player)
+
+    expected =%Player{
+      dices:  %{
+        1 => %Dice{face: %Dice.Face{stance: :attack, type: :melee, intersects: 1}},
+        2 => %Dice{face: %Dice.Face{stance: :block, type: :ranged, intersects: 1}}
+      }
+    }
 
     assert actual == expected
   end

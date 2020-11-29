@@ -4,8 +4,29 @@ defmodule Game.Phase.GodFavor do
   """
   @behaviour Game.Phase
 
+  alias Game.{
+    Player,
+    Phase
+  }
+
   @impl Game.Phase
   @spec action(Game.t(), any()) :: Game.t()
+  def action(game, :start_phase) do
+    %{turns: turns} = Phase.current(game)
+
+    game
+    |> Game.update_players(&Player.update(&1, %{turns: turns}))
+  end
+
+  def action(game, :end_turn) do
+    player =
+      game
+      |> Game.current_player()
+      |> Player.update_turns(-1)
+
+    Game.update_current_player(game, player)
+  end
+
   def action(game, _other) do
     # unknown action
     game

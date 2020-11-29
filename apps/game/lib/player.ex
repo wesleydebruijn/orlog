@@ -3,7 +3,6 @@ defmodule Game.Player do
   Player
   """
   alias Game.{
-    Settings,
     Player,
     Dice
   }
@@ -17,14 +16,6 @@ defmodule Game.Player do
           dices: %{}
         }
   defstruct user: nil, health: 0, tokens: 0, dices: %{}, turns: 0, rolled: false
-
-  @spec new(String.t(), Settings.t()) :: Player.t()
-  def new(user, settings) do
-    %Player{user: user}
-    |> update_health(settings.health)
-    |> update_tokens(settings.tokens)
-    |> set_dices(settings.dices)
-  end
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs) do
@@ -44,6 +35,17 @@ defmodule Game.Player do
   @spec update_turns(Player.t(), integer()) :: Player.t()
   def update_turns(player, amount) do
     %{player | turns: player.turns + amount}
+  end
+
+  @spec collect_tokens(Player.t()) :: Player.t()
+  def collect_tokens(player) do
+    tokens =
+      player.dices
+      |> Enum.map(fn {_index, dice} -> dice.tokens end)
+      |> Enum.sum()
+
+    player
+    |> update_tokens(tokens)
   end
 
   @spec set_dices(Player.t(), integer()) :: Player.t()
@@ -73,5 +75,10 @@ defmodule Game.Player do
       |> fun.()
 
     %{player | dices: Map.put(player.dices, index, dice)}
+  end
+
+  @spec resolve(Player.t(), Player.t()) :: Player.t()
+  def resolve(player, other) do
+    %{player | dices: Dice.resolve(player.dices, other.dices)}
   end
 end

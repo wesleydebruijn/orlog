@@ -6,11 +6,19 @@ defmodule Game.Phase.Roll do
 
   alias Game.{
     Player,
+    Phase,
     Dice
   }
 
   @impl Game.Phase
   @spec action(Game.t(), any()) :: Game.t()
+  def action(game, :start_phase) do
+    %{turns: turns} = Phase.current(game)
+
+    game
+    |> Game.update_players(&Player.update(&1, %{turns: turns}))
+  end
+
   def action(game, {:swap, index}) do
     player =
       game
