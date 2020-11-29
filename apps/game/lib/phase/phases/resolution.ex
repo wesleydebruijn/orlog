@@ -6,7 +6,8 @@ defmodule Game.Phase.Resolution do
 
   alias Game.{
     Player,
-    Phase
+    Phase,
+    Turn
   }
 
   @impl Game.Phase
@@ -15,32 +16,61 @@ defmodule Game.Phase.Resolution do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> Game.update_players(&Player.update(&1, %{turns: turns}))
+    |> Game.update_players(fn player ->
+      player
+      |> Player.update(%{turns: turns})
+      |> Player.collect_tokens()
+    end)
   end
 
+  def action(game, :start_turn), do: Turn.next(game)
+
   def action(game, :end_turn) do
-    opponent = Game.opponent_player(game)
+    game
+    |> Game.current_player()
+    |> Map.get(:turns)
+    |> case do
+      3 -> action(game, :pre_resolution)
+      2 -> action(game, :resolution)
+      1 -> action(game, :post_resolution)
+      _other -> game
+    end
+  end
+
+  def action(game, :pre_resolution) do
+    player =
+      game
+      |> Game.current_player()
+      |> Player.update_turns(-1)
+
+    game
+    |> Game.update_current_player(player)
+    |> Turn.next()
+  end
+
+  def action(game, :resolution) do
+    oponnent = Game.current_player(game)
 
     player =
       game
       |> Game.current_player()
       |> Player.update_turns(-1)
-      |> Player.collect_tokens()
-      |> Player.resolve(opponent)
+      |> Player.resolve(oponnent)
 
-    Game.update_current_player(game, player)
-    # TODO: buy & apply pre-phase godfavor effects
+    game
+    |> Game.update_current_player(player)
+    |> Turn.next()
   end
 
-  def action(game, :resolve) do
-    # |> Game.update_players(&Player.collect_on_hit/1)
-    # |> Game.update_players(&Player.collect_on_block/1)
-    # TODO: buy & apply post-phase godfavor effects
-    game
-  end
+  def action(game, :post_resolution) do
+    player =
+      game
+      |> Game.current_player()
+      |> Player.update_turns(-1)
 
-  def action(game, :end_phase) do
     game
+    |> Game.update_current_player(player)
+    |> Turn.next()
   end
 
   def action(game, _other) do

@@ -5,6 +5,7 @@ defmodule Game.Dice.Face.TokenStealTest do
 
   test "get/1" do
     actual = Face.TokenSteal.get()
+
     expected = %Face{
       type: :token,
       stance: :steal

@@ -126,8 +126,8 @@ defmodule Game.PlayerTest do
 
     actual = Player.resolve(player, other_player)
 
-    expected =%Player{
-      dices:  %{
+    expected = %Player{
+      dices: %{
         1 => %Dice{face: %Dice.Face{stance: :attack, type: :melee, intersects: 1}},
         2 => %Dice{face: %Dice.Face{stance: :block, type: :ranged, intersects: 1}}
       }

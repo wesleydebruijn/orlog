@@ -7,7 +7,8 @@ defmodule Game.Phase.Roll do
   alias Game.{
     Player,
     Phase,
-    Dice
+    Dice,
+    Turn
   }
 
   @impl Game.Phase
@@ -28,19 +29,39 @@ defmodule Game.Phase.Roll do
     Game.update_current_player(game, player)
   end
 
+  def action(game, :continue) do
+    game
+    |> Game.current_player()
+    |> case do
+      %{turns: 1} ->
+        game
+        |> action(:roll)
+        |> action(:keep)
+        |> Turn.next()
+
+      %{rolled: false} ->
+        action(game, :roll)
+
+      %{rolled: true} ->
+        Turn.next(game)
+    end
+  end
+
   def action(game, :roll) do
     player =
       game
       |> Game.current_player()
-      |> case do
-        %{rolled: true} = player ->
-          player
+      |> Player.update_dices(&Dice.roll/1)
+      |> Player.update(%{rolled: true})
 
-        %{rolled: false} = player ->
-          player
-          |> Player.update_dices(&Dice.roll/1)
-          |> Player.update(%{rolled: true})
-      end
+    Game.update_current_player(game, player)
+  end
+
+  def action(game, :keep) do
+    player =
+      game
+      |> Game.current_player()
+      |> Player.update_dices(&Dice.keep/1)
 
     Game.update_current_player(game, player)
   end
@@ -50,10 +71,6 @@ defmodule Game.Phase.Roll do
       game
       |> Game.current_player()
       |> Player.update_turns(-1)
-      |> case do
-        %{turns: 0} = player -> Player.update_dices(player, &Dice.keep/1)
-        player -> player
-      end
       |> Player.update_dices(&Dice.lock/1)
 
     Game.update_current_player(game, player)

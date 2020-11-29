@@ -5,6 +5,7 @@ defmodule Game.Dice.Face.MeleeAttackTest do
 
   test "get/1" do
     actual = Face.MeleeAttack.get()
+
     expected = %Face{
       type: :melee,
       stance: :attack

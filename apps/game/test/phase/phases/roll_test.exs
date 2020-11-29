@@ -38,10 +38,11 @@ defmodule Game.Phase.RollTest do
       assert actual == expected
     end
 
-    test "roll dice when not rolled" do
+    test "continue when not rolled" do
       game = %Game{
         players: %{
           1 => %Player{
+            turns: 3,
             dices: %{
               1 => %Dice{},
               2 => %Dice{}
@@ -51,7 +52,7 @@ defmodule Game.Phase.RollTest do
         turn: 1
       }
 
-      actual = Phase.Roll.action(game, :roll)
+      actual = Phase.Roll.action(game, :continue)
 
       assert %Game{
                players: %{
@@ -67,10 +68,11 @@ defmodule Game.Phase.RollTest do
              } = actual
     end
 
-    test "roll dice when already rolled" do
+    test "continue when already rolled" do
       game = %Game{
         players: %{
           1 => %Player{
+            turns: 3,
             dices: %{
               1 => %Dice{face: Dice.Face.MeleeAttack},
               2 => %Dice{face: Dice.Face.MeleeAttack}
@@ -81,11 +83,12 @@ defmodule Game.Phase.RollTest do
         turn: 1
       }
 
-      actual = Phase.Roll.action(game, :roll)
+      actual = Phase.Roll.action(game, :continue)
 
       expected = %Game{
         players: %{
           1 => %Player{
+            turns: 3,
             dices: %{
               1 => %Dice{face: Dice.Face.MeleeAttack},
               2 => %Dice{face: Dice.Face.MeleeAttack}
@@ -99,10 +102,11 @@ defmodule Game.Phase.RollTest do
       assert actual == expected
     end
 
-    test "end turn when last turn" do
+    test "continue when last turn" do
       game = %Game{
         players: %{
           1 => %Player{
+            turns: 1,
             dices: %{
               1 => %Dice{face: Dice.Face.MeleeAttack},
               2 => %Dice{face: Dice.Face.MeleeAttack}
@@ -114,23 +118,21 @@ defmodule Game.Phase.RollTest do
         turn: 1
       }
 
-      actual = Phase.Roll.action(game, :end_turn)
+      actual = Phase.Roll.action(game, :continue)
 
-      expected = %Game{
+      assert %Game{
         players: %{
           1 => %Player{
             dices: %{
-              1 => %Dice{face: Dice.Face.MeleeAttack, keep: true, locked: true},
-              2 => %Dice{face: Dice.Face.MeleeAttack, keep: true, locked: true}
+              1 => %Dice{},
+              2 => %Dice{}
             },
             rolled: true,
-            turns: 0
+            turns: 1
           }
         },
         turn: 1
-      }
-
-      assert actual == expected
+      } = actual
     end
 
     test "end turn when turns left" do

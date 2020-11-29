@@ -6,7 +6,8 @@ defmodule Game.Phase.GodFavor do
 
   alias Game.{
     Player,
-    Phase
+    Phase,
+    Turn
   }
 
   @impl Game.Phase
@@ -17,6 +18,8 @@ defmodule Game.Phase.GodFavor do
     game
     |> Game.update_players(&Player.update(&1, %{turns: turns}))
   end
+
+  def action(game, :continue), do: Turn.next(game)
 
   def action(game, :end_turn) do
     player =

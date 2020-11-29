@@ -43,6 +43,7 @@ defmodule Game do
 
   @spec do_action(Game.t(), any()) :: Game.t()
   def do_action(%{phase: 0} = game, _action), do: game
+
   def do_action(game, action) do
     %{module: module} = Map.get(game.settings.phases, game.phase)
 

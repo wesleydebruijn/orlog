@@ -5,6 +5,7 @@ defmodule Game.Dice.Face.RangedAttackTest do
 
   test "get/1" do
     actual = Face.RangedAttack.get()
+
     expected = %Face{
       type: :ranged,
       stance: :attack
