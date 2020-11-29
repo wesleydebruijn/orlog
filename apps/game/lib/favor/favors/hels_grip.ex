@@ -19,18 +19,19 @@ defmodule Favor.HelsGrip do
   def invoke(game, options) do
     opponent = Game.opponent_player(game)
 
-    updated_opponent = opponent
-    |> Map.get(:dices)
-    |> Enum.filter(fn {_index, die} ->
-      die.face == Game.Dice.Face.MeleeAttack.get()
-    end)
-    |> Enum.reduce(opponent, fn {index, _die}, acc ->
-      Game.Player.update_dice(acc, index, fn die ->
-        Game.Dice.update_face(die, %{
-         health_opponent: options.heal_per_melee
-        })
+    updated_opponent =
+      opponent
+      |> Map.get(:dices)
+      |> Enum.filter(fn {_index, die} ->
+        die.face == Game.Dice.Face.MeleeAttack.get()
       end)
-    end)
+      |> Enum.reduce(opponent, fn {index, _die}, acc ->
+        Game.Player.update_dice(acc, index, fn die ->
+          Game.Dice.update_face(die, %{
+            health_opponent: options.heal_per_melee
+          })
+        end)
+      end)
 
     Game.update_opponent_player(game, updated_opponent)
   end

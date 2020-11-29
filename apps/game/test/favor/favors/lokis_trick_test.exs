@@ -1,4 +1,4 @@
-defmodule HelsGripTest do
+defmodule LokisTrickTest do
   use ExUnit.Case
 
   alias Game.{
@@ -6,7 +6,7 @@ defmodule HelsGripTest do
     Dice
   }
 
-  test "Hels Grip favor" do
+  test "Loki's Trick favor" do
     game = %Game{
       players: %{
         1 => %Player{
@@ -16,10 +16,10 @@ defmodule HelsGripTest do
           user: "OnfortuinelijkeHenk",
           dices: %{
             1 => %Dice{
-              face: Dice.Face.MeleeAttack.get()
+              face: Game.Dice.Face.MeleeBlock.get()
             },
             2 => %Dice{
-              face: Dice.Face.RangedAttack.get()
+              face: Game.Dice.Face.MeleeBlock.get()
             }
           }
         }
@@ -27,33 +27,34 @@ defmodule HelsGripTest do
       turn: 1
     }
 
-    actual = Favor.HelsGrip.invoke(game, %{heal_per_melee: 1})
+    actual = Favor.LokisTrick.invoke(game, %{bans: 2})
 
     expected = %Game{
+      turn: 1,
       players: %{
-        1 => %Player{
+        1 => %Game.Player{
           user: "FortuinelijkeHenk"
         },
-        2 => %Player{
+        2 => %Game.Player{
           user: "OnfortuinelijkeHenk",
           dices: %{
-            1 => %Dice{
-              face: %Dice.Face{
-                health_opponent: 1,
-                stance: :attack
+            2 => %Game.Dice{
+              face: %Game.Dice.Face{
+                disabled: true,
+                stance: :block,
+                type: :melee
               }
             },
-            2 => %Dice{
-              face: %Dice.Face{
-                health_opponent: 0,
-                stance: :attack,
-                type: :ranged
+            1 => %Game.Dice{
+              face: %Game.Dice.Face{
+                stance: :block,
+                type: :melee,
+                disabled: true
               }
             }
           }
         }
-      },
-      turn: 1
+      }
     }
 
     assert actual == expected
