@@ -3,14 +3,14 @@ defmodule Game.Turn do
   Turn
   """
 
-  @spec determine_next_turn(Game.t()) :: integer()
-  def determine_next_turn(game) do
+  @spec determine_next(Game.t()) :: integer()
+  def determine_next(game) do
     if game.turn + 1 > Enum.count(game.players), do: 1, else: game.turn + 1
   end
 
-  @spec next_turn(Game.t()) :: Game.t()
-  def next_turn(game) do
-    turn = determine_next_turn(game)
+  @spec next(Game.t()) :: Game.t()
+  def next(game) do
+    turn = determine_next(game)
 
     game
     |> Game.do_action(:end_turn)

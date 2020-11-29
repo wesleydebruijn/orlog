@@ -7,7 +7,7 @@ defmodule Game.TurnTest do
     Turn
   }
 
-  describe "determine_next_turn/1" do
+  describe "determine_next/1" do
     test "when in bounds" do
       game = %Game{
         players: %{
@@ -17,7 +17,7 @@ defmodule Game.TurnTest do
         turn: 1
       }
 
-      actual = Turn.determine_next_turn(game)
+      actual = Turn.determine_next(game)
       expected = 2
 
       assert actual == expected
@@ -32,14 +32,14 @@ defmodule Game.TurnTest do
         turn: 2
       }
 
-      actual = Turn.determine_next_turn(game)
+      actual = Turn.determine_next(game)
       expected = 1
 
       assert actual == expected
     end
   end
 
-  describe "next_turn/1" do
+  describe "next/1" do
     test "when players have turns left" do
       game = %Game{
         settings: %Settings{
@@ -57,7 +57,7 @@ defmodule Game.TurnTest do
         phase: 1
       }
 
-      actual = Turn.next_turn(game)
+      actual = Turn.next(game)
 
       expected = %Game{
         settings: %Settings{
@@ -95,7 +95,7 @@ defmodule Game.TurnTest do
         phase: 1
       }
 
-      actual = Turn.next_turn(game)
+      actual = Turn.next(game)
 
       expected = %Game{
         settings: %Settings{
