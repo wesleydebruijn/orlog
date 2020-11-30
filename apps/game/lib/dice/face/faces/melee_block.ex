@@ -2,14 +2,12 @@ defmodule Game.Dice.Face.MeleeBlock do
   @moduledoc """
   Dice face to block melee attack from the oponnent
   """
-  alias Game.Dice.Face
+  @behaviour Game.Dice.Face
 
-  @behaviour Face
-
-  @impl Face
-  @spec get :: Face.t()
+  @impl Game.Dice.Face
+  @spec get :: Game.Dice.Face.t()
   def get do
-    %Face{
+    %Game.Dice.Face{
       type: :melee,
       stance: :block
     }

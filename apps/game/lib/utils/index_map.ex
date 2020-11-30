@@ -43,12 +43,12 @@ defmodule IndexMap do
     end)
   end
 
-  @spec filter(map(), fun()) :: [any()]
+  @spec filter(any(), fun()) :: [any()]
   def filter(items, fun) do
     Enum.filter(items, fn {_index, item} -> fun.(item) end)
   end
 
-  @spec sum(map(), fun()) :: number
+  @spec sum(any(), fun()) :: number
   def sum(items, fun) do
     items
     |> Enum.map(fn {_index, item} -> fun.(item) end)

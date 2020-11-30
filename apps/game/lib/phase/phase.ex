@@ -1,6 +1,6 @@
 defmodule Game.Phase do
   @moduledoc """
-  Behaviour of a phase
+  Players have X turns to do certain actions
   """
   @callback action(Game.t(), any()) :: Game.t()
 

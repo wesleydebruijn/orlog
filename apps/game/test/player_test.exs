@@ -61,28 +61,6 @@ defmodule Game.PlayerTest do
     end
   end
 
-  test "collect_tokens/1" do
-    player = %Player{
-      dices: %{
-        1 => %Dice{tokens: 1},
-        2 => %Dice{tokens: 1}
-      },
-      tokens: 3
-    }
-
-    actual = Player.collect_tokens(player)
-
-    expected = %Player{
-      dices: %{
-        1 => %Dice{tokens: 1},
-        2 => %Dice{tokens: 1}
-      },
-      tokens: 5
-    }
-
-    assert actual == expected
-  end
-
   test "resolve/2" do
     player = %Player{
       dices: %{

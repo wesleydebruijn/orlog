@@ -3,7 +3,7 @@ defmodule Game.Dice.Face do
   Behaviour of a dice face
 
   when not {disabled} do {type} {stance} for {count} times with {amount}
-  and gain extra {health} and {tokens} for every successful {type} {stance}
+  which will intersect with opposing faces for {intersects} times
   """
   alias Game.Dice
   alias Game.Dice.Face
@@ -46,6 +46,17 @@ defmodule Game.Dice.Face do
 
   @spec type?(Face.t(), atom()) :: boolean()
   def type?(face, type), do: face.type == type
+
+  @spec hits(Face.t()) :: integer()
+  def hits(%{disabled: true}), do: 0
+  def hits(%{stance: :block} = face), do: face.intersects
+  def hits(face), do: face.count - face.intersects
+
+  @spec hit_amount(Dice.t()) :: integer()
+  def hit_amount(%Dice{face: face}), do: hit_amount(face)
+
+  @spec hit_amount(Face.t()) :: integer()
+  def hit_amount(face), do: hits(face) * face.amount
 
   @spec resolve(map(), map()) :: map()
   def resolve(faces, other) do

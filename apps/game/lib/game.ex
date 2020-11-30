@@ -1,6 +1,6 @@
 defmodule Game do
   @moduledoc """
-  Game
+  Orlog, the Game: Clone of minigame from Assassin's Creed: Valhalla
   """
   alias Game.{
     Settings,
@@ -28,9 +28,11 @@ defmodule Game do
     }
     |> IndexMap.update_all(:players, fn player ->
       player
-      |> Player.update_health(settings.health)
-      |> Player.update_tokens(settings.tokens)
-      |> Player.update(%{dices: Dice.create(settings.dices)})
+      |> Player.update(%{
+        health: settings.health,
+        tokens: settings.tokens,
+        dices: Dice.create(settings.dices)
+      })
     end)
     |> Turn.coinflip()
     |> Round.next()

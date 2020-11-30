@@ -2,14 +2,12 @@ defmodule Game.Dice.Face.TokenSteal do
   @moduledoc """
   Dice face to steal token from the oponnent
   """
-  alias Game.Dice.Face
+  @behaviour Game.Dice.Face
 
-  @behaviour Face
-
-  @impl Face
-  @spec get :: Face.t()
+  @impl Game.Dice.Face
+  @spec get :: Game.Dice.Face.t()
   def get do
-    %Face{
+    %Game.Dice.Face{
       type: :token,
       stance: :steal
     }

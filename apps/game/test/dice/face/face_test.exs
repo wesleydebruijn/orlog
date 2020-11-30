@@ -94,6 +94,52 @@ defmodule Game.Dice.FaceTest do
     end
   end
 
+  describe "hits/1" do
+    test "when disabled" do
+      actual = Face.hits(%Face{disabled: true, intersects: 1})
+      expected = 0
+
+      assert actual == expected
+    end
+
+    test "when block stance" do
+      actual = Face.hits(%Face{stance: :block, intersects: 1})
+      expected = 1
+
+      assert actual == expected
+    end
+
+    test "when attack stance" do
+      actual = Face.hits(%Face{stance: :attack, intersects: 1, count: 2})
+      expected = 1
+
+      assert actual == expected
+    end
+
+    test "when steal stance" do
+      actual = Face.hits(%Face{stance: :steal, intersects: 1, count: 2})
+      expected = 1
+
+      assert actual == expected
+    end
+  end
+
+  describe "hit_amount/1" do
+    test "when dice" do
+      actual = Face.hit_amount(%Dice{face: %Face{stance: :attack, amount: 2, count: 2}})
+      expected = 4
+
+      assert actual == expected
+    end
+
+    test "when face" do
+      actual = Face.hit_amount(%Face{stance: :attack, amount: 2, count: 2})
+      expected = 4
+
+      assert actual == expected
+    end
+  end
+
   describe "resolve_face/2" do
     test "single attack blocked by oponnent block" do
       faces = %{

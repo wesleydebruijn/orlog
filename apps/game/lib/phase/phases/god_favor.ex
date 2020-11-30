@@ -1,6 +1,8 @@
 defmodule Game.Phase.GodFavor do
   @moduledoc """
-  GodFavor phase
+  Players can request help from the Gods by
+  spending their tokens for an extra perk during the
+  next phase of the game
   """
   @behaviour Game.Phase
 

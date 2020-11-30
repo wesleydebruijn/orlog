@@ -1,6 +1,8 @@
 defmodule Game.Phase.Roll do
   @moduledoc """
-  Roll phase
+  Players roll dices for X turns,
+  after each roll a player can swap out dices to keep
+  during next phase of the game
   """
   @behaviour Game.Phase
 
@@ -17,7 +19,11 @@ defmodule Game.Phase.Roll do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> IndexMap.update_all(:players, &Player.update(&1, %{turns: turns}))
+    |> IndexMap.update_all(:players, fn player ->
+      player
+      |> Player.update(%{turns: turns})
+      |> IndexMap.update_all(:dices, &Dice.unlock/1)
+    end)
   end
 
   def action(game, {:swap, index}) do

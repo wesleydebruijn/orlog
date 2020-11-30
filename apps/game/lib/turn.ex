@@ -1,6 +1,6 @@
 defmodule Game.Turn do
   @moduledoc """
-  Turn
+  Turn is assigned and switched between players in the game
   """
 
   @spec coinflip(Game.t()) :: Game.t()

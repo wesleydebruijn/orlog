@@ -1,6 +1,8 @@
 defmodule Game.Dice do
   @moduledoc """
-  Dice
+  A dice can be rolled during a game by a player,
+  the player can decide to {keep} the dice to retain its {face}
+  before its gonna be {locked} in
   """
   alias Game.Dice
 
@@ -44,7 +46,7 @@ defmodule Game.Dice do
   def lock(dice), do: %{dice | locked: true}
 
   @spec unlock(Dice.t()) :: Dice.t()
-  def unlock(dice), do: %{dice | locked: false}
+  def unlock(dice), do: %{dice | keep: false, locked: false}
 
   @spec faces(map()) :: map()
   def faces(dices) do

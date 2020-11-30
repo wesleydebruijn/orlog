@@ -1,6 +1,6 @@
 defmodule Game.Round do
   @moduledoc """
-  Round
+  Cycle of a collection of phases in a game
   """
   @spec determine_next(Game.t()) :: integer()
   def determine_next(game) do

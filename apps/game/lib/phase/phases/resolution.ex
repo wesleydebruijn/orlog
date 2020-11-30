@@ -1,13 +1,16 @@
 defmodule Game.Phase.Resolution do
   @moduledoc """
-  Resolution phase
+  Player's dices face off against each other
+  and previously selected God Favors are triggered before
+  and/or after the standoff
   """
   @behaviour Game.Phase
 
   alias Game.{
     Player,
     Phase,
-    Turn
+    Turn,
+    Action
   }
 
   @impl Game.Phase
@@ -16,11 +19,7 @@ defmodule Game.Phase.Resolution do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> IndexMap.update_all(:players, fn player ->
-      player
-      |> Player.update(%{turns: turns})
-      |> Player.collect_tokens()
-    end)
+    |> IndexMap.update_all(:players, &Player.update(&1, %{turns: turns}))
   end
 
   def action(game, :start_turn), do: Turn.next(game)
@@ -37,7 +36,9 @@ defmodule Game.Phase.Resolution do
   end
 
   def action(game, :pre_resolution) do
+    # todo: invoke pre resolution god favors (maybe in two fases? opponnent effects vs player effects)
     game
+    |> Action.collect_tokens()
     |> Turn.update_player(&Player.update_turns(&1, -1))
     |> Turn.next()
   end
@@ -46,15 +47,22 @@ defmodule Game.Phase.Resolution do
     game
     |> Turn.update_player(fn player ->
       player
-      |> Player.update_turns(-1)
       |> Player.resolve(Turn.get_opponent(game))
+      |> Player.update_turns(-1)
     end)
     |> Turn.next()
   end
 
   def action(game, :post_resolution) do
     game
-    |> Turn.update_player(&Player.update_turns(&1, -1))
+    |> Action.attack_health()
+    |> Action.steal_tokens()
+    |> Turn.update_player(fn player ->
+      # todo: reset dice amount to game.settings.dices
+      player
+      |> Player.update_turns(-1)
+    end)
+    # todo: invoke post resolution god favors
     |> Turn.next()
   end
 

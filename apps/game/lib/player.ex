@@ -1,6 +1,6 @@
 defmodule Game.Player do
   @moduledoc """
-  Player
+  Player of a game
   """
   alias Game.{
     Player,
@@ -42,14 +42,6 @@ defmodule Game.Player do
   @spec update_turns(Player.t(), integer()) :: Player.t()
   def update_turns(player, amount) do
     %{player | turns: player.turns + amount}
-  end
-
-  @spec collect_tokens(Player.t()) :: Player.t()
-  def collect_tokens(player) do
-    tokens = IndexMap.sum(player.dices, & &1.tokens)
-
-    player
-    |> update_tokens(tokens)
   end
 
   @spec resolve(Player.t(), Player.t()) :: Player.t()
