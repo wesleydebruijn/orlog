@@ -17,14 +17,14 @@ defmodule Game.Phase.Roll do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> Game.update_players(&Player.update(&1, %{turns: turns}))
+    |> IndexMap.update_all(:players, &Player.update(&1, %{turns: turns}))
   end
 
   def action(game, {:swap, index}) do
     game
     |> Turn.update_player(fn player ->
       player
-      |> Player.update_dice(index, &Dice.swap/1)
+      |> IndexMap.update(:dices, index, &Dice.swap/1)
     end)
   end
 
@@ -50,7 +50,7 @@ defmodule Game.Phase.Roll do
     game
     |> Turn.update_player(fn player ->
       player
-      |> Player.update_dices(&Dice.roll/1)
+      |> IndexMap.update_all(:dices, &Dice.roll/1)
       |> Player.update(%{rolled: true})
     end)
   end
@@ -59,7 +59,7 @@ defmodule Game.Phase.Roll do
     game
     |> Turn.update_player(fn player ->
       player
-      |> Player.update_dices(&Dice.keep/1)
+      |> IndexMap.update_all(:dices, &Dice.keep/1)
     end)
   end
 
@@ -68,7 +68,7 @@ defmodule Game.Phase.Roll do
     |> Turn.update_player(fn player ->
       player
       |> Player.update_turns(-1)
-      |> Player.update_dices(&Dice.lock/1)
+      |> IndexMap.update_all(:dices, &Dice.lock/1)
     end)
   end
 

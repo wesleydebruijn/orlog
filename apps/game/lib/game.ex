@@ -5,6 +5,7 @@ defmodule Game do
   alias Game.{
     Settings,
     Player,
+    Dice,
     Turn,
     Round,
     Phase
@@ -25,45 +26,23 @@ defmodule Game do
       settings: settings,
       players: Player.create(users)
     }
-    |> Game.update_players(fn player ->
+    |> IndexMap.update_all(:players, fn player ->
       player
       |> Player.update_health(settings.health)
       |> Player.update_tokens(settings.tokens)
-      |> Player.set_dices(settings.dices)
+      |> Player.update(%{dices: Dice.create(settings.dices)})
     end)
     |> Turn.coinflip()
     |> Round.next()
     |> Phase.next()
   end
 
-  @spec do_action(Game.t(), any()) :: Game.t()
-  def do_action(%{phase: 0} = game, _action), do: game
+  @spec invoke(Game.t(), any()) :: Game.t()
+  def invoke(%{phase: 0} = game, _action), do: game
 
-  def do_action(game, action) do
+  def invoke(game, action) do
     %{module: module} = Map.get(game.settings.phases, game.phase)
 
     apply(module, :action, [game, action])
-  end
-
-  @spec get_player(Game.t(), integer()) :: Player.t()
-  def get_player(game, index) do
-    Map.get(game.players, index)
-  end
-
-  @spec update_players(Game.t(), fun()) :: Game.t()
-  def update_players(game, fun) do
-    players = Enum.into(game.players, %{}, fn {id, player} -> {id, fun.(player)} end)
-
-    %{game | players: players}
-  end
-
-  @spec update_player(Game.t(), integer(), fun()) :: Game.t()
-  def update_player(game, index, fun) do
-    player =
-      game.players
-      |> Map.get(index)
-      |> fun.()
-
-    %{game | players: Map.put(game.players, index, player)}
   end
 end

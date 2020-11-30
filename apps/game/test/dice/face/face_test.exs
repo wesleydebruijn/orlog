@@ -66,6 +66,34 @@ defmodule Game.Dice.FaceTest do
     end
   end
 
+  describe "stance?/2" do
+    test "when stance matches" do
+      assert Face.stance?(%Face{stance: :block}, :block)
+    end
+
+    test "when stance matches with dice" do
+      assert Face.stance?(%Dice{face: %Face{stance: :block}}, :block)
+    end
+
+    test "when stance doesnt match" do
+      refute Face.stance?(%Face{stance: :block}, :attack)
+    end
+  end
+
+  describe "type?/2" do
+    test "when type matches" do
+      assert Face.type?(%Face{type: :melee}, :melee)
+    end
+
+    test "when type matches with dice" do
+      assert Face.type?(%Dice{face: %Face{type: :melee}}, :melee)
+    end
+
+    test "when type doesnt match" do
+      refute Face.type?(%Face{type: :melee}, :ranged)
+    end
+  end
+
   describe "resolve_face/2" do
     test "single attack blocked by oponnent block" do
       faces = %{

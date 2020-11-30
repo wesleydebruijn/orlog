@@ -23,29 +23,29 @@ defmodule Game.Turn do
     turn = determine_next(game)
 
     game
-    |> Game.do_action(:end_turn)
+    |> Game.invoke(:end_turn)
     |> Game.Phase.try_next()
     |> Map.put(:turn, turn)
-    |> Game.do_action(:start_turn)
+    |> Game.invoke(:start_turn)
   end
 
   @spec get_player(Game.t()) :: Player.t()
   def get_player(game) do
-    Game.get_player(game, game.turn)
+    IndexMap.get(game.players, game.turn)
   end
 
   @spec update_player(Game.t(), fun()) :: Game.t()
   def update_player(game, fun) do
-    Game.update_player(game, game.turn, fun)
+    IndexMap.update(game, :players, game.turn, fun)
   end
 
   @spec get_opponent(Game.t()) :: Player.t()
   def get_opponent(game) do
-    Game.get_player(game, determine_next(game))
+    IndexMap.get(game.players, determine_next(game))
   end
 
   @spec update_opponent(Game.t(), fun()) :: Game.t()
   def update_opponent(game, fun) do
-    Game.update_player(game, determine_next(game), fun)
+    IndexMap.update(game, :players, determine_next(game), fun)
   end
 end

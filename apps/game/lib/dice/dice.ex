@@ -20,6 +20,11 @@ defmodule Game.Dice do
         }
   defstruct face: %Dice.Face{}, tokens: 0, locked: false, keep: false
 
+  @spec create(integer()) :: map()
+  def create(amount) do
+    Enum.into(1..amount, %{}, fn index -> {index, %Dice{}} end)
+  end
+
   @spec roll(Dice.t()) :: Dice.t()
   def roll(%{keep: true} = dice), do: dice
 

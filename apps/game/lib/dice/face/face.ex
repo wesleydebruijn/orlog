@@ -5,6 +5,7 @@ defmodule Game.Dice.Face do
   when not {disabled} do {type} {stance} for {count} times with {amount}
   and gain extra {health} and {tokens} for every successful {type} {stance}
   """
+  alias Game.Dice
   alias Game.Dice.Face
 
   @callback get :: Face.t()
@@ -13,8 +14,6 @@ defmodule Game.Dice.Face do
           count: integer(),
           amount: integer(),
           intersects: integer(),
-          health: integer(),
-          tokens: integer(),
           disabled: boolean(),
           type: :melee | :ranged | :token,
           stance: :attack | :block | :steal
@@ -22,8 +21,6 @@ defmodule Game.Dice.Face do
   defstruct count: 1,
             amount: 1,
             intersects: 0,
-            health: 0,
-            tokens: 0,
             disabled: false,
             type: :melee,
             stance: :block
@@ -37,6 +34,18 @@ defmodule Game.Dice.Face do
       face.type == other.type &&
       [:block, :attack] -- [face.stance, other.stance] == []
   end
+
+  @spec stance?(Dice.t(), atom()) :: boolean()
+  def stance?(%Dice{face: face}, type), do: stance?(face, type)
+
+  @spec stance?(Face.t(), atom()) :: boolean()
+  def stance?(face, stance), do: face.stance == stance
+
+  @spec type?(Dice.t(), atom()) :: boolean()
+  def type?(%Dice{face: face}, type), do: type?(face, type)
+
+  @spec type?(Face.t(), atom()) :: boolean()
+  def type?(face, type), do: face.type == type
 
   @spec resolve(map(), map()) :: map()
   def resolve(faces, other) do

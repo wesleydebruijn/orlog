@@ -4,7 +4,9 @@ defmodule Game.TestDisplay do
     player2 = Map.get(game.players, 2)
 
     name = fn dice ->
-      "[#{dice.face.type} #{dice.face.stance}#{if dice.tokens == 1, do: "*", else: ""}]#{if dice.keep, do: "!", else: ""}#{if dice.locked, do: "!", else: ""}"
+      "[#{dice.face.type} #{dice.face.stance}#{if dice.tokens == 1, do: "*", else: ""}]#{
+        if dice.keep, do: "!", else: ""
+      }#{if dice.locked, do: "!", else: ""}"
     end
 
     resolution = fn player, stance, type ->
@@ -12,7 +14,9 @@ defmodule Game.TestDisplay do
       |> Game.Dice.faces()
       |> Map.values()
       |> Enum.filter(fn face -> face.stance == stance && face.type == type end)
-      |> Enum.map(fn face -> "#{face.count - face.intersects}/#{face.count} hits"  end)
+      |> Enum.map(fn face ->
+        "#{face.intersects}/#{face.count} blocked"
+      end)
       |> Enum.join(" - ")
     end
 
@@ -47,7 +51,7 @@ defmodule Game.TestDisplay do
     IO.puts("player1 resolution:")
     IO.puts("melee attack: " <> resolution.(player1, :attack, :melee))
     IO.puts("ranged attack: " <> resolution.(player1, :attack, :ranged))
-    IO.puts("melee block: " <> resolution.(player1, :block, :ranged))
+    IO.puts("melee block: " <> resolution.(player1, :block, :melee))
     IO.puts("ranged block: " <> resolution.(player1, :block, :ranged))
     IO.puts("token steal: " <> resolution.(player1, :steal, :token))
 
@@ -56,7 +60,7 @@ defmodule Game.TestDisplay do
     IO.puts("player2 resolution:")
     IO.puts("melee attack: " <> resolution.(player2, :attack, :melee))
     IO.puts("ranged attack: " <> resolution.(player2, :attack, :ranged))
-    IO.puts("melee block: " <> resolution.(player2, :block, :ranged))
+    IO.puts("melee block: " <> resolution.(player2, :block, :melee))
     IO.puts("ranged block: " <> resolution.(player2, :block, :ranged))
     IO.puts("token steal: " <> resolution.(player2, :steal, :token))
 

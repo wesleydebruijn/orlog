@@ -16,7 +16,7 @@ defmodule Game.Phase.GodFavor do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> Game.update_players(&Player.update(&1, %{turns: turns}))
+    |> IndexMap.update_all(:players, &Player.update(&1, %{turns: turns}))
   end
 
   def action(game, :continue), do: Turn.next(game)

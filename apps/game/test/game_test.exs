@@ -53,28 +53,4 @@ defmodule GameTest do
              phase: 1
            } = Game.start(["Wesley", "Jeffrey"])
   end
-
-  test "update_players/2" do
-    game = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    fun = fn player -> %{player | tokens: 999} end
-
-    actual = Game.update_players(game, &fun.(&1))
-
-    expected = %Game{
-      players: %{
-        1 => %Player{user: "Wesley", tokens: 999},
-        2 => %Player{user: "Jeffrey", tokens: 999}
-      },
-      turn: 1
-    }
-
-    assert actual == expected
-  end
 end

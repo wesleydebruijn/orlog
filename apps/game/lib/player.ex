@@ -46,46 +46,20 @@ defmodule Game.Player do
 
   @spec collect_tokens(Player.t()) :: Player.t()
   def collect_tokens(player) do
-    tokens =
-      player.dices
-      |> Enum.map(fn {_index, dice} -> dice.tokens end)
-      |> Enum.sum()
+    tokens = IndexMap.sum(player.dices, & &1.tokens)
 
     player
     |> update_tokens(tokens)
   end
 
-  @spec set_dices(Player.t(), integer()) :: Player.t()
-  def set_dices(player, amount) do
-    %{player | dices: Enum.into(1..amount, %{}, fn index -> {index, %Dice{}} end)}
-  end
-
-  @spec get_dice(Player.t(), integer()) :: Dice.t()
-  def get_dice(player, index) do
-    Map.get(player.dices, index)
-  end
-
-  @spec update_dices(Player.t(), fun()) :: Player.t()
-  def update_dices(player, fun) do
-    dices =
-      player.dices
-      |> Enum.into(%{}, fn {index, dice} -> {index, fun.(dice)} end)
-
-    %{player | dices: dices}
-  end
-
-  @spec update_dice(Player.t(), integer(), fun()) :: Player.t()
-  def update_dice(player, index, fun) do
-    dice =
-      player.dices
-      |> Map.get(index)
-      |> fun.()
-
-    %{player | dices: Map.put(player.dices, index, dice)}
-  end
-
   @spec resolve(Player.t(), Player.t()) :: Player.t()
-  def resolve(player, other) do
-    %{player | dices: Dice.resolve(player.dices, other.dices)}
+  def resolve(player, opponent) do
+    opponent =
+      opponent
+      |> IndexMap.update_all(:dices, fn %{face: face} = dice ->
+        %{dice | face: %{face | intersects: 0}}
+      end)
+
+    %{player | dices: Dice.resolve(player.dices, opponent.dices)}
   end
 end

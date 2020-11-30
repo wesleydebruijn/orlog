@@ -16,7 +16,7 @@ defmodule Game.Phase.Resolution do
     %{turns: turns} = Phase.current(game)
 
     game
-    |> Game.update_players(fn player ->
+    |> IndexMap.update_all(:players, fn player ->
       player
       |> Player.update(%{turns: turns})
       |> Player.collect_tokens()

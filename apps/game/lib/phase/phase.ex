@@ -19,10 +19,10 @@ defmodule Game.Phase do
     phase = determine_next(game)
 
     game
-    |> Game.do_action(:end_phase)
+    |> Game.invoke(:end_phase)
     |> Game.Round.try_next()
     |> Map.put(:phase, phase)
-    |> Game.do_action(:start_phase)
+    |> Game.invoke(:start_phase)
   end
 
   @spec try_next(Game.t()) :: Game.t()
