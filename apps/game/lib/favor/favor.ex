@@ -1,5 +1,11 @@
 defmodule Favor do
   @callback invoke(Game.t(), any()) :: Game.t()
+  @callback get :: Face.t()
+
+  @type t :: %Favor{
+          trigger: :pre_resolution | :resolution | :post_resolution,
+          tiers: map()
+        }
 
   defmacro __using__(_) do
     quote do

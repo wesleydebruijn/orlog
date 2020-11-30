@@ -13,11 +13,18 @@ defmodule Favor.BrunhildsFury do
     Turn
   }
 
-  @tiers %{
-    1 => %{cost: 6, melee_multiplier: 1.5},
-    2 => %{cost: 10, melee_multiplier: 2},
-    3 => %{cost: 18, melee_multiplier: 3}
-  }
+  @impl Favor
+  @spec get :: Face.t()
+  def get do
+    %Favor{
+      trigger: :pre_resolution,
+      tiers: %{
+        1 => %{cost: 6, melee_multiplier: 1.5},
+        2 => %{cost: 10, melee_multiplier: 2},
+        3 => %{cost: 18, melee_multiplier: 3}
+      }
+    }
+  end
 
   use Favor
 

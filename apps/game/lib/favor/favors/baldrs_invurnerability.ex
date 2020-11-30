@@ -13,11 +13,18 @@ defmodule Favor.BaldrsInvurnerability do
     Dice
   }
 
-  @tiers %{
-    1 => %{cost: 3, defence: 1},
-    2 => %{cost: 6, defence: 2},
-    3 => %{cost: 9, defence: 3}
-  }
+  @impl Favor
+  @spec get :: Face.t()
+  def get do
+    %Favor{
+      trigger: :pre_resolution,
+      tiers: %{
+        1 => %{cost: 3, defence: 1},
+        2 => %{cost: 6, defence: 2},
+        3 => %{cost: 9, defence: 3}
+      }
+    }
+  end
 
   use Favor
 
