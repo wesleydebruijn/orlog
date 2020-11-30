@@ -7,6 +7,10 @@ defmodule Favor.ThorsStrike do
   Tier 2: 5 damage for 8 God Favor.
   Tier 3: 8 damage for 12 God Favor.
   """
+  alias Game.{
+    Turn
+  }
+
   @tiers %{
     1 => %{cost: 4, damage: 2},
     2 => %{cost: 8, damage: 5},
@@ -17,11 +21,10 @@ defmodule Favor.ThorsStrike do
 
   @impl Favor
   def invoke(game, options) do
-    opponent =
-      game
-      |> Game.opponent_player()
+    game
+    |> Turn.update_opponent(fn opponent ->
+      opponent
       |> Game.Player.update_health(-options.damage)
-
-    Game.update_opponent_player(game, opponent)
+    end)
   end
 end

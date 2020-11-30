@@ -7,6 +7,12 @@ defmodule Favor.BaldrsInvurnerability do
   Tier 2: +2 to melee and ranged block dice for 6 God Favor.
   Tier 3: +3 to melee and ranged block dice for 9 God Favor.
   """
+  alias Game.{
+    Turn,
+    Player,
+    Dice
+  }
+
   @tiers %{
     1 => %{cost: 3, defence: 1},
     2 => %{cost: 6, defence: 2},
@@ -17,23 +23,14 @@ defmodule Favor.BaldrsInvurnerability do
 
   @impl Favor
   def invoke(game, options) do
-    player = Game.current_player(game)
-
-    opponent =
-      player
-      |> Map.get(:dices)
-      |> Enum.filter(fn {_index, die} ->
-        die.face == Game.Dice.Face.MeleeBlock.get() or
-          die.face == Game.Dice.Face.RangedBlock.get()
+    game
+    |> Turn.update_player(fn player ->
+      player.dices
+      |> IndexMap.filter(&Dice.Face.stance?(&1, :block))
+      |> IndexMap.update_in(player, :dices, fn dice ->
+        dice
+        |> Dice.update_face(%{amount: dice.face.amount + options.defence})
       end)
-      |> Enum.reduce(player, fn {index, _die}, acc ->
-        Game.Player.update_dice(acc, index, fn die ->
-          Game.Dice.update_face(die, %{
-            amount: die.face.amount + options.defence
-          })
-        end)
-      end)
-
-    Game.update_current_player(game, opponent)
+    end)
   end
 end

@@ -24,7 +24,8 @@ defmodule FreyrsGift do
           }
         },
         2 => %Player{
-          user: "OnfortuinelijkeHenk"
+          user: "OnfortuinelijkeHenk",
+          dices: %{}
         }
       },
       turn: 1

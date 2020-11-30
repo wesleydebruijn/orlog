@@ -7,6 +7,11 @@ defmodule Favor.HelsGrip do
   Tier 2: heal 2 damage for each melee attack for 12 God Favor.
   Tier 3: heal 3 damage for each melee attack for 18 God Favor.
   """
+  alias Game.{
+    Turn,
+    Dice
+  }
+
   @tiers %{
     1 => %{cost: 4, heal_per_melee: 1},
     2 => %{cost: 8, heal_per_melee: 2},
@@ -17,22 +22,16 @@ defmodule Favor.HelsGrip do
 
   @impl Favor
   def invoke(game, options) do
-    opponent = Game.opponent_player(game)
-
-    updated_opponent =
-      opponent
-      |> Map.get(:dices)
-      |> Enum.filter(fn {_index, die} ->
-        die.face == Game.Dice.Face.MeleeAttack.get()
+    game
+    |> Turn.update_opponent(fn opponent ->
+      opponent.dices
+      |> IndexMap.filter(fn dice ->
+        Dice.Face.type?(dice, :melee) && Dice.Face.stance?(dice, :attack)
       end)
-      |> Enum.reduce(opponent, fn {index, _die}, acc ->
-        Game.Player.update_dice(acc, index, fn die ->
-          Game.Dice.update_face(die, %{
-            health_opponent: options.heal_per_melee
-          })
-        end)
+      |> IndexMap.update_in(opponent, :dices, fn dice ->
+        dice
+        |> Game.Dice.update_face(%{health_opponent: options.heal_per_melee})
       end)
-
-    Game.update_opponent_player(game, updated_opponent)
+    end)
   end
 end

@@ -7,6 +7,10 @@ defmodule Favor.IdunsRejuvenation do
   Tier 2: 4 health for 7 God Favor.
   Tier 3: 6 health for 10 God Favor.
   """
+  alias Game.{
+    Turn
+  }
+
   @tiers %{
     1 => %{cost: 4, heal: 2},
     2 => %{cost: 7, heal: 4},
@@ -17,11 +21,7 @@ defmodule Favor.IdunsRejuvenation do
 
   @impl Favor
   def invoke(game, options) do
-    player =
-      game
-      |> Game.current_player()
-      |> Game.Player.update_health(options.heal)
-
-    Game.update_current_player(game, player)
+    game
+    |> Turn.update_player(&Game.Player.update_health(&1, options.heal))
   end
 end

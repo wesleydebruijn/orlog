@@ -7,6 +7,12 @@ defmodule Favor.BrunhildsFury do
   Tier 2: multiplies melee attack dice by 2 for 10 God Favor.
   Tier 3: multiplies melee attack dice by 3 for 18 God Favor.
   """
+  alias Game.{
+    Player,
+    Dice,
+    Turn
+  }
+
   @tiers %{
     1 => %{cost: 6, melee_multiplier: 1.5},
     2 => %{cost: 10, melee_multiplier: 2},
@@ -17,22 +23,16 @@ defmodule Favor.BrunhildsFury do
 
   @impl Favor
   def invoke(game, options) do
-    player = Game.current_player(game)
-
-    updated_player =
-      player
-      |> Map.get(:dices)
-      |> Enum.filter(fn {_index, die} ->
-        die.face == Game.Dice.Face.MeleeAttack.get()
+    game
+    |> Turn.update_player(fn player ->
+      player.dices
+      |> IndexMap.filter(fn dice ->
+        Dice.Face.stance?(dice, :attack) && Dice.Face.type?(dice, :melee)
       end)
-      |> Enum.reduce(player, fn {index, _die}, acc ->
-        Game.Player.update_dice(acc, index, fn die ->
-          Game.Dice.update_face(die, %{
-            amount: die.face.amount * options.melee_multiplier
-          })
-        end)
+      |> IndexMap.update_in(player, :dices, fn dice ->
+        dice
+        |> Dice.update_face(%{amount: dice.face.amount * options.melee_multiplier})
       end)
-
-    Game.update_current_player(game, updated_player)
+    end)
   end
 end

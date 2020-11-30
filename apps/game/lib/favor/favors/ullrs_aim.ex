@@ -7,6 +7,10 @@ defmodule Favor.UllrsAim do
   Tier 2: 3 ranged block bypasses for 3 God Favor.
   Tier 3: 6 ranged block bypasses for 6 God Favor.
   """
+  alias Game.{
+    Turn,
+    Dice
+  }
 
   @tiers %{
     1 => %{cost: 4, ranged_bypass: 2},
@@ -18,23 +22,17 @@ defmodule Favor.UllrsAim do
 
   @impl Favor
   def invoke(game, options) do
-    player = Game.opponent_player(game)
-
-    opponent =
-      player
-      |> Map.get(:dices)
-      |> Enum.filter(fn {_index, die} ->
-        die.face == Game.Dice.Face.RangedBlock.get()
+    game
+    |> Turn.update_opponent(fn opponent ->
+      opponent.dices
+      |> IndexMap.filter(fn dice ->
+        Dice.Face.stance?(dice, :block) && Dice.Face.type?(dice, :ranged)
       end)
-      |> Enum.take(options.ranged_bypass)
-      |> Enum.reduce(player, fn {index, _die}, acc ->
-        Game.Player.update_dice(acc, index, fn die ->
-          Game.Dice.update_face(die, %{
-            disabled: true
-          })
-        end)
+      |> IndexMap.take(options.ranged_bypass)
+      |> IndexMap.update_in(opponent, :dices, fn dice ->
+        dice
+        |> Dice.update_face(%{disabled: true})
       end)
-
-    Game.update_opponent_player(game, opponent)
+    end)
   end
 end
