@@ -106,7 +106,6 @@ defmodule Game.Phase.RollTest do
       game = %Game{
         players: %{
           1 => %Player{
-            turns: 1,
             dices: %{
               1 => %Dice{face: Dice.Face.MeleeAttack},
               2 => %Dice{face: Dice.Face.MeleeAttack}
@@ -121,18 +120,18 @@ defmodule Game.Phase.RollTest do
       actual = Phase.Roll.action(game, :continue)
 
       assert %Game{
-        players: %{
-          1 => %Player{
-            dices: %{
-              1 => %Dice{},
-              2 => %Dice{}
-            },
-            rolled: true,
-            turns: 1
-          }
-        },
-        turn: 1
-      } = actual
+               players: %{
+                 1 => %Player{
+                   dices: %{
+                     1 => %Dice{},
+                     2 => %Dice{}
+                   },
+                   rolled: true,
+                   turns: 1
+                 }
+               },
+               turn: 1
+             } = actual
     end
 
     test "end turn when turns left" do

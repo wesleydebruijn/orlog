@@ -51,37 +51,7 @@ defmodule GameTest do
              },
              round: 1,
              phase: 1
-           } = Game.start("Wesley", "Jeffrey")
-  end
-
-  test "current_player/1" do
-    game = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    actual = Game.current_player(game)
-    expected = %Player{user: "Wesley"}
-
-    assert actual == expected
-  end
-
-  test "opponent_player/1" do
-    game = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    actual = Game.opponent_player(game)
-    expected = %Player{user: "Jeffrey"}
-
-    assert actual == expected
+           } = Game.start(["Wesley", "Jeffrey"])
   end
 
   test "update_players/2" do
@@ -101,54 +71,6 @@ defmodule GameTest do
       players: %{
         1 => %Player{user: "Wesley", tokens: 999},
         2 => %Player{user: "Jeffrey", tokens: 999}
-      },
-      turn: 1
-    }
-
-    assert actual == expected
-  end
-
-  test "update_current_player/2" do
-    game = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    player = %Player{user: "Wesley de Bruijn"}
-
-    actual = Game.update_current_player(game, player)
-
-    expected = %Game{
-      players: %{
-        1 => %Player{user: "Wesley de Bruijn"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    assert actual == expected
-  end
-
-  test "update_opponent_player/2" do
-    game = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey"}
-      },
-      turn: 1
-    }
-
-    player = %Player{user: "Jeffrey van Hoven"}
-
-    actual = Game.update_opponent_player(game, player)
-
-    expected = %Game{
-      players: %{
-        1 => %Player{user: "Wesley"},
-        2 => %Player{user: "Jeffrey van Hoven"}
       },
       turn: 1
     }

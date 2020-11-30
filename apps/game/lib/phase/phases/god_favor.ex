@@ -22,12 +22,7 @@ defmodule Game.Phase.GodFavor do
   def action(game, :continue), do: Turn.next(game)
 
   def action(game, :end_turn) do
-    player =
-      game
-      |> Game.current_player()
-      |> Player.update_turns(-1)
-
-    Game.update_current_player(game, player)
+    Turn.update_player(game, &Player.update_turns(&1, -1))
   end
 
   def action(game, _other) do

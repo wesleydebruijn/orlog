@@ -5,13 +5,11 @@ defmodule Favor do
     quote do
       def buy(game, tier) do
         options = Map.get(@tiers, tier, %{cost: 0})
-        player = Game.current_player(game)
+        player = Game.Turn.get_player(game)
 
         if player.tokens >= options.cost do
-          current_player = Game.Player.update_tokens(player, -options.cost)
-
           game
-          |> Game.update_current_player(current_player)
+          |> Game.Turn.update_player(&Game.Player.update_tokens(&1, -options.cost))
           |> invoke(options)
         else
           game

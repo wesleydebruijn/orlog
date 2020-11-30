@@ -11,32 +11,27 @@ defmodule Game do
   }
 
   @type t :: %Game{
+          settings: Settings.t(),
           players: any(),
           round: integer(),
           phase: integer(),
           turn: integer()
         }
-  defstruct players: %{}, phase: 0, round: 0, turn: nil, settings: %Settings{}
+  defstruct settings: %Settings{}, players: %{}, round: 0, phase: 0, turn: 0
 
-  @spec start(String.t(), String.t()) :: Game.t()
-  def start(user1, user2) do
-    game = %Game{
-      turn: Enum.random(1..2),
-      players: %{
-        1 => %Player{user: user1},
-        2 => %Player{user: user2}
-      }
+  @spec start([String.t()], Settings.t()) :: Game.t()
+  def start(users, settings \\ %Settings{}) do
+    %Game{
+      settings: settings,
+      players: Player.create(users)
     }
-
-    game
-    |> update_players(fn player ->
-      %{health: health, tokens: tokens, dices: dices} = game.settings
-
+    |> Game.update_players(fn player ->
       player
-      |> Player.update_health(health)
-      |> Player.update_tokens(tokens)
-      |> Player.set_dices(dices)
+      |> Player.update_health(settings.health)
+      |> Player.update_tokens(settings.tokens)
+      |> Player.set_dices(settings.dices)
     end)
+    |> Turn.coinflip()
     |> Round.next()
     |> Phase.next()
   end
@@ -50,14 +45,9 @@ defmodule Game do
     apply(module, :action, [game, action])
   end
 
-  @spec current_player(Game.t()) :: Player.t()
-  def current_player(game) do
-    Map.get(game.players, game.turn)
-  end
-
-  @spec opponent_player(Game.t()) :: Player.t()
-  def opponent_player(game) do
-    Map.get(game.players, Turn.determine_next(game))
+  @spec get_player(Game.t(), integer()) :: Player.t()
+  def get_player(game, index) do
+    Map.get(game.players, index)
   end
 
   @spec update_players(Game.t(), fun()) :: Game.t()
@@ -67,13 +57,13 @@ defmodule Game do
     %{game | players: players}
   end
 
-  @spec update_current_player(Game.t(), Player.t()) :: Game.t()
-  def update_current_player(game, player) do
-    %{game | players: Map.put(game.players, game.turn, player)}
-  end
+  @spec update_player(Game.t(), integer(), fun()) :: Game.t()
+  def update_player(game, index, fun) do
+    player =
+      game.players
+      |> Map.get(index)
+      |> fun.()
 
-  @spec update_opponent_player(Game.t(), Player.t()) :: Game.t()
-  def update_opponent_player(game, player) do
-    %{game | players: Map.put(game.players, Turn.determine_next(game), player)}
+    %{game | players: Map.put(game.players, index, player)}
   end
 end

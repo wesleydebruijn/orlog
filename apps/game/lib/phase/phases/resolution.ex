@@ -27,49 +27,34 @@ defmodule Game.Phase.Resolution do
 
   def action(game, :end_turn) do
     game
-    |> Game.current_player()
-    |> Map.get(:turns)
+    |> Turn.get_player()
     |> case do
-      3 -> action(game, :pre_resolution)
-      2 -> action(game, :resolution)
-      1 -> action(game, :post_resolution)
+      %{turns: 3} -> action(game, :pre_resolution)
+      %{turns: 2} -> action(game, :resolution)
+      %{turns: 1} -> action(game, :post_resolution)
       _other -> game
     end
   end
 
   def action(game, :pre_resolution) do
-    player =
-      game
-      |> Game.current_player()
-      |> Player.update_turns(-1)
-
     game
-    |> Game.update_current_player(player)
+    |> Turn.update_player(&Player.update_turns(&1, -1))
     |> Turn.next()
   end
 
   def action(game, :resolution) do
-    oponnent = Game.current_player(game)
-
-    player =
-      game
-      |> Game.current_player()
-      |> Player.update_turns(-1)
-      |> Player.resolve(oponnent)
-
     game
-    |> Game.update_current_player(player)
+    |> Turn.update_player(fn player ->
+      player
+      |> Player.update_turns(-1)
+      |> Player.resolve(Turn.get_opponent(game))
+    end)
     |> Turn.next()
   end
 
   def action(game, :post_resolution) do
-    player =
-      game
-      |> Game.current_player()
-      |> Player.update_turns(-1)
-
     game
-    |> Game.update_current_player(player)
+    |> Turn.update_player(&Player.update_turns(&1, -1))
     |> Turn.next()
   end
 

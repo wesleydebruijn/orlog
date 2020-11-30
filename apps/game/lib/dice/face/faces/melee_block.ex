@@ -7,7 +7,7 @@ defmodule Game.Dice.Face.MeleeBlock do
   @behaviour Face
 
   @impl Face
-  @spec get :: Game.Dice.Face.t()
+  @spec get :: Face.t()
   def get do
     %Face{
       type: :melee,

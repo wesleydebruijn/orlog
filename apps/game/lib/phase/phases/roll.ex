@@ -21,17 +21,16 @@ defmodule Game.Phase.Roll do
   end
 
   def action(game, {:swap, index}) do
-    player =
-      game
-      |> Game.current_player()
+    game
+    |> Turn.update_player(fn player ->
+      player
       |> Player.update_dice(index, &Dice.swap/1)
-
-    Game.update_current_player(game, player)
+    end)
   end
 
   def action(game, :continue) do
     game
-    |> Game.current_player()
+    |> Turn.get_player()
     |> case do
       %{turns: 1} ->
         game
@@ -48,32 +47,29 @@ defmodule Game.Phase.Roll do
   end
 
   def action(game, :roll) do
-    player =
-      game
-      |> Game.current_player()
+    game
+    |> Turn.update_player(fn player ->
+      player
       |> Player.update_dices(&Dice.roll/1)
       |> Player.update(%{rolled: true})
-
-    Game.update_current_player(game, player)
+    end)
   end
 
   def action(game, :keep) do
-    player =
-      game
-      |> Game.current_player()
+    game
+    |> Turn.update_player(fn player ->
+      player
       |> Player.update_dices(&Dice.keep/1)
-
-    Game.update_current_player(game, player)
+    end)
   end
 
   def action(game, :end_turn) do
-    player =
-      game
-      |> Game.current_player()
+    game
+    |> Turn.update_player(fn player ->
+      player
       |> Player.update_turns(-1)
       |> Player.update_dices(&Dice.lock/1)
-
-    Game.update_current_player(game, player)
+    end)
   end
 
   def action(game, _other) do
