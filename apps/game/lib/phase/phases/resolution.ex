@@ -28,8 +28,10 @@ defmodule Game.Phase.Resolution do
     game
     |> Turn.get_player()
     |> case do
-      %{turns: 3} -> action(game, :pre_resolution)
-      %{turns: 2} -> action(game, :resolution)
+      %{turns: 5} -> action(game, :pre_resolution)
+      %{turns: 4} -> action(game, :resolve)
+      %{turns: 3} -> action(game, :attack)
+      %{turns: 2} -> action(game, :steal)
       %{turns: 1} -> action(game, :post_resolution)
       _other -> game
     end
@@ -39,30 +41,36 @@ defmodule Game.Phase.Resolution do
     # todo: invoke pre resolution god favors (maybe in two fases? opponnent effects vs player effects)
     game
     |> Action.collect_tokens()
-    |> Turn.update_player(&Player.update_turns(&1, -1))
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
     |> Turn.next()
   end
 
-  def action(game, :resolution) do
+  def action(game, :resolve) do
     game
-    |> Turn.update_player(fn player ->
-      player
-      |> Player.resolve(Turn.get_opponent(game))
-      |> Player.update_turns(-1)
-    end)
+    |> Turn.update_player(&Player.resolve(&1, Turn.get_opponent(game)))
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
+    |> Turn.next()
+  end
+
+  def action(game, :attack) do
+    game
+    |> Action.attack_health()
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
+    |> Turn.next()
+  end
+
+  def action(game, :steal) do
+    game
+    |> Action.steal_tokens()
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
     |> Turn.next()
   end
 
   def action(game, :post_resolution) do
-    game
-    |> Action.attack_health()
-    |> Action.steal_tokens()
-    |> Turn.update_player(fn player ->
-      # todo: reset dice amount to game.settings.dices
-      player
-      |> Player.update_turns(-1)
-    end)
+    # todo: reset dice amount to game.settings.dices
     # todo: invoke post resolution god favors
+    game
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
     |> Turn.next()
   end
 

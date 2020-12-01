@@ -18,7 +18,7 @@ defmodule Game.Action do
       |> IndexMap.sum(& &1.tokens)
 
     game
-    |> Turn.update_player(&Player.update_tokens(&1, tokens_to_collect))
+    |> Turn.update_player(&Player.increase(&1, :tokens, tokens_to_collect))
   end
 
   @spec attack_health(Game.t()) :: Game.t()
@@ -39,7 +39,7 @@ defmodule Game.Action do
       health_to_attack = Enum.min([desired_health_to_attack, maximum_health_to_attack])
 
       game
-      |> Turn.update_opponent(&Player.update_health(&1, -health_to_attack))
+      |> Turn.update_opponent(&Player.increase(&1, :health, -health_to_attack))
     else
       game
     end
@@ -63,8 +63,8 @@ defmodule Game.Action do
       tokens_to_steal = Enum.min([desired_tokens_to_steal, maximum_tokens_to_steal])
 
       game
-      |> Turn.update_opponent(&Player.update_tokens(&1, -tokens_to_steal))
-      |> Turn.update_player(&Player.update_tokens(&1, tokens_to_steal))
+      |> Turn.update_opponent(&Player.increase(&1, :tokens, -tokens_to_steal))
+      |> Turn.update_player(&Player.increase(&1, :tokens, tokens_to_steal))
     else
       game
     end

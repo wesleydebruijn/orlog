@@ -14,6 +14,6 @@ defmodule Game.Settings do
             phases: %{
               1 => %{module: Game.Phase.Roll, turns: 3},
               2 => %{module: Game.Phase.GodFavor, turns: 1},
-              3 => %{module: Game.Phase.Resolution, turns: 3}
+              3 => %{module: Game.Phase.Resolution, turns: 5}
             }
 end

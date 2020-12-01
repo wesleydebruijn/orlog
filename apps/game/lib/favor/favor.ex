@@ -9,7 +9,7 @@ defmodule Favor do
 
         if player.tokens >= options.cost do
           game
-          |> Game.Turn.update_player(&Game.Player.update_tokens(&1, -options.cost))
+          |> Game.Turn.update_player(&Game.Player.increase(&1, :tokens, -options.cost))
           |> invoke(options)
         else
           game

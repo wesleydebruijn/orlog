@@ -73,7 +73,7 @@ defmodule Game.Phase.Roll do
     game
     |> Turn.update_player(fn player ->
       player
-      |> Player.update_turns(-1)
+      |> Player.increase(:turns, -1)
       |> IndexMap.update_all(:dices, &Dice.lock/1)
     end)
   end

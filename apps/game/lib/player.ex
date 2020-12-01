@@ -29,19 +29,10 @@ defmodule Game.Player do
     Map.merge(player, attrs)
   end
 
-  @spec update_health(Player.t(), integer()) :: Player.t()
-  def update_health(player, amount) do
-    %{player | health: player.health + amount}
-  end
-
-  @spec update_tokens(Player.t(), integer()) :: Player.t()
-  def update_tokens(player, amount) do
-    %{player | tokens: player.tokens + amount}
-  end
-
-  @spec update_turns(Player.t(), integer()) :: Player.t()
-  def update_turns(player, amount) do
-    %{player | turns: player.turns + amount}
+  @spec increase(Player.t(), atom(), integer()) :: Player.t()
+  def increase(player, key, amount) do
+    player
+    |> Map.put(key, Map.get(player, key) + amount)
   end
 
   @spec resolve(Player.t(), Player.t()) :: Player.t()
