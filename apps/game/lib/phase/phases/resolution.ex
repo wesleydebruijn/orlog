@@ -35,43 +35,34 @@ defmodule Game.Phase.Resolution do
       %{turns: 1} -> action(game, :post_resolution)
       _other -> game
     end
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
   end
 
   def action(game, :pre_resolution) do
     # todo: invoke pre resolution god favors (maybe in two fases? opponnent effects vs player effects)
     game
     |> Action.collect_tokens()
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
-    |> Turn.next()
   end
 
   def action(game, :resolve) do
     game
     |> Turn.update_player(&Player.resolve(&1, Turn.get_opponent(game)))
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
-    |> Turn.next()
   end
 
   def action(game, :attack) do
     game
     |> Action.attack_health()
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
-    |> Turn.next()
   end
 
   def action(game, :steal) do
     game
     |> Action.steal_tokens()
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
-    |> Turn.next()
   end
 
   def action(game, :post_resolution) do
     # todo: reset dice amount to game.settings.dices
     # todo: invoke post resolution god favors
     game
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
-    |> Turn.next()
   end
 
   def action(game, _other) do
