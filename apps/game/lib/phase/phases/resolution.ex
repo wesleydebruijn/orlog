@@ -10,7 +10,8 @@ defmodule Game.Phase.Resolution do
     Player,
     Phase,
     Turn,
-    Action
+    Action,
+    Favor
   }
 
   @impl Game.Phase
@@ -39,9 +40,10 @@ defmodule Game.Phase.Resolution do
   end
 
   def action(game, :pre_resolution) do
-    # todo: invoke pre resolution god favors (maybe in two fases? opponnent effects vs player effects)
+    # todo: split god favor invoke into player/opponent
     game
     |> Action.Token.collect_tokens()
+    |> Favor.invoke(:pre_resolution, :player)
   end
 
   def action(game, :resolve) do
@@ -61,8 +63,8 @@ defmodule Game.Phase.Resolution do
 
   def action(game, :post_resolution) do
     # todo: reset dice amount to game.settings.dices
-    # todo: invoke post resolution god favors
     game
+    |> Favor.invoke(:post_resolution, :player)
   end
 
   def action(game, _other) do

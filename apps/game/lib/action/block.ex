@@ -13,8 +13,8 @@ defmodule Game.Action.Block do
   @spec increase_melee_block(Game.t(), integer) :: Game.t()
   def increase_melee_block(game, amount), do: increase_block(game, amount, :melee)
 
-  @spec increase_block(Game.t(), integer(), atom() | nil) :: Game.t()
-  def increase_block(game, amount, type) do
+  @spec increase_block(Game.t(), integer(), atom()) :: Game.t()
+  def increase_block(game, amount, type \\ nil) do
     game
     |> Turn.update_player(fn player ->
       player.dices
@@ -31,8 +31,8 @@ defmodule Game.Action.Block do
   @spec bypass_melee_block(Game.t(), any) :: Game.t()
   def bypass_melee_block(game, amount), do: bypass_block(game, amount, :melee)
 
-  @spec bypass_block(Game.t(), integer(), atom() | nil) :: Game.t()
-  def bypass_block(game, amount, type) do
+  @spec bypass_block(Game.t(), integer(), atom()) :: Game.t()
+  def bypass_block(game, amount, type \\ nil) do
     game
     |> Turn.update_opponent(fn opponent ->
       opponent.dices

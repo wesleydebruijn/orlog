@@ -44,8 +44,8 @@ defmodule Game.Action.Attack do
   @spec multiply_melee_attack(Game.t(), integer) :: Game.t()
   def multiply_melee_attack(game, amount), do: multiply_attack(game, amount, :melee)
 
-  @spec multiply_attack(Game.t(), integer(), atom() | nil) :: Game.t()
-  def multiply_attack(game, amount, type) do
+  @spec multiply_attack(Game.t(), integer(), atom()) :: Game.t()
+  def multiply_attack(game, amount, type \\ nil) do
     game
     |> Turn.update_player(fn player ->
       player.dices

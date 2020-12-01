@@ -9,7 +9,8 @@ defmodule Game.Phase.GodFavor do
   alias Game.{
     Player,
     Phase,
-    Turn
+    Turn,
+    Favor
   }
 
   @impl Game.Phase
@@ -22,6 +23,12 @@ defmodule Game.Phase.GodFavor do
   end
 
   def action(game, :continue), do: Turn.next(game)
+
+  def action(game, {:select, favor_tier}) do
+    game
+    |> Favor.select(favor_tier)
+    |> Turn.next()
+  end
 
   def action(game, :end_turn) do
     Turn.update_player(game, &Player.increase(&1, :turns, -1))

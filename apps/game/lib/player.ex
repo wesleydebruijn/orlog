@@ -14,9 +14,19 @@ defmodule Game.Player do
           tokens: integer(),
           turns: integer(),
           rolled: boolean(),
+          favors: [integer()],
+          active_favor: {integer(), integer()},
           dices: %{}
         }
-  defstruct user: nil, health: 0, health_regen: 0, tokens: 0, dices: %{}, turns: 0, rolled: false
+  defstruct user: nil,
+            health: 0,
+            health_regen: 0,
+            tokens: 0,
+            dices: %{},
+            turns: 0,
+            rolled: false,
+            favors: [8, 2, 3],
+            active_favor: nil
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs), do: Map.merge(player, attrs)

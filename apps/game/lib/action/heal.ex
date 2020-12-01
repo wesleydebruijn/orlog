@@ -20,8 +20,8 @@ defmodule Game.Action.Heal do
   @spec heal_on_melee_block(Game.t(), any) :: Game.t()
   def heal_on_melee_block(game, amount), do: heal_on_block(game, amount, :melee)
 
-  @spec heal_on_block(Game.t(), integer(), atom() | nil) :: Game.t()
-  def heal_on_block(game, amount, type) do
+  @spec heal_on_block(Game.t(), integer(), atom()) :: Game.t()
+  def heal_on_block(game, amount, type \\ nil) do
     game
     |> Turn.update_player(fn player ->
       blocks =
@@ -42,8 +42,8 @@ defmodule Game.Action.Heal do
   @spec heal_on_melee_attack(Game.t(), integer()) :: Game.t()
   def heal_on_melee_attack(game, amount), do: heal_on_attack(game, amount, :melee)
 
-  @spec heal_on_attack(Game.t(), integer(), atom() | nil) :: Game.t()
-  def heal_on_attack(game, amount, type) do
+  @spec heal_on_attack(Game.t(), integer(), atom()) :: Game.t()
+  def heal_on_attack(game, amount, type \\ nil) do
     game
     |> Turn.update_player(fn player ->
       attacks =
