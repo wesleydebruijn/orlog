@@ -7,11 +7,11 @@ defmodule Game.Dice do
   alias Game.Dice
 
   @faces [
-    Dice.Face.MeleeAttack.get(),
-    Dice.Face.MeleeBlock.get(),
-    Dice.Face.RangedAttack.get(),
-    Dice.Face.RangedBlock.get(),
-    Dice.Face.TokenSteal.get()
+    %Dice.Face{type: :melee, stance: :attack},
+    %Dice.Face{type: :melee, stance: :block},
+    %Dice.Face{type: :ranged, stance: :attack},
+    %Dice.Face{type: :ranged, stance: :block},
+    %Dice.Face{type: :token, stance: :steal}
   ]
 
   @type t :: %Dice{

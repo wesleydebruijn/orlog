@@ -1,14 +1,11 @@
 defmodule Game.Dice.Face do
   @moduledoc """
-  Behaviour of a dice face
-
+  Face of the dice determines the action of the dice,
   when not {disabled} do {type} {stance} for {count} times with {amount}
   which will intersect with opposing faces for {intersects} times
   """
   alias Game.Dice
   alias Game.Dice.Face
-
-  @callback get :: Face.t()
 
   @type t :: %Face{
           count: integer(),
@@ -70,9 +67,7 @@ defmodule Game.Dice.Face do
     |> resolve_face(%{face | count: face.count - 1})
   end
 
-  def resolve_face(faces, face) do
-    find_intersect(faces, face)
-  end
+  def resolve_face(faces, face), do: find_intersect(faces, face)
 
   defp find_intersect(faces, face) do
     {index, face} = Enum.find(faces, {nil, nil}, &intersects?(face, elem(&1, 1)))
