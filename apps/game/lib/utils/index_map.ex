@@ -8,6 +8,11 @@ defmodule IndexMap do
     Map.get(items, index)
   end
 
+  @spec dig(any(), atom()) :: any()
+  def dig(items, key) do
+    Enum.into(items, %{}, fn {index, item} -> {index, Map.get(item, key)} end)
+  end
+
   @spec update(map(), atom(), integer(), fun()) :: map()
   def update(source, key, index, fun) do
     item =
@@ -55,7 +60,7 @@ defmodule IndexMap do
     |> Enum.sum()
   end
 
-  @spec take(map(), integer()) :: [any()]
+  @spec take(any(), integer()) :: [any()]
   def take(items, amount) do
     Enum.take(items, amount)
   end
@@ -73,13 +78,12 @@ defmodule IndexMap do
     |> Enum.filter(fn {index, _item} -> Enum.member?(indices, index) end)
   end
 
-  @spec majority(map(), fun()) :: map()
+  @spec majority(map(), fun()) :: [any()]
   def majority(items, fun) do
     items
     |> Enum.group_by(fn {_index, item} -> fun.(item) end)
     |> Enum.max_by(fn {_group, items} -> Enum.count(items) end)
     |> elem(1)
-    |> Enum.into(%{})
   end
 
   @spec add(map(), list()) :: map()

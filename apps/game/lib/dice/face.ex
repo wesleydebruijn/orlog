@@ -44,6 +44,34 @@ defmodule Game.Dice.Face do
   @spec type?(Face.t(), atom()) :: boolean()
   def type?(face, type), do: face.type == type
 
+  @spec update(Dice.t(), map()) :: Dice.t()
+  def update(%Dice{face: face} = dice, attrs) do
+    %{dice | face: update(face, attrs)}
+  end
+
+  @spec update(Face.t(), map()) :: Face.t()
+  def update(face, attrs), do: Map.merge(face, attrs)
+
+  @spec increase(Dice.t(), atom(), integer()) :: Dice.t()
+  def increase(%Dice{face: face} = dice, key, amount) do
+    %{dice | face: increase(face, key, amount)}
+  end
+
+  @spec increase(Face.t(), atom(), integer()) :: Face.t()
+  def increase(face, key, amount) do
+    Map.put(face, key, Map.get(face, key) + amount)
+  end
+
+  @spec multiply(Dice.t(), atom(), integer()) :: Dice.t()
+  def multiply(%Dice{face: face} = dice, key, amount) do
+    %{dice | face: multiply(face, key, amount)}
+  end
+
+  @spec multiply(Face.t(), atom(), integer()) :: Face.t()
+  def multiply(face, key, amount) do
+    Map.put(face, key, Map.get(face, key) * amount)
+  end
+
   @spec hits(Face.t()) :: integer()
   def hits(%{disabled: true}), do: 0
   def hits(%{stance: :block} = face), do: face.intersects

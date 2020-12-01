@@ -13,6 +13,22 @@ defmodule IndexMapTest do
     assert actual == expected
   end
 
+  test "dig/2" do
+    dices = %{
+      1 => %{face: %{amount: 33}},
+      2 => %{face: %{amount: 44}}
+    }
+
+    actual = IndexMap.dig(dices, :face)
+
+    expected = %{
+      1 => %{amount: 33},
+      2 => %{amount: 44}
+    }
+
+    assert actual == expected
+  end
+
   test "update/4" do
     map = %{
       key: %{
@@ -151,10 +167,10 @@ defmodule IndexMapTest do
 
     actual = IndexMap.majority(items, fun)
 
-    expected = %{
-      1 => %{items: [1, 2], name: "test"},
-      3 => %{items: [5, 6], name: "test"}
-    }
+    expected = [
+      {1, %{items: [1, 2], name: "test"}},
+      {3, %{items: [5, 6], name: "test"}}
+    ]
 
     assert actual == expected
   end

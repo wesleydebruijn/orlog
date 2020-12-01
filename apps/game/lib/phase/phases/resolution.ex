@@ -41,7 +41,7 @@ defmodule Game.Phase.Resolution do
   def action(game, :pre_resolution) do
     # todo: invoke pre resolution god favors (maybe in two fases? opponnent effects vs player effects)
     game
-    |> Action.collect_tokens()
+    |> Action.Token.collect_tokens()
   end
 
   def action(game, :resolve) do
@@ -51,12 +51,12 @@ defmodule Game.Phase.Resolution do
 
   def action(game, :attack) do
     game
-    |> Action.attack_health()
+    |> Action.Attack.attack_health()
   end
 
   def action(game, :steal) do
     game
-    |> Action.steal_tokens()
+    |> Action.Token.steal_tokens()
   end
 
   def action(game, :post_resolution) do

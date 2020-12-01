@@ -62,22 +62,6 @@ defmodule Game.DiceTest do
     assert %Dice{keep: true} = actual
   end
 
-  test "faces/1" do
-    dices = %{
-      1 => %Dice{face: %Dice.Face{amount: 33}},
-      2 => %Dice{face: %Dice.Face{amount: 44}}
-    }
-
-    actual = Dice.faces(dices)
-
-    expected = %{
-      1 => %Dice.Face{amount: 33},
-      2 => %Dice.Face{amount: 44}
-    }
-
-    assert actual == expected
-  end
-
   test "resolve/2" do
     dices = %{
       1 => %Dice{face: %Dice.Face{stance: :attack, type: :melee}},

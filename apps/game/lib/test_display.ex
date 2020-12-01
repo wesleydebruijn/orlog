@@ -20,7 +20,7 @@ defmodule Game.TestDisplay do
 
     resolution = fn player, stance, type ->
       player.dices
-      |> Game.Dice.faces()
+      |> IndexMap.dig(:face)
       |> Map.values()
       |> Enum.filter(fn face -> face.stance == stance && face.type == type end)
       |> Enum.map(fn face ->
