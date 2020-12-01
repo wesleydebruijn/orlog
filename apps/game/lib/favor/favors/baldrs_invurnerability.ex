@@ -1,5 +1,5 @@
-defmodule Favor.BaldrsInvurnerability do
-  @behaviour Favor
+defmodule Game.Favor.BaldrsInvurnerability do
+  @behaviour Game.Favor
   @moduledoc """
   Baldr's Invurnerability increases your defence rolls by a fixed amount.
 
@@ -9,14 +9,14 @@ defmodule Favor.BaldrsInvurnerability do
   """
   alias Game.{
     Turn,
-    Player,
     Dice
   }
+  use Game.Favor
 
-  @impl Favor
-  @spec get :: Face.t()
+  @impl Game.Favor
+  @spec get :: Game.Face.t()
   def get do
-    %Favor{
+    %Game.Favor{
       trigger: :pre_resolution,
       tiers: %{
         1 => %{cost: 3, defence: 1},
@@ -26,9 +26,7 @@ defmodule Favor.BaldrsInvurnerability do
     }
   end
 
-  use Favor
-
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(fn player ->

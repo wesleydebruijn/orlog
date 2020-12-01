@@ -1,5 +1,5 @@
-defmodule Favor.LokisTrick do
-  @behaviour Favor
+defmodule Game.Favor.LokisTrick do
+  @behaviour Game.Favor
   @moduledoc """
   Loki's Trick enables you to ban a fixed amount of your opponents dice.
 
@@ -17,9 +17,9 @@ defmodule Favor.LokisTrick do
     3 => %{cost: 9, bans: 3}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_opponent(fn opponent ->

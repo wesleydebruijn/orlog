@@ -1,5 +1,5 @@
-defmodule Favor.VidarsMight do
-  @behaviour Favor
+defmodule Game.Favor.VidarsMight do
+  @behaviour Game.Favor
   @moduledoc """
   Vidar's Might removes a number of melee defence rolls of the opponent.
 
@@ -18,9 +18,9 @@ defmodule Favor.VidarsMight do
     3 => %{cost: 6, melee_bypass: 6}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_opponent(fn opponent ->

@@ -1,5 +1,5 @@
-defmodule Favor.HelsGrip do
-  @behaviour Favor
+defmodule Game.Favor.HelsGrip do
+  @behaviour Game.Favor
   @moduledoc """
   Hel’s Grip heals you for each melee attack dice your opponent hits you with.
 
@@ -18,9 +18,9 @@ defmodule Favor.HelsGrip do
     3 => %{cost: 12, heal_per_melee: 3}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_opponent(fn opponent ->

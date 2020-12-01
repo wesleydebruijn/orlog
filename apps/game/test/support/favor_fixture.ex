@@ -5,7 +5,7 @@ defmodule FavorFixture do
     3 => %{cost: 12}
   }
 
-  use Favor
+  use Game.Favor
 
   def invoke(game, tier) do
     send(self(), tier)

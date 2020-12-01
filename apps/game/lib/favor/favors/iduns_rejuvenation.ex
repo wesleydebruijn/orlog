@@ -1,5 +1,5 @@
-defmodule Favor.IdunsRejuvenation do
-  @behaviour Favor
+defmodule Game.Favor.IdunsRejuvenation do
+  @behaviour Game.Favor
   @moduledoc """
   Idun's Rejuvenation heals the current player for a fixed amount of health.
 
@@ -17,9 +17,9 @@ defmodule Favor.IdunsRejuvenation do
     3 => %{cost: 10, heal: 6}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(&Game.Player.update_health(&1, options.heal))

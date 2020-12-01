@@ -1,5 +1,5 @@
-defmodule Favor.MimirsWisdom do
-  @behaviour Favor
+defmodule Game.Favor.MimirsWisdom do
+  @behaviour Game.Favor
   @moduledoc """
    Mimirs Wisdom gives you God Favor per damage dealth to you this round.
 
@@ -13,9 +13,9 @@ defmodule Favor.MimirsWisdom do
     3 => %{cost: 12, damage: 8}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, _options) do
     # TODO: Implement
     game

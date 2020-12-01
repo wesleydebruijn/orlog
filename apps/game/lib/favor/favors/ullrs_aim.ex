@@ -1,5 +1,5 @@
-defmodule Favor.UllrsAim do
-  @behaviour Favor
+defmodule Game.Favor.UllrsAim do
+  @behaviour Game.Favor
   @moduledoc """
   Ullrs Aim bypasses a fixed amount of ranged block dice.
 
@@ -18,9 +18,9 @@ defmodule Favor.UllrsAim do
     3 => %{cost: 6, ranged_bypass: 6}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_opponent(fn opponent ->

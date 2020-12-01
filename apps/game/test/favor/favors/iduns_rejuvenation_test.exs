@@ -2,7 +2,8 @@ defmodule IdunsRejuvenationTest do
   use ExUnit.Case
 
   alias Game.{
-    Player
+    Player,
+    Favor
   }
 
   test "Iduns Rejuvenation favor" do

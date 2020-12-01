@@ -1,5 +1,5 @@
-defmodule Favor.FreyrsGift do
-  @behaviour Favor
+defmodule Game.Favor.FreyrsGift do
+  @behaviour Game.Favor
   @moduledoc """
   Freyr's Gift adds a fixed amount to the majority of die faces.
 
@@ -19,9 +19,9 @@ defmodule Favor.FreyrsGift do
     3 => %{cost: 8, amount: 4}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(fn player ->

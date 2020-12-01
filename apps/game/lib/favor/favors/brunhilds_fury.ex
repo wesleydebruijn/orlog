@@ -1,5 +1,5 @@
-defmodule Favor.BrunhildsFury do
-  @behaviour Favor
+defmodule Game.Favor.BrunhildsFury do
+  @behaviour Game.Favor
   @moduledoc """
   Brunhild's Fury multiplies your melee attack dice.
 
@@ -13,10 +13,10 @@ defmodule Favor.BrunhildsFury do
     Turn
   }
 
-  @impl Favor
+  @impl Game.Favor
   @spec get :: Face.t()
   def get do
-    %Favor{
+    %Game.Favor{
       trigger: :pre_resolution,
       tiers: %{
         1 => %{cost: 6, melee_multiplier: 1.5},
@@ -26,9 +26,9 @@ defmodule Favor.BrunhildsFury do
     }
   end
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(fn player ->

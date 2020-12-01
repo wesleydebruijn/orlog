@@ -1,5 +1,5 @@
-defmodule Favor.FriggsSight do
-  @behaviour Favor
+defmodule Game.Favor.FriggsSight do
+  @behaviour Game.Favor
   @moduledoc """
   Friggs Sight forces the opponent to reroll a fixed amount of die.
 
@@ -13,9 +13,9 @@ defmodule Favor.FriggsSight do
     3 => %{cost: 12, damage: 8}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, _options) do
     # TODO: Implement
     game

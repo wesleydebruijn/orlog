@@ -1,5 +1,5 @@
-defmodule Favor.ThorsStrike do
-  @behaviour Favor
+defmodule Game.Favor.ThorsStrike do
+  @behaviour Game.Favor
   @moduledoc """
   Thor's Strike dishes out raw damage to the opponent player.
 
@@ -17,9 +17,9 @@ defmodule Favor.ThorsStrike do
     3 => %{cost: 12, damage: 8}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_opponent(fn opponent ->

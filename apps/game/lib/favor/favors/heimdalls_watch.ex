@@ -1,5 +1,5 @@
-defmodule Favor.HeimdallsWatch do
-  @behaviour Favor
+defmodule Game.Favor.HeimdallsWatch do
+  @behaviour Game.Favor
   @moduledoc """
   Heimdalls Watch grants health for each succesful block.
 
@@ -18,9 +18,9 @@ defmodule Favor.HeimdallsWatch do
     3 => %{cost: 10, block_heal: 3}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(fn player ->

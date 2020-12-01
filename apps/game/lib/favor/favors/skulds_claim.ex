@@ -1,5 +1,5 @@
-defmodule Favor.SkuldsClaim do
-  @behaviour Favor
+defmodule Game.Favor.SkuldsClaim do
+  @behaviour Game.Favor
 
   @tiers %{
     1 => %{cost: 4, damage: 2},
@@ -7,9 +7,9 @@ defmodule Favor.SkuldsClaim do
     3 => %{cost: 12, damage: 8}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, _options) do
     # TODO: Implement
     game

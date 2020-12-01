@@ -1,5 +1,5 @@
-defmodule Favor.OdinsSacrifice do
-  @behaviour Favor
+defmodule Game.Favor.OdinsSacrifice do
+  @behaviour Game.Favor
   @moduledoc """
   Odin's Sacrifice heals you for a fixed amount of health per tier.
 
@@ -17,9 +17,9 @@ defmodule Favor.OdinsSacrifice do
     3 => %{cost: 10, heal: 5}
   }
 
-  use Favor
+  use Game.Favor
 
-  @impl Favor
+  @impl Game.Favor
   def invoke(game, options) do
     game
     |> Turn.update_player(&Game.Player.update_health(&1, options.heal))
