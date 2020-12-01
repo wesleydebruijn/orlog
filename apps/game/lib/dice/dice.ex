@@ -22,17 +22,12 @@ defmodule Game.Dice do
         }
   defstruct face: %Dice.Face{}, tokens: 0, locked: false, keep: false
 
-  @spec create(integer()) :: map()
-  def create(amount) do
-    Enum.into(1..amount, %{}, fn index -> {index, %Dice{}} end)
-  end
+  @spec roll!(Dice.t()) :: Dice.t()
+  def roll!(dice), do: random_roll(dice)
 
   @spec roll(Dice.t()) :: Dice.t()
   def roll(%{keep: true} = dice), do: dice
-
-  def roll(dice) do
-    %{dice | face: Enum.random(@faces), tokens: Enum.random(0..1)}
-  end
+  def roll(dice), do: random_roll(dice)
 
   @spec keep(Dice.t()) :: Dice.t()
   def keep(dice), do: %{dice | keep: true}
@@ -64,5 +59,9 @@ defmodule Game.Dice do
     |> Enum.into(%{}, fn {index, dice} ->
       {index, %{dice | face: Map.get(faces, index)}}
     end)
+  end
+
+  defp random_roll(dice) do
+    %{dice | face: Enum.random(@faces), tokens: Enum.random(0..1)}
   end
 end

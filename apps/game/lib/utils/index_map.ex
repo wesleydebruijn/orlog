@@ -72,4 +72,28 @@ defmodule IndexMap do
     items
     |> Enum.filter(fn {index, _item} -> Enum.member?(indices, index) end)
   end
+
+  @spec majority(map(), fun()) :: map()
+  def majority(items, fun) do
+    items
+    |> Enum.group_by(fn {_index, item} -> fun.(item) end)
+    |> Enum.max_by(fn {_group, items} -> Enum.count(items) end)
+    |> elem(1)
+    |> Enum.into(%{})
+  end
+
+  @spec add(map(), list()) :: map()
+  def add(items, values) do
+    from =
+      items
+      |> Map.keys()
+      |> Enum.max(&>=/2, fn -> 0 end)
+      |> Kernel.+(1)
+
+    to = from + Enum.count(values) - 1
+
+    from..to
+    |> Enum.into(%{}, fn index -> {index, Enum.at(values, index - from)} end)
+    |> Map.merge(items)
+  end
 end

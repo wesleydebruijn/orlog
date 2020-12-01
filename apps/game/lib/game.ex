@@ -24,14 +24,14 @@ defmodule Game do
   def start(users, settings \\ %Settings{}) do
     %Game{
       settings: settings,
-      players: Player.create(users)
+      players: IndexMap.add(%{}, Enum.map(users, fn user -> %Player{user: user} end))
     }
     |> IndexMap.update_all(:players, fn player ->
       player
       |> Player.update(%{
         health: settings.health,
         tokens: settings.tokens,
-        dices: Dice.create(settings.dices)
+        dices: IndexMap.add(%{}, Enum.map(1..settings.dices, fn _x -> %Dice{} end))
       })
     end)
     |> Turn.coinflip()

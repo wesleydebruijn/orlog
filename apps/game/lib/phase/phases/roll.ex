@@ -26,6 +26,11 @@ defmodule Game.Phase.Roll do
     end)
   end
 
+  def action(game, :start_turn) do
+    game
+    |> Turn.update_player(&Player.update(&1, %{rolled: false}))
+  end
+
   def action(game, {:swap, index}) do
     game
     |> Turn.update_player(fn player ->

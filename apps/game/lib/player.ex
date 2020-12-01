@@ -17,13 +17,6 @@ defmodule Game.Player do
         }
   defstruct user: nil, health: 0, tokens: 0, dices: %{}, turns: 0, rolled: false
 
-  @spec create([String.t()]) :: map()
-  def create(users) do
-    users
-    |> Enum.with_index(1)
-    |> Enum.into(%{}, fn {user, index} -> {index, %Player{user: user}} end)
-  end
-
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs) do
     Map.merge(player, attrs)

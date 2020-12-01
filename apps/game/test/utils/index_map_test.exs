@@ -139,4 +139,64 @@ defmodule IndexMapTest do
 
     assert Enum.count(actual) == 1
   end
+
+  test "majority/2" do
+    items = %{
+      1 => %{items: [1, 2], name: "test"},
+      2 => %{items: [3, 4], name: "other"},
+      3 => %{items: [5, 6], name: "test"}
+    }
+
+    fun = fn item -> item.name end
+
+    actual = IndexMap.majority(items, fun)
+
+    expected = %{
+      1 => %{items: [1, 2], name: "test"},
+      3 => %{items: [5, 6], name: "test"}
+    }
+
+    assert actual == expected
+  end
+
+  describe "add/2" do
+    test "when map is empty" do
+      items = %{}
+
+      list = [3, 2, 1]
+
+      actual = IndexMap.add(items, list)
+
+      expected = %{
+        1 => 3,
+        2 => 2,
+        3 => 1
+      }
+
+      assert actual == expected
+    end
+
+    test "when map is not empty" do
+      items = %{
+        1 => 6,
+        2 => 5,
+        3 => 4
+      }
+
+      list = [3, 2, 1]
+
+      actual = IndexMap.add(items, list)
+
+      expected = %{
+        1 => 6,
+        2 => 5,
+        3 => 4,
+        4 => 3,
+        5 => 2,
+        6 => 1
+      }
+
+      assert actual == expected
+    end
+  end
 end
