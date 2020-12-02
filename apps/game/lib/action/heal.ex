@@ -44,19 +44,21 @@ defmodule Game.Action.Heal do
 
   @spec heal_on_attack(Game.t(), integer(), atom()) :: Game.t()
   def heal_on_attack(game, amount, type \\ nil) do
-    game
-    |> Turn.update_player(fn player ->
-      attacks =
-        game
-        |> Turn.get_opponent()
-        |> Map.get(:dices)
-        |> IndexMap.filter(fn dice ->
-          Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
-        end)
-        |> IndexMap.sum(&Dice.Face.hits/1)
+    attacks =
+      game
+      |> Turn.get_opponent()
+      |> Map.get(:dices)
+      |> IndexMap.filter(fn dice ->
+        Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
+      end)
+      |> IndexMap.sum(&Dice.Face.hits/1)
 
-      player
-      |> Player.increase(:health, attacks * amount)
-    end)
+    game
+    |> Turn.update_player(&Player.increase(&1, :health, attacks * amount))
+  end
+
+  @spec heal_on_tokens_spent(Game.t(), integer()) :: Game.t()
+  def heal_on_tokens_spent(game, _amount) do
+    game
   end
 end

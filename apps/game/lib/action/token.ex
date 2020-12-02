@@ -60,4 +60,24 @@ defmodule Game.Action.Token do
     game
     |> Turn.update_player(&Player.increase(&1, :tokens, damage * amount))
   end
+
+  @spec destroy_tokens_on_ranged_attack(Game.t(), integer()) :: Game.t()
+  def destroy_tokens_on_ranged_attack(game, amount) do
+    dices =
+      game
+      |> Turn.get_player()
+      |> Map.get(:dices)
+      |> IndexMap.filter(fn dice ->
+        Dice.Face.stance?(dice, :attack) && Dice.Face.type?(dice, :ranged)
+      end)
+      |> Enum.count()
+
+    game
+    |> Turn.update_opponent(&Player.increase(&1, :tokens, -(dices * amount)))
+  end
+
+  @spec decrease_favor_tier(Game.t(), integer()) :: Game.t()
+  def decrease_favor_tier(game, _amount) do
+    game
+  end
 end

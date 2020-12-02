@@ -11,8 +11,8 @@ defmodule Game.Favor do
 
   @type t :: %Favor{
           name: String.t(),
-          affects: :player | :opponent,
-          trigger: :pre_resolution | :resolution | :post_resolution,
+          affects: :player | :opponent | :both,
+          trigger: :pre_resolution | :post_resolution | :pre_favor | :post_favor,
           invoke: fun(),
           tiers: %{
             1 => %{cost: number(), value: number()},
@@ -23,10 +23,11 @@ defmodule Game.Favor do
 
   defstruct name: nil, affects: :player, trigger: :pre_resolution, invoke: nil, tiers: %{}
 
+  @spec all :: map()
   def all do
     %{
       1 => %Favor{
-        name: "Thorss Strike",
+        name: "Thors's Strike",
         affects: :player,
         trigger: :post_resolution,
         invoke: &Action.Attack.attack_health/2,
@@ -127,8 +128,8 @@ defmodule Game.Favor do
       10 => %Favor{
         name: "Mimir's Wisdom",
         affects: :player,
-        invoke: &Action.Token.tokens_on_damage/2,
         trigger: :post_resolution,
+        invoke: &Action.Token.tokens_on_damage/2,
         tiers: %{
           1 => %{cost: 4, value: 2},
           2 => %{cost: 8, value: 5},
@@ -138,8 +139,8 @@ defmodule Game.Favor do
       11 => %Favor{
         name: "Odin's Sacrifice",
         affects: :player,
-        invoke: &Action.Heal.heal/2,
         trigger: :pre_resolution,
+        invoke: &Action.Heal.heal/2,
         tiers: %{
           1 => %{cost: 6, value: 3},
           2 => %{cost: 8, value: 4},
@@ -147,23 +148,21 @@ defmodule Game.Favor do
         }
       },
       12 => %Favor{
-        # Adds ranged damage to your ranged damage dice. +1, +2, +3 for a cost of 6, 10, and 14.
         name: "Skadi's Hunt",
         affects: :player,
-        invoke: fn game, _value -> game end,
         trigger: :pre_resolution,
+        invoke: &Action.Attack.multiply_ranged_attack/2,
         tiers: %{
-          1 => %{cost: 6, value: 1},
-          2 => %{cost: 10, value: 2},
-          3 => %{cost: 14, value: 3}
+          1 => %{cost: 6, value: 2},
+          2 => %{cost: 10, value: 3},
+          3 => %{cost: 14, value: 4}
         }
       },
       13 => %Favor{
-        # Destroy an opponents God Favor for each arrow dice played. -2, -3, -4 per die for 4,6, and 8 cost.
         name: "Skuld's Claim",
         affects: :opponent,
-        invoke: fn game, _value -> game end,
         trigger: :pre_resolution,
+        invoke: &Action.Token.destroy_tokens_on_ranged_attack/2,
         tiers: %{
           1 => %{cost: 4, value: 2},
           2 => %{cost: 6, value: 3},
@@ -173,8 +172,8 @@ defmodule Game.Favor do
       14 => %Favor{
         name: "Ullr's Aim",
         affects: :opponent,
-        invoke: &Action.Block.bypass_block/2,
         trigger: :pre_resolution,
+        invoke: &Action.Block.bypass_block/2,
         tiers: %{
           1 => %{cost: 2, value: 2},
           2 => %{cost: 3, value: 3},
@@ -182,11 +181,10 @@ defmodule Game.Favor do
         }
       },
       15 => %Favor{
-        # Vars Bond heals you for +1, +2, and +3 for each favor spent by your opponent for a cost of 10, 14, and 18.
         name: "Var's Bond",
-        affects: :player,
-        invoke: fn game, _value -> game end,
-        trigger: :pre_resolution,
+        affects: :both,
+        trigger: :post_favor,
+        invoke: &Action.Heal.heal_on_tokens_spent/2,
         tiers: %{
           1 => %{cost: 10, value: 1},
           2 => %{cost: 14, value: 2},
@@ -196,8 +194,8 @@ defmodule Game.Favor do
       16 => %Favor{
         name: "Vidar's Might",
         affects: :opponent,
-        invoke: &Action.Block.bypass_melee_block/2,
         trigger: :pre_resolution,
+        invoke: &Action.Block.bypass_melee_block/2,
         tiers: %{
           1 => %{cost: 2, value: 2},
           2 => %{cost: 3, value: 4},
@@ -205,11 +203,10 @@ defmodule Game.Favor do
         }
       },
       17 => %Favor{
-        # This ability reduces your opponents God Favor skill, if invokved, by -1, -2, and -3 levels for a cost of 3, 6 and 9.
         name: "Thrymr's Theft",
-        affects: :opponent,
-        invoke: fn game, _value -> game end,
-        trigger: :pre_resolution,
+        affects: :both,
+        trigger: :pre_favor,
+        invoke: &Action.Token.decrease_favor_tier/2,
         tiers: %{
           1 => %{cost: 3, value: 1},
           2 => %{cost: 6, value: 2},
@@ -221,57 +218,43 @@ defmodule Game.Favor do
 
   @spec select(Game.t(), {integer(), integer()}) :: Game.t()
   def select(game, favor_tier) do
-    %{tokens: tokens} = Turn.get_player(game)
-
-    favor_tier
-    |> get_tier()
-    |> case do
-      %{cost: cost} when cost <= tokens ->
-        game
-        |> Turn.update_player(&Player.update(&1, %{active_favor: favor_tier}))
-
-      _other ->
-        game
-    end
-  end
-
-  @spec invoke(Game.t(), atom(), atom()) :: Game.t()
-  def invoke(game, trigger, affects) do
-    # todo: use player.favors
     player = Turn.get_player(game)
+    %{tier: tier} = Player.favor(player, favor_tier)
 
-    if player.active_favor do
-      favor = get_favor(player.active_favor)
-      tier = get_tier(player.active_favor)
-
-      if favor.trigger == trigger && favor.affects == affects do
-        tier
-        |> case do
-          %{cost: cost} when cost <= player.tokens ->
-            game
-            |> Turn.update_player(&Player.increase(&1, :tokens, -cost))
-            |> favor.invoke.(tier.value)
-
-          _other ->
-            game
-        end
-      else
-        game
-      end
+    if tier && tier.cost <= player.tokens do
+      game
+      |> Turn.update_player(&Player.update(&1, %{favor_tier: favor_tier}))
     else
       game
     end
   end
 
-  defp get_favor({favor, _tier}) do
-    all()
-    |> Map.get(favor)
+  @spec invoke(Game.t(), atom(), atom()) :: Game.t()
+  def invoke(game, trigger, affects) do
+    player = Turn.get_player(game)
+    %{favor: favor, tier: tier} = Player.favor(player)
+
+    if favor && favor.trigger == trigger && favor.affects == affects &&
+         tier && tier.cost <= player.tokens do
+      game
+      |> Turn.update_player(&Player.increase(&1, :tokens, -tier.cost))
+      |> Turn.swap(&invoke(&1, :pre_favor, :both))
+      |> do_invoke()
+      |> Turn.swap(&invoke(&1, :pre_favor, :both))
+    else
+      game
+    end
   end
 
-  defp get_tier({favor, tier}) do
-    all()
-    |> Map.get(favor)
-    |> Map.get(:tiers)
-    |> Map.get(tier)
+  @spec do_invoke(Game.t()) :: Game.t()
+  defp do_invoke(game) do
+    player = Turn.get_player(game)
+    %{favor: favor, tier: tier} = Player.favor(player)
+
+    if favor && tier do
+      favor.invoke.(game, tier.value)
+    else
+      game
+    end
   end
 end

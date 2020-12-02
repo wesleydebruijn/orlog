@@ -29,6 +29,14 @@ defmodule Game.Turn do
     |> Game.invoke(:start_turn)
   end
 
+  @spec swap(Game.t(), fun()) :: Game.t()
+  def swap(game, fun) do
+    game
+    |> Map.put(:turn, determine_next(game))
+    |> fun.()
+    |> Map.put(:turn, game.turn)
+  end
+
   @spec get_player(Game.t()) :: Player.t()
   def get_player(game) do
     IndexMap.get(game.players, game.turn)

@@ -31,7 +31,8 @@ defmodule Game do
       |> Player.update(%{
         health: settings.health,
         tokens: settings.tokens,
-        dices: IndexMap.add(%{}, Enum.map(1..settings.dices, fn _x -> %Dice{} end))
+        dices: IndexMap.add(%{}, Enum.map(1..settings.dices, fn _x -> %Dice{} end)),
+        favors: IndexMap.add(%{}, Enum.map(1..3, fn x -> x end))
       })
     end)
     |> Turn.coinflip()

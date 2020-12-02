@@ -4,7 +4,8 @@ defmodule Game.Player do
   """
   alias Game.{
     Player,
-    Dice
+    Dice,
+    Favor
   }
 
   @type t :: %Player{
@@ -14,8 +15,8 @@ defmodule Game.Player do
           tokens: integer(),
           turns: integer(),
           rolled: boolean(),
-          favors: [integer()],
-          active_favor: {integer(), integer()},
+          favors: map(),
+          favor_tier: {integer(), integer()},
           dices: %{}
         }
   defstruct user: nil,
@@ -25,8 +26,8 @@ defmodule Game.Player do
             dices: %{},
             turns: 0,
             rolled: false,
-            favors: [8, 2, 3],
-            active_favor: nil
+            favors: %{},
+            favor_tier: {0, 0}
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs), do: Map.merge(player, attrs)
@@ -35,6 +36,20 @@ defmodule Game.Player do
   def increase(player, key, amount) do
     player
     |> Map.put(key, Map.get(player, key) + amount)
+  end
+
+  @spec favor(Player.t()) :: map()
+  def favor(player), do: favor(player, player.favor_tier)
+
+  @spec favor(Player.t(), {integer(), integer()}) :: map()
+  def favor(player, favor_tier) do
+    {favor_index, tier_index} = favor_tier
+    favor = Map.get(Favor.all(), Map.get(player.favors, favor_index))
+
+    %{
+      favor: favor,
+      tier: Map.get(favor || %{}, tier_index)
+    }
   end
 
   @spec resolve(Player.t(), Player.t()) :: Player.t()
