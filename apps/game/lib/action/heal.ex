@@ -27,7 +27,7 @@ defmodule Game.Action.Heal do
       blocks =
         player.dices
         |> IndexMap.filter(fn dice ->
-          Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
+          Dice.stance?(dice, :block) && (!type || Dice.type?(dice, type))
         end)
         |> IndexMap.sum(&Dice.Face.hits/1)
 
@@ -49,7 +49,7 @@ defmodule Game.Action.Heal do
       |> Turn.get_opponent()
       |> Map.get(:dices)
       |> IndexMap.filter(fn dice ->
-        Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
+        Dice.stance?(dice, :block) && (!type || Dice.type?(dice, type))
       end)
       |> IndexMap.sum(&Dice.Face.hits/1)
 

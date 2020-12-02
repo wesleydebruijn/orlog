@@ -32,18 +32,6 @@ defmodule Game.Dice.Face do
       [:block, :attack] -- [face.stance, other.stance] == []
   end
 
-  @spec stance?(Dice.t(), atom()) :: boolean()
-  def stance?(%Dice{face: face}, type), do: stance?(face, type)
-
-  @spec stance?(Face.t(), atom()) :: boolean()
-  def stance?(face, stance), do: face.stance == stance
-
-  @spec type?(Dice.t(), atom()) :: boolean()
-  def type?(%Dice{face: face}, type), do: type?(face, type)
-
-  @spec type?(Face.t(), atom()) :: boolean()
-  def type?(face, type), do: face.type == type
-
   @spec update(Dice.t(), map()) :: Dice.t()
   def update(%Dice{face: face} = dice, attrs) do
     %{dice | face: update(face, attrs)}

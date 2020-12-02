@@ -1,6 +1,6 @@
 defmodule Game.Action.Dice do
   @moduledoc """
-  Token related actions
+  Dice related actions
   """
   alias Game.{
     Player,

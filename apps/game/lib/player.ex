@@ -11,7 +11,6 @@ defmodule Game.Player do
   @type t :: %Player{
           user: String.t(),
           health: integer(),
-          health_regen: integer(),
           tokens: integer(),
           turns: integer(),
           rolled: boolean(),
@@ -21,7 +20,6 @@ defmodule Game.Player do
         }
   defstruct user: nil,
             health: 0,
-            health_regen: 0,
             tokens: 0,
             dices: %{},
             turns: 0,
@@ -38,19 +36,22 @@ defmodule Game.Player do
     |> Map.put(key, Map.get(player, key) + amount)
   end
 
-  @spec favor(Player.t()) :: map()
-  def favor(player), do: favor(player, player.favor_tier)
+  @spec get_favor(Player.t()) :: map()
+  def get_favor(player), do: get_favor(player, player.favor_tier)
 
-  @spec favor(Player.t(), {integer(), integer()}) :: map()
-  def favor(player, favor_tier) do
+  @spec get_favor(Player.t(), {integer(), integer()}) :: map()
+  def get_favor(player, favor_tier) do
     {favor_index, tier_index} = favor_tier
-    favor = Map.get(Favor.all(), Map.get(player.favors, favor_index))
+    favor = Map.get(Favor.all(), Map.get(player.favors, favor_index, 0), %{})
 
     %{
       favor: favor,
-      tier: Map.get(favor || %{}, tier_index)
+      tier: Map.get(favor, tier_index, %{})
     }
   end
+
+  @spec sufficient_tokens?(Player.t(), integer()) :: boolean()
+  def sufficient_tokens?(player, amount), do: player.tokens >= amount
 
   @spec resolve(Player.t(), Player.t()) :: Player.t()
   def resolve(player, opponent) do

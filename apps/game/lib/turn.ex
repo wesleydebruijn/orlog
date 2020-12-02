@@ -29,8 +29,8 @@ defmodule Game.Turn do
     |> Game.invoke(:start_turn)
   end
 
-  @spec swap(Game.t(), fun()) :: Game.t()
-  def swap(game, fun) do
+  @spec opponent(Game.t(), fun()) :: Game.t()
+  def opponent(game, fun) do
     game
     |> Map.put(:turn, determine_next(game))
     |> fun.()

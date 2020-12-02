@@ -14,9 +14,7 @@ defmodule Game.Action.Token do
       game
       |> Turn.get_player()
       |> Map.get(:dices)
-      |> IndexMap.filter(fn dice ->
-        Dice.Face.type?(dice, :token) && Dice.Face.stance?(dice, :steal)
-      end)
+      |> IndexMap.filter(fn dice -> Dice.type?(dice, :token) && Dice.stance?(dice, :steal) end)
       |> IndexMap.sum(&Dice.Face.hit_amount/1)
 
     if desired_tokens_to_steal > 0 do
@@ -54,7 +52,7 @@ defmodule Game.Action.Token do
       game
       |> Turn.get_opponent()
       |> Map.get(:dices)
-      |> IndexMap.filter(&Dice.Face.stance?(&1, :attack))
+      |> IndexMap.filter(&Dice.stance?(&1, :attack))
       |> IndexMap.sum(&Dice.Face.hit_amount/1)
 
     game
@@ -67,9 +65,7 @@ defmodule Game.Action.Token do
       game
       |> Turn.get_player()
       |> Map.get(:dices)
-      |> IndexMap.filter(fn dice ->
-        Dice.Face.stance?(dice, :attack) && Dice.Face.type?(dice, :ranged)
-      end)
+      |> IndexMap.filter(fn dice -> Dice.stance?(dice, :attack) && Dice.type?(dice, :ranged) end)
       |> Enum.count()
 
     game

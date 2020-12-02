@@ -43,6 +43,12 @@ defmodule Game.Dice do
   @spec unlock(Dice.t()) :: Dice.t()
   def unlock(dice), do: %{dice | keep: false, locked: false}
 
+  @spec stance?(Dice.t(), atom()) :: boolean()
+  def stance?(%Dice{face: face}, stance), do: face.stance == stance
+
+  @spec type?(Dice.t(), atom()) :: boolean()
+  def type?(%Dice{face: face}, type), do: face.type == type
+
   @spec resolve(map(), map()) :: map()
   def resolve(dices, other_dices) do
     faces =

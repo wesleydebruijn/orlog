@@ -11,7 +11,7 @@ defmodule Game.Favor do
 
   @type t :: %Favor{
           name: String.t(),
-          affects: :player | :opponent | :both,
+          affects: :player | :opponent | :any,
           trigger: :pre_resolution | :post_resolution | :pre_favor | :post_favor,
           invoke: fun(),
           tiers: %{
@@ -21,7 +21,44 @@ defmodule Game.Favor do
           }
         }
 
-  defstruct name: nil, affects: :player, trigger: :pre_resolution, invoke: nil, tiers: %{}
+  defstruct name: nil, affects: :any, trigger: :pre_resolution, invoke: nil, tiers: %{}
+
+  def invoke?(favor, trigger, affects) do
+    Map.get(favor, :trigger) == trigger && Map.get(favor, :affects) == affects
+  end
+
+  @spec invoke(Game.t()) :: Game.t()
+  def invoke(game) do
+    %{favor: favor, tier: tier} =
+      game
+      |> Turn.get_player()
+      |> Player.get_favor()
+
+    invoke = Map.get(favor, :invoke)
+    value = Map.get(tier, :value)
+
+    if invoke && value do
+      invoke.(game, value)
+    else
+      game
+    end
+  end
+
+  @spec invoke(Game.t(), atom(), atom()) :: Game.t()
+  def invoke(game, trigger, affects) do
+    player = Turn.get_player(game)
+    %{favor: favor, tier: tier} = Player.get_favor(player)
+
+    if invoke?(favor, trigger, affects) && Player.sufficient_tokens?(player, Map.get(tier, :cost)) do
+      game
+      |> Turn.update_player(&Player.increase(&1, :tokens, -Map.get(tier, :cost)))
+      |> Turn.opponent(&invoke(&1, :pre_favor, :any))
+      |> invoke()
+      |> Turn.opponent(&invoke(&1, :post_favor, :any))
+    else
+      game
+    end
+  end
 
   @spec all :: map()
   def all do
@@ -182,8 +219,8 @@ defmodule Game.Favor do
       },
       15 => %Favor{
         name: "Var's Bond",
-        affects: :both,
-        trigger: :post_favor,
+        affects: :any,
+        trigger: :pre_favor,
         invoke: &Action.Heal.heal_on_tokens_spent/2,
         tiers: %{
           1 => %{cost: 10, value: 1},
@@ -204,7 +241,7 @@ defmodule Game.Favor do
       },
       17 => %Favor{
         name: "Thrymr's Theft",
-        affects: :both,
+        affects: :any,
         trigger: :pre_favor,
         invoke: &Action.Token.decrease_favor_tier/2,
         tiers: %{
@@ -214,47 +251,5 @@ defmodule Game.Favor do
         }
       }
     }
-  end
-
-  @spec select(Game.t(), {integer(), integer()}) :: Game.t()
-  def select(game, favor_tier) do
-    player = Turn.get_player(game)
-    %{tier: tier} = Player.favor(player, favor_tier)
-
-    if tier && tier.cost <= player.tokens do
-      game
-      |> Turn.update_player(&Player.update(&1, %{favor_tier: favor_tier}))
-    else
-      game
-    end
-  end
-
-  @spec invoke(Game.t(), atom(), atom()) :: Game.t()
-  def invoke(game, trigger, affects) do
-    player = Turn.get_player(game)
-    %{favor: favor, tier: tier} = Player.favor(player)
-
-    if favor && favor.trigger == trigger && favor.affects == affects &&
-         tier && tier.cost <= player.tokens do
-      game
-      |> Turn.update_player(&Player.increase(&1, :tokens, -tier.cost))
-      |> Turn.swap(&invoke(&1, :pre_favor, :both))
-      |> do_invoke()
-      |> Turn.swap(&invoke(&1, :pre_favor, :both))
-    else
-      game
-    end
-  end
-
-  @spec do_invoke(Game.t()) :: Game.t()
-  defp do_invoke(game) do
-    player = Turn.get_player(game)
-    %{favor: favor, tier: tier} = Player.favor(player)
-
-    if favor && tier do
-      favor.invoke.(game, tier.value)
-    else
-      game
-    end
   end
 end

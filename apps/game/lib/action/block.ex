@@ -19,7 +19,7 @@ defmodule Game.Action.Block do
     |> Turn.update_player(fn player ->
       player.dices
       |> IndexMap.filter(fn dice ->
-        Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
+        Dice.stance?(dice, :block) && (!type || Dice.type?(dice, type))
       end)
       |> IndexMap.update_in(player, :dices, &Dice.Face.increase(&1, :amount, amount))
     end)
@@ -37,7 +37,7 @@ defmodule Game.Action.Block do
     |> Turn.update_opponent(fn opponent ->
       opponent.dices
       |> IndexMap.filter(fn dice ->
-        Dice.Face.stance?(dice, :block) && (!type || Dice.Face.type?(dice, type))
+        Dice.stance?(dice, :block) && (!type || Dice.type?(dice, type))
       end)
       |> IndexMap.take(amount)
       |> IndexMap.update_in(opponent, :dices, &Dice.Face.update(&1, %{disabled: true}))

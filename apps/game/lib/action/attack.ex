@@ -14,7 +14,7 @@ defmodule Game.Action.Attack do
       game
       |> Turn.get_player()
       |> Map.get(:dices)
-      |> IndexMap.filter(&Dice.Face.stance?(&1, :attack))
+      |> IndexMap.filter(&Dice.stance?(&1, :attack))
       |> IndexMap.sum(&Dice.Face.hit_amount/1)
 
     if desired_health_to_attack > 0 do
@@ -50,7 +50,7 @@ defmodule Game.Action.Attack do
     |> Turn.update_player(fn player ->
       player.dices
       |> IndexMap.filter(fn dice ->
-        Dice.Face.stance?(dice, :attack) && (!type || Dice.Face.type?(dice, type))
+        Dice.stance?(dice, :attack) && (!type || Dice.type?(dice, type))
       end)
       |> IndexMap.update_in(player, :dices, &Dice.Face.multiply(&1, :amount, amount))
     end)
