@@ -29,6 +29,77 @@ defmodule Game.PlayerTest do
     end
   end
 
+  describe "get_favor/2" do
+    test "with selected favor/tier" do
+      player = %Player{
+        favors: %{
+          1 => 2,
+          2 => 5,
+          3 => 1
+        },
+        favor_tier: {3, 3}
+      }
+
+      actual = Player.get_favor(player)
+
+      expected = %{
+        favor: %{
+          affects: :any,
+          invoke: &Game.FakeAction.invoke/2,
+          name: "Fake Favor",
+          tiers: %{
+            1 => %{cost: 4, value: 1},
+            2 => %{cost: 6, value: 2},
+            3 => %{cost: 8, value: 3}
+          },
+          trigger: :pre_favor
+        },
+        tier: %{cost: 8, value: 3}
+      }
+
+      assert actual == expected
+    end
+
+    test "with given favor/tier" do
+      player = %Player{
+        favors: %{
+          1 => 2,
+          2 => 5,
+          3 => 1
+        }
+      }
+
+      actual = Player.get_favor(player, {3, 1})
+
+      expected = %{
+        favor: %{
+          affects: :any,
+          invoke: &Game.FakeAction.invoke/2,
+          name: "Fake Favor",
+          tiers: %{
+            1 => %{cost: 4, value: 1},
+            2 => %{cost: 6, value: 2},
+            3 => %{cost: 8, value: 3}
+          },
+          trigger: :pre_favor
+        },
+        tier: %{cost: 4, value: 1}
+      }
+
+      assert actual == expected
+    end
+  end
+
+  describe "sufficient_tokens?" do
+    test "when player has enough tokens" do
+      assert Player.sufficient_tokens?(%Player{tokens: 3}, 3)
+    end
+
+    test "when player doesnt have enough tokens" do
+      refute Player.sufficient_tokens?(%Player{tokens: 3}, 4)
+    end
+  end
+
   test "resolve/2" do
     player = %Player{
       dices: %{

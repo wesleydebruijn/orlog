@@ -4,9 +4,10 @@ defmodule Game.Player do
   """
   alias Game.{
     Player,
-    Dice,
-    Favor
+    Dice
   }
+
+  @favors Application.get_env(:game, :favors)
 
   @type t :: %Player{
           user: String.t(),
@@ -42,11 +43,11 @@ defmodule Game.Player do
   @spec get_favor(Player.t(), {integer(), integer()}) :: map()
   def get_favor(player, favor_tier) do
     {favor_index, tier_index} = favor_tier
-    favor = Map.get(Favor.all(), Map.get(player.favors, favor_index, 0), %{})
+    favor = Map.get(@favors, Map.get(player.favors, favor_index, 0), %{})
 
     %{
       favor: favor,
-      tier: Map.get(favor, tier_index, %{})
+      tier: Map.get(Map.get(favor, :tiers, %{}), tier_index, %{})
     }
   end
 

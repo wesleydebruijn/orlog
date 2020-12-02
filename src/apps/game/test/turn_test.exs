@@ -52,6 +52,33 @@ defmodule Game.TurnTest do
     end
   end
 
+  test "opponent/2" do
+    game = %Game{
+      players: %{
+        1 => %Player{user: "Wesley"},
+        2 => %Player{user: "Jeffrey"}
+      },
+      turn: 1
+    }
+
+    fun = fn game ->
+      game
+      |> Turn.update_player(fn player -> %{player | tokens: 999} end)
+    end
+
+    actual = Turn.opponent(game, fun)
+
+    expected = %Game{
+      players: %{
+        1 => %Player{user: "Wesley"},
+        2 => %Player{user: "Jeffrey", tokens: 999}
+      },
+      turn: 1
+    }
+
+    assert actual == expected
+  end
+
   describe "next/1" do
     test "when players have turns left" do
       game = %Game{

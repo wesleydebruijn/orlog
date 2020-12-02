@@ -3,6 +3,22 @@ defmodule Game.DiceTest do
 
   alias Game.Dice
 
+  describe "roll!/1" do
+    test "when dice is not kept" do
+      dice = %Dice{}
+      actual = Enum.map(0..10, fn _x -> Dice.roll!(dice) end)
+
+      assert Enum.any?(actual, fn x -> x != dice end)
+    end
+
+    test "when dice is kept" do
+      expected = %Dice{tokens: 3}
+      actual = Dice.roll!(%Dice{tokens: 3})
+
+      refute actual == expected
+    end
+  end
+
   describe "roll/1" do
     test "when dice is not kept" do
       dice = %Dice{}

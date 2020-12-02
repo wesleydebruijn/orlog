@@ -52,7 +52,7 @@ defmodule Game.Action.Attack do
       |> IndexMap.filter(fn dice ->
         Dice.stance?(dice, :attack) && (!type || Dice.type?(dice, type))
       end)
-      |> IndexMap.update_in(player, :dices, &Dice.Face.multiply(&1, :amount, amount))
+      |> IndexMap.update_in(player, :dices, &Dice.Face.multiply(&1, :count, amount))
     end)
   end
 end

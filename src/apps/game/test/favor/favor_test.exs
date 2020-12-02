@@ -1,53 +1,215 @@
-defmodule FavorTest do
+defmodule Game.FavorTest do
   use ExUnit.Case
-  # alias Game.Player
 
-  # def create_game_with_tokens(tokens) do
-  #   %Game{
-  #     players: %{
-  #       1 => %Player{
-  #         tokens: tokens
-  #       }
-  #     },
-  #     turn: 1
-  #   }
-  # end
+  alias Game.{
+    Favor,
+    Player
+  }
 
-  # describe "buy/2" do
-  #   test "should reduce tokens by tier 1 cost" do
-  #     game = create_game_with_tokens(10)
-  #     actual = FavorFixture.buy(game, 1)
-  #     expected = create_game_with_tokens(6)
+  describe "invoke?/3" do
+    test "when trigger and affects matches with favor" do
+      favor = %Favor{
+        affects: :opponent,
+        trigger: :pre_resolution
+      }
 
-  #     assert_received %{cost: 4}
-  #     assert actual == expected
-  #   end
+      assert Favor.invoke?(favor, :pre_resolution, :opponent)
+    end
 
-  #   test "should reduce tokens by tier 2 cost" do
-  #     game = create_game_with_tokens(10)
-  #     actual = FavorFixture.buy(game, 2)
-  #     expected = create_game_with_tokens(2)
+    test "when trigger differs from favor" do
+      favor = %Favor{
+        affects: :opponent,
+        trigger: :post_favor
+      }
 
-  #     assert_received %{cost: 8}
-  #     assert actual == expected
-  #   end
+      refute Favor.invoke?(favor, :pre_resolution, :opponent)
+    end
 
-  #   test "should reduce tokens by tier 3 cost" do
-  #     game = create_game_with_tokens(12)
-  #     actual = FavorFixture.buy(game, 3)
-  #     expected = create_game_with_tokens(0)
+    test "when affects differs from favor" do
+      favor = %Favor{
+        affects: :player,
+        trigger: :pre_resolution
+      }
 
-  #     assert_received %{cost: 12}
-  #     assert actual == expected
-  #   end
+      refute Favor.invoke?(favor, :pre_resolution, :opponent)
+    end
+  end
 
-  #   test "should not be able to buy: insufficient tokens" do
-  #     game = create_game_with_tokens(4)
-  #     actual = FavorFixture.buy(game, 3)
-  #     expected = create_game_with_tokens(4)
+  describe "invoke/2" do
+    test "when player has a favor selected" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 1}
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
 
-  #     refute_received %{cost: 12}
-  #     assert actual == expected
-  #   end
-  # end
+      actual = Favor.invoke(game)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 1},
+            health: 1
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
+    test "when player has no favor selected" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1}
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      actual = Favor.invoke(game)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1}
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+  end
+
+  describe "invoke/3" do
+    test "when player has favor & sufficient tokens" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 6
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      actual = Favor.invoke(game, :pre_favor, :any)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 0,
+            health: 2
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
+    test "when cannot be invoked" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 6
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      actual = Favor.invoke(game, :pre_resolution, :any)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 6
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
+    test "when player has insufficient tokens" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 5
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      actual = Favor.invoke(game, :pre_favor, :any)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            favor_tier: {1, 2},
+            tokens: 5
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
+    test "when player has no active favor" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            tokens: 6
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      actual = Favor.invoke(game, :pre_favor, :any)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            favors: %{1 => 1},
+            tokens: 6
+          },
+          2 => %Player{}
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+  end
 end

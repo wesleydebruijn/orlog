@@ -25,7 +25,7 @@ defmodule Game.Phase.GodFavor do
 
   def action(game, {:select, favor_tier}) do
     player = Turn.get_player(game)
-    %{tier: tier} = Player.get_favor(player)
+    %{tier: tier} = Player.get_favor(player, favor_tier)
 
     if Player.sufficient_tokens?(player, Map.get(tier, :cost)) do
       game

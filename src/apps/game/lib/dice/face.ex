@@ -61,6 +61,7 @@ defmodule Game.Dice.Face do
   end
 
   @spec hits(Face.t()) :: integer()
+  def hits(%Dice{face: face}), do: hits(face)
   def hits(%{disabled: true}), do: 0
   def hits(%{stance: :block} = face), do: face.intersects
   def hits(face), do: face.count - face.intersects

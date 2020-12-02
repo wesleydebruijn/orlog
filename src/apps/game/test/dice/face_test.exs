@@ -66,6 +66,52 @@ defmodule Game.Dice.FaceTest do
     end
   end
 
+  test "update/2" do
+    actual = Face.update(%Face{}, %{count: 2})
+    expected = %Face{count: 2}
+
+    assert actual == expected
+  end
+
+  describe "increase/2" do
+    test "when count is added" do
+      actual = Face.increase(%Face{}, :count, 2)
+      expected = %Face{count: 3}
+
+      assert actual == expected
+    end
+
+    test "when count is added with dice" do
+      actual = Face.increase(%Dice{face: %Face{}}, :count, 2)
+      expected = %Dice{face: %Face{count: 3}}
+
+      assert actual == expected
+    end
+
+    test "when count is substracted" do
+      actual = Face.increase(%Face{}, :count, -2)
+      expected = %Face{count: -1}
+
+      assert actual == expected
+    end
+  end
+
+  describe "multiply/2" do
+    test "when count is added" do
+      actual = Face.multiply(%Face{}, :count, 4)
+      expected = %Face{count: 4}
+
+      assert actual == expected
+    end
+
+    test "when count is added with dice" do
+      actual = Face.multiply(%Dice{face: %Face{}}, :count, 2)
+      expected = %Dice{face: %Face{count: 2}}
+
+      assert actual == expected
+    end
+  end
+
   describe "hits/1" do
     test "when disabled" do
       actual = Face.hits(%Face{disabled: true, intersects: 1})

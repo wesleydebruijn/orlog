@@ -73,7 +73,14 @@ defmodule Game.Action.Token do
   end
 
   @spec decrease_favor_tier(Game.t(), integer()) :: Game.t()
-  def decrease_favor_tier(game, _amount) do
-    game
+  def decrease_favor_tier(game, amount) do
+    %{favor_tier: favor_tier} = Turn.get_opponent(game)
+
+    if favor_tier do
+      {favor, tier} = favor_tier
+
+      game
+      |> Turn.update_opponent(&Player.update(&1, %{favor_tier: {favor, tier - amount}}))
+    end
   end
 end
