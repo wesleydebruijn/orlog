@@ -1,7 +1,8 @@
 (() => {
     class myWebsocketHandler {
         setupSocket() {
-            this.socket = new WebSocket("ws://localhost:4000/ws/chat")
+
+            this.socket = new WebSocket(`ws://localhost:4000/ws/df7dffa9-8d4c-4e22-989a-8f9796df58de/${Math.random()}`)
 
             this.socket.addEventListener("message", (event) => {
                 const pTag = document.createElement("p")

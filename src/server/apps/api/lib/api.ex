@@ -11,10 +11,7 @@ defmodule Api do
           port: 4000
         ]
       ),
-      Registry.child_spec(
-        keys: :duplicate,
-        name: Registry.Api
-      )
+      Api.GameLobby.Supervisor
     ]
 
     opts = [strategy: :one_for_one, name: Api.Application]
@@ -25,7 +22,7 @@ defmodule Api do
     [
       {:_,
        [
-         {"/ws/[...]", Api.SocketHandler, []},
+         {"/ws/[...]", Api.GameLobby.Websocket, []},
          {:_, Plug.Cowboy.Handler, {Api.Router, []}}
        ]}
     ]
