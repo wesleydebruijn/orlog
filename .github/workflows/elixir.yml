@@ -24,13 +24,12 @@ jobs:
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:   
-        path: src/deps
+        path: src/server/deps
         key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
-      working-directory: ./src
+      working-directory: ./src/server
       run: mix deps.get
     - name: Run tests
-      working-directory: ./src
+      working-directory: ./src/server
       run: mix test
-   
