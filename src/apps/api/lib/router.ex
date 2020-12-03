@@ -2,18 +2,11 @@ defmodule Api.Router do
   use Plug.Router
   require EEx
 
-  plug(Plug.Static,
-    at: "/",
-    from: :api
-  )
+  plug(Plug.Static, at: "/", from: :api)
 
   plug(:match)
 
-  plug(Plug.Parsers,
-    parsers: [:json],
-    pass: ["application/json"],
-    json_decoder: Jason
-  )
+  plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
 
   plug(:dispatch)
 

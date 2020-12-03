@@ -24,6 +24,7 @@ defmodule Api.MixProject do
 
   defp deps do
     [
+      {:game, in_umbrella: true},
       {:cowboy, "~> 2.8"},
       {:plug, "~> 1.11"},
       {:plug_cowboy, "~> 2.0"},

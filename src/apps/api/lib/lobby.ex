@@ -1,4 +1,4 @@
-defmodule Game.Lobby do
+defmodule Api.GameLobby do
   use GenServer
 
   def start_link(_args) do
@@ -9,7 +9,7 @@ defmodule Game.Lobby do
     GenServer.call(pid, action)
   end
 
-  def init(state) do
+  def init(_state) do
     init_state = Game.start(["Wesley", "Jeffrey"])
 
     {:ok, init_state}
@@ -17,8 +17,6 @@ defmodule Game.Lobby do
 
   def handle_call(action, _from, state) do
     new_state = Game.invoke(state, action)
-
-    Game.TestDisplay.display(new_state)
 
     {:reply, nil, new_state}
   end
