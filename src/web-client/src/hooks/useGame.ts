@@ -14,11 +14,10 @@ export function useGame() {
           type: "INIT"
         });
       },
-      joinGame: (gameId: string, playerId: string) => {
+      joinGame: (gameId: string) => {
         dispatch({
           type: "JOIN_GAME",
           payload: {
-            playerId,
             gameId
           }
         })

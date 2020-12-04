@@ -13,13 +13,12 @@ type CreateAction = {
   type: typeof WEBSOCKET_JOIN_GAME;
   payload: {
     gameId: string;
-    playerId: string;
   };
 };
 
 export type Action = InitAction | CreateAction;
 
-export default (state: GameState, action: Action) => {
+export default function GameReducer(state: GameState, action: Action) {
   switch (action.type) {
     case "INIT": {
       let playerId = localStorage.getItem("orlog:playerid");
@@ -37,8 +36,10 @@ export default (state: GameState, action: Action) => {
       };
     }
     case "JOIN_GAME":
-      console.log("JOINING");
-      const { gameId, playerId } = action.payload;
+      const {
+        player: { id: playerId },
+      } = state;
+      const { gameId } = action.payload;
       console.log(gameId, playerId);
       return {
         ...state,

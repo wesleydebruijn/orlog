@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router';
 
 import { useGame } from '../../hooks/useGame'
 
 export default function Game() {
-  const { joinGame, state: { player } } = useGame();
+  const { joinGame } = useGame();
   const { id: gameId } = useParams<{ id: string }>();
 
-  useEffect(() => {
-    // @ts-ignore
-    joinGame(gameId, player.id);
+   useEffect(() => {
+    joinGame(gameId)
   }, []) 
   
   return (
