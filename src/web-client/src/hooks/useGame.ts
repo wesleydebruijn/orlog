@@ -1,9 +1,9 @@
 import { useContext } from "react";
 
-import { WebsocketContext } from "../providers/WebsocketProvider";
+import { Context } from "../providers/GameProvider/GameProvider";
 
-export function useWebsocket() {
-  const context = useContext(WebsocketContext);
+export function useGame() {
+  const context = useContext(Context);
 
   if (context) {
     const { dispatch, state } = context;

@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router';
 
-import { useWebsocket } from '../../hooks/useWebsocket'
+import { useGame } from '../../hooks/useGame'
 
 export default function Game() {
-  const { joinGame, state: { user } } = useWebsocket();
-  const { gameId} = useParams<{ gameId: string }>();
+  const { joinGame, state: { player } } = useGame();
+  const { id: gameId } = useParams<{ id: string }>();
+
   useEffect(() => {
     // @ts-ignore
-    joinGame(gameId, user.id);
+    joinGame(gameId, player.id);
   }, []) 
   
   return (
