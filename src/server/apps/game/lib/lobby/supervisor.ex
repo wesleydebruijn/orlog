@@ -1,6 +1,6 @@
-defmodule Api.GameLobby.Supervisor do
+defmodule Game.Lobby.Supervisor do
   @moduledoc """
-  Supervises all game lobby servers
+  Supervises game lobby servers
   """
   use DynamicSupervisor
 
@@ -9,11 +9,13 @@ defmodule Api.GameLobby.Supervisor do
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
+  def count do
+    DynamicSupervisor.count_children(__MODULE__)
+  end
+
   @spec find_or_initialize(String.t()) :: {:ok, pid}
   def find_or_initialize(uuid) do
-    spec = {Api.GameLobby.Server, [uuid]}
-
-    DynamicSupervisor.start_child(__MODULE__, spec)
+    DynamicSupervisor.start_child(__MODULE__, {Game.Lobby.Server, [uuid]})
   end
 
   @impl true

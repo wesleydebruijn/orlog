@@ -20,6 +20,7 @@ defmodule Game.Dice do
           locked: boolean(),
           keep: boolean()
         }
+  @derive Jason.Encoder
   defstruct face: %Dice.Face{}, tokens: 0, locked: false, keep: false
 
   @spec roll!(Dice.t()) :: Dice.t()

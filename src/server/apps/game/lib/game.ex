@@ -18,6 +18,7 @@ defmodule Game do
           phase: integer(),
           turn: integer()
         }
+  @derive Jason.Encoder
   defstruct settings: %Settings{}, players: %{}, round: 0, phase: 0, turn: 0
 
   @spec start([String.t()], Settings.t()) :: Game.t()

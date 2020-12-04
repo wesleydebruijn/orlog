@@ -12,7 +12,8 @@ defmodule Game.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+      consolidate_protocols: Mix.env() != :test
     ]
   end
 
@@ -26,6 +27,8 @@ defmodule Game.MixProject do
   defp elixirc_paths(_env), do: ["lib"]
 
   defp deps do
-    []
+    [
+      {:jason, "~> 1.2"}
+    ]
   end
 end

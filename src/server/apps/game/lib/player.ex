@@ -19,6 +19,7 @@ defmodule Game.Player do
           favor_tier: {integer(), integer()},
           dices: %{}
         }
+  @derive Jason.Encoder
   defstruct user: nil,
             health: 0,
             tokens: 0,
