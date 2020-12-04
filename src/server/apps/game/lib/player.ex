@@ -10,7 +10,7 @@ defmodule Game.Player do
   @favors Application.get_env(:game, :favors)
 
   @type t :: %Player{
-          user: String.t(),
+          uuid: String.t(),
           health: integer(),
           tokens: integer(),
           turns: integer(),
@@ -19,8 +19,8 @@ defmodule Game.Player do
           favor_tier: {integer(), integer()},
           dices: %{}
         }
-  @derive Jason.Encoder
-  defstruct user: nil,
+  @derive {Jason.Encoder, except: [:uuid, :favor_tier]}
+  defstruct uuid: nil,
             health: 0,
             tokens: 0,
             dices: %{},

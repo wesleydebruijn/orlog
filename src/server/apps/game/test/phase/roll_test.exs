@@ -21,7 +21,7 @@ defmodule Game.Phase.RollTest do
         turn: 1
       }
 
-      actual = Phase.Roll.action(game, {:swap, 2})
+      actual = Phase.Roll.action(game, {:select, 2})
 
       expected = %Game{
         players: %{

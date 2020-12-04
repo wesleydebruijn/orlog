@@ -1,7 +1,4 @@
 defmodule Api.Websocket do
-  @moduledoc """
-  Websocket connection of the user
-  """
   @behaviour :cowboy_websocket
 
   def init(request, _state) do
@@ -16,19 +13,25 @@ defmodule Api.Websocket do
     {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(state.uuid)
 
     if Game.Lobby.Server.joinable?(pid, state.uuid) do
-      state = Game.Lobby.Server.join(pid, user_uuid)
+      new_state = Game.Lobby.Server.join(pid, user_uuid)
 
-      {:ok, state}
+      {:ok, new_state}
     else
-      {:reply, {:close, 1000, "Lobby is full"}, %{}}
+      {:reply, {:close, 1000, "Lobby is full"}, state}
     end
   end
 
   def websocket_handle({:text, json}, state) do
-    payload = Jason.decode!(json)
-    message = payload["data"]["message"]
+    {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(state.uuid)
 
-    {:reply, {:text, message}, state}
+    payload = Jason.decode!(json)
+
+    state =
+      case payload["data"]["message"] do
+        _other -> Game.Lobby.Server.action(pid, :continue)
+      end
+
+    {:reply, {:text, state}, state}
   end
 
   def websocket_info(info, state) do

@@ -9,6 +9,7 @@ defmodule Game.Lobby.Supervisor do
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
+  @spec count :: %{active: integer, specs: integer, supervisors: integer, workers: integer}
   def count do
     DynamicSupervisor.count_children(__MODULE__)
   end

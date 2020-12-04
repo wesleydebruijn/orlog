@@ -22,7 +22,7 @@ defmodule GameTest do
                  health: 15,
                  tokens: 0,
                  turns: 3,
-                 user: "Wesley"
+                 uuid: "Wesley"
                },
                2 => %Player{
                  dices: %{
@@ -36,7 +36,7 @@ defmodule GameTest do
                  health: 15,
                  tokens: 0,
                  turns: 3,
-                 user: "Jeffrey"
+                 uuid: "Jeffrey"
                }
              },
              settings: %Settings{

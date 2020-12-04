@@ -53,8 +53,8 @@ defmodule Game.PhaseTest do
         }
       },
       players: %{
-        1 => %Player{user: "Wesley", turns: 0},
-        2 => %Player{user: "Jeffrey", turns: 0}
+        1 => %Player{uuid: "Wesley", turns: 0},
+        2 => %Player{uuid: "Jeffrey", turns: 0}
       },
       turn: 1,
       phase: 0
@@ -69,8 +69,8 @@ defmodule Game.PhaseTest do
         }
       },
       players: %{
-        1 => %Player{user: "Wesley", turns: 3},
-        2 => %Player{user: "Jeffrey", turns: 3}
+        1 => %Player{uuid: "Wesley", turns: 3},
+        2 => %Player{uuid: "Jeffrey", turns: 3}
       },
       turn: 1,
       phase: 1
@@ -83,8 +83,8 @@ defmodule Game.PhaseTest do
     test "when players have turns left" do
       game = %Game{
         players: %{
-          1 => %Player{user: "Wesley", turns: 3},
-          2 => %Player{user: "Jeffrey", turns: 3}
+          1 => %Player{uuid: "Wesley", turns: 3},
+          2 => %Player{uuid: "Jeffrey", turns: 3}
         },
         turn: 1,
         phase: 1
@@ -94,8 +94,8 @@ defmodule Game.PhaseTest do
 
       expected = %Game{
         players: %{
-          1 => %Player{user: "Wesley", turns: 3},
-          2 => %Player{user: "Jeffrey", turns: 3}
+          1 => %Player{uuid: "Wesley", turns: 3},
+          2 => %Player{uuid: "Jeffrey", turns: 3}
         },
         turn: 1,
         phase: 1
@@ -114,8 +114,8 @@ defmodule Game.PhaseTest do
           }
         },
         players: %{
-          1 => %Player{user: "Wesley", turns: 0},
-          2 => %Player{user: "Jeffrey", turns: 0}
+          1 => %Player{uuid: "Wesley", turns: 0},
+          2 => %Player{uuid: "Jeffrey", turns: 0}
         },
         turn: 1,
         phase: 1
@@ -132,8 +132,8 @@ defmodule Game.PhaseTest do
           }
         },
         players: %{
-          1 => %Player{user: "Wesley", turns: 1},
-          2 => %Player{user: "Jeffrey", turns: 1}
+          1 => %Player{uuid: "Wesley", turns: 1},
+          2 => %Player{uuid: "Jeffrey", turns: 1}
         },
         turn: 1,
         phase: 2
@@ -152,8 +152,8 @@ defmodule Game.PhaseTest do
           }
         },
         players: %{
-          1 => %Player{user: "Wesley", turns: 0},
-          2 => %Player{user: "Jeffrey", turns: 0}
+          1 => %Player{uuid: "Wesley", turns: 0},
+          2 => %Player{uuid: "Jeffrey", turns: 0}
         },
         turn: 1,
         phase: 3,
@@ -171,8 +171,8 @@ defmodule Game.PhaseTest do
           }
         },
         players: %{
-          1 => %Player{user: "Wesley", turns: 3},
-          2 => %Player{user: "Jeffrey", turns: 3}
+          1 => %Player{uuid: "Wesley", turns: 3},
+          2 => %Player{uuid: "Jeffrey", turns: 3}
         },
         turn: 1,
         phase: 1,
