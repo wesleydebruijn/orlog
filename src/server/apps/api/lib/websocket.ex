@@ -1,7 +1,4 @@
 defmodule Api.Websocket do
-  @moduledoc """
-  Websocket connection of the user
-  """
   @behaviour :cowboy_websocket
 
   def init(request, _state) do

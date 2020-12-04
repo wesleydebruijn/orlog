@@ -22,10 +22,10 @@ defmodule Game do
   defstruct settings: %Settings{}, players: %{}, round: 0, phase: 0, turn: 0
 
   @spec start([String.t()], Settings.t()) :: Game.t()
-  def start(users, settings \\ %Settings{}) do
+  def start(uuids, settings \\ %Settings{}) do
     %Game{
       settings: settings,
-      players: IndexMap.add(%{}, Enum.map(users, fn user -> %Player{user: user} end))
+      players: IndexMap.add(%{}, Enum.map(uuids, fn uuid -> %Player{uuid: uuid} end))
     }
     |> IndexMap.update_all(:players, fn player ->
       player
