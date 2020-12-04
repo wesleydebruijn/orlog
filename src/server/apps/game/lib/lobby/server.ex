@@ -20,12 +20,17 @@ defmodule Game.Lobby.Server do
     end
   end
 
+  @spec state(pid()) :: Lobby.t()
+  def state(pid) do
+    GenServer.call(pid, :state)
+  end
+
   @spec joinable?(pid(), String.t()) :: boolean()
   def joinable?(pid, user_uuid) do
     GenServer.call(pid, {:joinable?, user_uuid})
   end
 
-  @spec join(pid(), String.t()) :: Game.Lobby.t()
+  @spec join(pid(), String.t()) :: Lobby.t()
   def join(pid, user_uuid) do
     GenServer.call(pid, {:join, user_uuid, self()})
   end
@@ -35,10 +40,20 @@ defmodule Game.Lobby.Server do
     GenServer.cast(pid, {:leave, self()})
   end
 
+  @spec action(pid(), any()) :: :ok
+  def action(pid, action) do
+    GenServer.call(pid, {:action, action, self()})
+  end
+
   @impl true
   @spec init(any) :: {:ok, Lobby.t()}
   def init(state) do
     {:ok, state}
+  end
+
+  @impl true
+  def handle_call(:state, _from, state) do
+    {:reply, state, state}
   end
 
   @impl true
@@ -48,17 +63,36 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_call({:join, user_uuid, pid}, _from, state) do
-    notify_pids(pid)
-
-    # todo: when @pids are met, start the game
+    notify_pids()
 
     new_state = Game.Lobby.join(state, user_uuid, pid)
 
-    {:reply, new_state, new_state}
+    if Game.Lobby.startable?(new_state) do
+      new_state = Game.Lobby.start(new_state)
+
+      {:reply, new_state, new_state}
+    else
+      {:reply, new_state, new_state}
+    end
+  end
+
+  @impl true
+  def handle_call({:action, action, pid}, _from, state) do
+    if Game.Lobby.turn?(state, pid) do
+      notify_pids()
+
+      new_state = %{state | game: Game.invoke(state.game, action)}
+
+      {:reply, new_state, new_state}
+    else
+      {:reply, state, state}
+    end
   end
 
   @impl true
   def handle_cast({:leave, pid}, state) do
+    notify_pids()
+
     new_state = Game.Lobby.leave(state, pid)
 
     if Game.Lobby.stale?(new_state) do
@@ -69,8 +103,10 @@ defmodule Game.Lobby.Server do
   end
 
   @impl true
-  def handle_info({:notify_pids, pid}, state) do
-    {:noreply, Game.Lobby.notify_pids(state, pid)}
+  def handle_info(:notify_pids, state) do
+    Game.Lobby.notify_pids(state)
+
+    {:noreply, state}
   end
 
   def handle_info(:terminate, state) do
@@ -81,8 +117,8 @@ defmodule Game.Lobby.Server do
     end
   end
 
-  defp notify_pids(pid) do
-    Process.send(self(), {:notify_pids, pid}, [])
+  defp notify_pids do
+    Process.send(self(), :notify_pids, [])
   end
 
   defp schedule_terminate do
