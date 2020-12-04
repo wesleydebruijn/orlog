@@ -15,6 +15,7 @@ defmodule Game.Dice.Face do
           type: :melee | :ranged | :token,
           stance: :attack | :block | :steal
         }
+  @derive Jason.Encoder
   defstruct count: 1,
             amount: 1,
             intersects: 0,

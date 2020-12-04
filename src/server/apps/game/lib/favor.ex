@@ -19,7 +19,7 @@ defmodule Game.Favor do
             3 => %{cost: number(), value: number()}
           }
         }
-
+  @derive Jason.Encoder
   defstruct name: nil, affects: :any, trigger: :pre_resolution, invoke: nil, tiers: %{}
 
   @spec invoke?(Favor.t(), atom(), atom()) :: boolean()
