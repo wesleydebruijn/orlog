@@ -19,7 +19,7 @@ export function useUser() {
   } = useContext(Context)
 
   if (user === undefined) {
-    throw new Error("Trying to access undefined user; this is most likely a programmer error.");
+    throw new Error('Trying to access undefined user; this is most likely a programmer error.')
   }
 
   return user

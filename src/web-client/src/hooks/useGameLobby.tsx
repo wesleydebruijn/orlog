@@ -6,7 +6,7 @@ import { useGameState } from './useGameState'
 
 export function useGameLobby() {
   const { gameId } = useParams<{ gameId: string }>()
-  const user = useUser();
+  const user = useUser()
   const socketUrl = `ws://localhost:4000/ws/${gameId}/${user.id}`
 
   const { state, nextState } = useGameState()

@@ -6,10 +6,10 @@ type LoginAction = {
   type: typeof AUTH_LOGIN
 }
 
-export type Action = LoginAction;
+export type Action = LoginAction
 
 export type User = {
-  id: string,
+  id: string
   name: string
 }
 
