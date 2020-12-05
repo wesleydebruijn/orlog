@@ -29,6 +29,8 @@ defmodule Game.Phase.Roll do
   def action(game, :start_turn) do
     game
     |> Turn.update_player(&Player.update(&1, %{rolled: false}))
+
+    # todo: next turn if all dices are locked
   end
 
   def action(game, {:select, index}) do

@@ -26,11 +26,10 @@ defmodule Api.Websocket do
   def websocket_handle({:text, json}, state) do
     {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(state.uuid)
 
-    payload = Jason.decode!(json)
-
     state =
-      case payload["data"]["message"] do
-        _other -> Game.Lobby.Server.action(pid, :continue)
+      case Jason.decode!(json) do
+        %{"type" => "continue"} -> Game.Lobby.Server.action(pid, :continue)
+        _other -> state
       end
 
     {:reply, {:text, encode!(state)}, state}

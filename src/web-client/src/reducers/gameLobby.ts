@@ -12,6 +12,7 @@ type NextState = {
 export type Action = NextState
 
 export default function GameReducer(state: GameLobby, action: Action) {
+  console.log(state, action)
   switch (action.type) {
     case NEXT_STATE:
       return action.payload.data

@@ -11,7 +11,7 @@ export function useGameLobby() {
 
   const { state, nextState } = useGameState()
 
-  useWebSocket(socketUrl, {
+  const { sendJsonMessage } = useWebSocket(socketUrl, {
     shouldReconnect: () => {
       // todo: dont reconnect on full lobby
       return true
@@ -23,7 +23,15 @@ export function useGameLobby() {
     }
   })
 
+  const doContinue = () => {
+    const message = {
+      type: 'continue'
+    }
+    sendJsonMessage(message)
+  }
+
   return {
+    doContinue,
     state
   }
 }

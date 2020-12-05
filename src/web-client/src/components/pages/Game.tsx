@@ -8,7 +8,7 @@ import {
 } from '../../selectors/selectors'
 
 export default function Game() {
-  const { state } = useGameLobby()
+  const { state, doContinue } = useGameLobby()
 
   const status = getStatus(state)
 
@@ -27,11 +27,13 @@ export default function Game() {
         <b>Phase:</b> {phase}
       </p>
       <p>
-        <b>You are:</b> {player && player.health}
+        <b>You are:</b> {player && player.health}{' '}
+        {state.game.turn === state.turn ? 'IK BEN' : 'IK BEN NIET'}
       </p>
       <p>
         <b>Your opponent is:</b> {opponent && opponent.health}
       </p>
+      <button onClick={() => doContinue()}>Continue</button>
     </>
   )
 }

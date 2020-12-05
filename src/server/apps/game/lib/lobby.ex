@@ -39,7 +39,7 @@ defmodule Game.Lobby do
 
   @spec startable?(Lobby.t()) :: boolean()
   def startable?(state) do
-    Enum.count(state.pids) == @pids
+    state.status != :playing && Enum.count(state.pids) == @pids
   end
 
   @spec turn?(Lobby.t(), pid()) :: boolean()
