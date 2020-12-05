@@ -40,7 +40,7 @@ defmodule Game.Lobby.Server do
     GenServer.cast(pid, {:leave, self()})
   end
 
-  @spec action(pid(), any()) :: :ok
+  @spec action(pid(), any()) :: Lobby.t()
   def action(pid, action) do
     GenServer.call(pid, {:action, action, self()})
   end
