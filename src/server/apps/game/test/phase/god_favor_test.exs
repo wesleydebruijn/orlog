@@ -69,13 +69,13 @@ defmodule Game.Phase.GodFavorTest do
         turn: 1
       }
 
-      actual = Phase.GodFavor.action(game, {:select, {1, 2}})
+      actual = Phase.GodFavor.action(game, {:select, %{favor: 1, tier: 2}})
 
       expected = %Game{
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             turns: 2,
             tokens: 6
           },
@@ -102,7 +102,7 @@ defmodule Game.Phase.GodFavorTest do
         turn: 1
       }
 
-      actual = Phase.GodFavor.action(game, {:select, {1, 2}})
+      actual = Phase.GodFavor.action(game, {:select, %{favor: 1, tier: 2}})
 
       expected = %Game{
         players: %{

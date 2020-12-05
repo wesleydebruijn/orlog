@@ -265,7 +265,7 @@ defmodule Game.Action.HealTest do
             favors: %{
               1 => 1
             },
-            favor_tier: {1, 1}
+            favor_tier: %{favor: 1, tier: 1}
           }
         },
         turn: 1
@@ -282,7 +282,7 @@ defmodule Game.Action.HealTest do
             favors: %{
               1 => 1
             },
-            favor_tier: {1, 1}
+            favor_tier: %{favor: 1, tier: 1}
           }
         },
         turn: 1
