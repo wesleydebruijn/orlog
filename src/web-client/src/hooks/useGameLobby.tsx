@@ -23,15 +23,20 @@ export function useGameLobby() {
     }
   })
 
-  const doContinue = () => {
-    const message = {
+  const doContinue = () =>
+    sendJsonMessage({
       type: 'continue'
-    }
-    sendJsonMessage(message)
-  }
+    })
+
+  const toggleDice = (index: string) =>
+    sendJsonMessage({
+      type: 'toggleDice',
+      value: parseInt(index)
+    })
 
   return {
     doContinue,
+    toggleDice,
     state
   }
 }

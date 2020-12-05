@@ -33,7 +33,7 @@ defmodule Game.Phase.Roll do
     # todo: next turn if all dices are locked
   end
 
-  def action(game, {:select, index}) do
+  def action(game, {:toggle, index}) do
     game
     |> Turn.update_player(fn player ->
       player

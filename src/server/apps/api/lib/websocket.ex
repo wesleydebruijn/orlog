@@ -28,8 +28,14 @@ defmodule Api.Websocket do
 
     state =
       case Jason.decode!(json) do
-        %{"type" => "continue"} -> Game.Lobby.Server.action(pid, :continue)
-        _other -> state
+        %{"type" => "continue"} ->
+          Game.Lobby.Server.action(pid, :continue)
+
+        %{"type" => "toggleDice", "value" => index} ->
+          Game.Lobby.Server.action(pid, {:toggle, index})
+
+        _other ->
+          state
       end
 
     {:reply, {:text, encode!(state)}, state}
