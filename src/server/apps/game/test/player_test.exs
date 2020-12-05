@@ -37,7 +37,7 @@ defmodule Game.PlayerTest do
           2 => 5,
           3 => 1
         },
-        favor_tier: {3, 3}
+        favor_tier: %{favor: 3, tier: 3}
       }
 
       actual = Player.get_favor(player)
@@ -69,7 +69,7 @@ defmodule Game.PlayerTest do
         }
       }
 
-      actual = Player.get_favor(player, {3, 1})
+      actual = Player.get_favor(player, %{favor: 3, tier: 1})
 
       expected = %{
         favor: %{

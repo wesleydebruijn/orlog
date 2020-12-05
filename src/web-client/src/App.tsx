@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import { GameLobbyProvider } from './providers/GameLobbyProvider'
+import { GameProvider } from './providers/GameLobbyProvider'
 import { AuthProvider } from './providers/AuthProvider'
 import PrivateRoute from './components/shared/PrivateRoute'
 
@@ -20,9 +20,9 @@ export default function App() {
             </PrivateRoute>
 
             <PrivateRoute path="/game/:gameId" exact>
-              <GameLobbyProvider>
+              <GameProvider>
                 <Game />
-              </GameLobbyProvider>
+              </GameProvider>
             </PrivateRoute>
 
             <Route path="/login" exact>

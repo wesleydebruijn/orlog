@@ -28,6 +28,7 @@ defmodule Api.MixProject do
       {:cowboy, "~> 2.8"},
       {:plug, "~> 1.11"},
       {:plug_cowboy, "~> 2.0"},
+      {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.2"}
     ]
   end

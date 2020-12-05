@@ -1,7 +1,14 @@
 import { Action } from '../reducers/gameLobby'
 
-export type GameLobbyContext = {
-  state: GameLobby
+export type GameState = {
+  lobby: GameLobby
+  favors?: {
+    [index: number]: Favor
+  }
+}
+
+export type GameContext = {
+  state: GameState
   dispatch: (action: Action) => void
 }
 
@@ -11,6 +18,18 @@ export type GameLobby = {
   settings: Settings
   turn: number
   game: Game
+}
+
+export type Favor = {
+  name: string
+  tiers: {
+    [index: number]: FavorTier
+  }
+}
+
+export type FavorTier = {
+  cost: number
+  value: number
 }
 
 export type Settings = {
@@ -61,18 +80,9 @@ export type DiceFace = {
   stance: 'attack' | 'block' | 'steal'
 }
 
-export const initialGameLobbyState: GameLobby = {
-  status: 'connecting',
-  turn: 0,
-  settings: {
-    dices: 0,
-    favors: 0,
-    health: 0,
-    tokens: 0
-  },
-  game: {
-    round: 0,
-    phase: 0,
+export const initialState: GameState = {
+  lobby: {
+    status: 'connecting',
     turn: 0,
     settings: {
       dices: 0,
@@ -80,6 +90,17 @@ export const initialGameLobbyState: GameLobby = {
       health: 0,
       tokens: 0
     },
-    players: {}
+    game: {
+      round: 0,
+      phase: 0,
+      turn: 0,
+      settings: {
+        dices: 0,
+        favors: 0,
+        health: 0,
+        tokens: 0
+      },
+      players: {}
+    }
   }
 }

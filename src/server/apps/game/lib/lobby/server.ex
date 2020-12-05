@@ -78,9 +78,9 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_call({:action, action, pid}, _from, state) do
-    if Game.Lobby.turn?(state, pid) do
-      notify_pids()
+    notify_pids()
 
+    if Game.Lobby.turn?(state, pid) do
       new_state = %{state | game: Game.invoke(state.game, action)}
 
       {:reply, new_state, new_state}

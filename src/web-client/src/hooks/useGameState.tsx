@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { Context } from '../providers/GameLobbyProvider'
-import { NEXT_STATE } from '../reducers/gameLobby'
+import { NEXT_STATE, SET_FAVORS } from '../reducers/gameLobby'
 import { GameLobby } from '../types/types'
 
 export function useGameState() {
@@ -14,6 +14,12 @@ export function useGameState() {
       nextState: (data: GameLobby) => {
         dispatch({
           type: NEXT_STATE,
+          payload: { data }
+        })
+      },
+      setFavors: (data: any) => {
+        dispatch({
+          type: SET_FAVORS,
           payload: { data }
         })
       },
