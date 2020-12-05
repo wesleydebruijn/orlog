@@ -1,33 +1,23 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { GameProvider } from "./providers/GameProvider/GameProvider";
-
-import PrivateRoute from "./components/shared/PrivateRoute";
 import Dashboard from "./components/pages/Dashboard";
-import Game from "./components/pages/Game";
-import Login from "./components/pages/Login";
+import Game from "./components/pages/Game"; 
 
 export default function App() {
   return (
     <Router>
-      <GameProvider>
-        <div className="orlog">
-          <Switch>
-            <PrivateRoute path="/" exact>
-              <Dashboard />
-            </PrivateRoute>
+      <div className="orlog">
+        <Switch>
+          <Route path="/" exact>
+            <Dashboard />
+          </Route>
 
-            <PrivateRoute path="/game/:id" exact>
-              <Game />
-            </PrivateRoute>
-
-            <Route path="/login" exact>
-              <Login />
-            </Route>
-          </Switch>
-        </div>
-      </GameProvider>
+          <Route path="/game/:gameId" exact>
+            <Game />
+          </Route>
+        </Switch>
+      </div>
     </Router>
   );
 }

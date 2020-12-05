@@ -19,7 +19,7 @@ defmodule Game.Player do
           favor_tier: {integer(), integer()},
           dices: %{}
         }
-  @derive {Jason.Encoder, except: [:uuid, :favor_tier]}
+  @derive {Jason.Encoder, except: [:favor_tier]}
   defstruct uuid: nil,
             health: 0,
             tokens: 0,
