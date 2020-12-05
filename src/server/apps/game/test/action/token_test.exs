@@ -272,7 +272,7 @@ defmodule Game.Action.TokenTest do
     game = %Game{
       players: %{
         1 => %Player{},
-        2 => %Player{favor_tier: {1, 2}}
+        2 => %Player{favor_tier: %{favor: 1, tier: 2}}
       },
       turn: 1
     }
@@ -282,7 +282,7 @@ defmodule Game.Action.TokenTest do
     expected = %Game{
       players: %{
         1 => %Player{},
-        2 => %Player{favor_tier: {1, -1}}
+        2 => %Player{favor_tier: %{favor: 1, tier: -1}}
       },
       turn: 1
     }

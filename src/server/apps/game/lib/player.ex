@@ -16,7 +16,7 @@ defmodule Game.Player do
           turns: integer(),
           rolled: boolean(),
           favors: map(),
-          favor_tier: {integer(), integer()},
+          favor_tier: map(),
           dices: %{}
         }
   @derive {Jason.Encoder, except: [:uuid, :favor_tier]}
@@ -27,7 +27,7 @@ defmodule Game.Player do
             turns: 0,
             rolled: false,
             favors: %{},
-            favor_tier: {0, 0}
+            favor_tier: %{favor: 0, tier: 0}
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs), do: Map.merge(player, attrs)
@@ -41,9 +41,10 @@ defmodule Game.Player do
   @spec get_favor(Player.t()) :: map()
   def get_favor(player), do: get_favor(player, player.favor_tier)
 
-  @spec get_favor(Player.t(), {integer(), integer()}) :: map()
-  def get_favor(player, favor_tier) do
-    {favor_index, tier_index} = favor_tier
+  @spec get_favor(Player.t(), map()) :: map()
+  def get_favor(player, map) do
+    favor_index = Map.get(map, :favor, 0)
+    tier_index = Map.get(map, :tier, 0)
     favor = Map.get(@favors, Map.get(player.favors, favor_index, 0), %{})
 
     %{

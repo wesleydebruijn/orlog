@@ -41,7 +41,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 1}
+            favor_tier: %{favor: 1, tier: 1}
           },
           2 => %Player{}
         },
@@ -54,7 +54,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 1},
+            favor_tier: %{favor: 1, tier: 1},
             health: 1
           },
           2 => %Player{}
@@ -98,7 +98,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 6
           },
           2 => %Player{}
@@ -112,7 +112,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 0,
             health: 2
           },
@@ -129,7 +129,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 6
           },
           2 => %Player{}
@@ -143,7 +143,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 6
           },
           2 => %Player{}
@@ -159,7 +159,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 5
           },
           2 => %Player{}
@@ -173,7 +173,7 @@ defmodule Game.FavorTest do
         players: %{
           1 => %Player{
             favors: %{1 => 1},
-            favor_tier: {1, 2},
+            favor_tier: %{favor: 1, tier: 2},
             tokens: 5
           },
           2 => %Player{}

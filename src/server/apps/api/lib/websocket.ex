@@ -26,11 +26,25 @@ defmodule Api.Websocket do
   def websocket_handle({:text, json}, state) do
     {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(state.uuid)
 
-    payload = Jason.decode!(json)
-
     state =
-      case payload["data"]["message"] do
-        _other -> Game.Lobby.Server.action(pid, :continue)
+      case Jason.decode!(json) do
+        %{"type" => "continue"} ->
+          Game.Lobby.Server.action(pid, :continue)
+
+        %{"type" => "toggleDice", "value" => index} ->
+          Game.Lobby.Server.action(pid, {:toggle, index})
+
+        %{"type" => "selectFavor", "value" => favor_tier} ->
+          case favor_tier do
+            %{"favor" => favor, "tier" => tier} ->
+              Game.Lobby.Server.action(pid, {:select, %{favor: favor, tier: tier}})
+
+            _other ->
+              state
+          end
+
+        _other ->
+          state
       end
 
     {:reply, {:text, encode!(state)}, state}
