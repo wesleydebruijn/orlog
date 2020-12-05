@@ -7,16 +7,25 @@ defmodule Game.Lobby do
     Settings
   }
 
+  require Logger
+
   @pids 2
   @type t :: %Lobby{
           uuid: String.t(),
+          turn: integer(),
+          status: :waiting | :playing,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{}
         }
 
-  @derive {Jason.Encoder, only: [:uuid, :settings, :game]}
-  defstruct uuid: "", settings: %Settings{}, game: %Game{}, pids: %{}
+  @derive {Jason.Encoder, except: [:pids]}
+  defstruct uuid: "",
+            status: :waiting,
+            turn: 0,
+            settings: %Settings{},
+            game: %Game{},
+            pids: %{}
 
   @spec joinable?(Lobby.t(), String.t()) :: boolean()
   def joinable?(state, user_uuid) do
@@ -40,6 +49,13 @@ defmodule Game.Lobby do
     Map.get(state.pids, uuid) == pid
   end
 
+  @spec turn(Lobby.t(), pid()) :: integer()
+  def turn(state, pid) do
+    state.game.players
+    |> Enum.find({0, nil}, fn {_index, player} -> Map.get(state.pids, player.uuid) == pid end)
+    |> elem(0)
+  end
+
   @spec join(Lobby.t(), String.t(), pid()) :: Lobby.t()
   def join(state, user_uuid, pid) do
     %{state | pids: Map.put(state.pids, user_uuid, pid)}
@@ -57,14 +73,14 @@ defmodule Game.Lobby do
 
   @spec start(Lobby.t()) :: Lobby.t()
   def start(state) do
-    %{state | game: Game.start(Map.keys(state.pids), state.settings)}
+    %{state | status: :playing, game: Game.start(Map.keys(state.pids), state.settings)}
   end
 
   @spec notify_pids(Lobby.t()) :: :ok
   def notify_pids(state) do
     state.pids
     |> Enum.map(fn {_uuid, pid} ->
-      Process.send(pid, Jason.encode!(state), [])
+      Process.send(pid, state, [])
     end)
 
     :ok

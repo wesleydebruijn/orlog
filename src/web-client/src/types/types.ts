@@ -1,6 +1,15 @@
+import { Action } from '../reducers/gameLobby'
+
+export type GameLobbyContext = {
+  state: GameLobby
+  dispatch: (action: Action) => void
+}
+
 export type GameLobby = {
   uuid?: string
+  status: 'connecting' | 'waiting' | 'playing'
   settings: Settings
+  turn: number
   game: Game
 }
 
@@ -48,11 +57,13 @@ export type DiceFace = {
   amount: number
   intersects: number
   disabled: boolean
-  type: "melee" | "ranged" | "token"
-  stance: "attack" | "block" | "steal"
+  type: 'melee' | 'ranged' | 'token'
+  stance: 'attack' | 'block' | 'steal'
 }
 
 export const initialGameLobbyState: GameLobby = {
+  status: 'connecting',
+  turn: 0,
   settings: {
     dices: 0,
     favors: 0,
