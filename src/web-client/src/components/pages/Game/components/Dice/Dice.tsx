@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import { Dice as DiceProps, DiceFace } from '../../../types/types'
+import { Dice as DiceProps, DiceFace } from '../../../../../types/types'
 
 import './dice.scss'
 
@@ -22,11 +22,18 @@ type Props = DiceProps & {
   onClick?: (index: string) => void
 }
 
-export default function Dice({ index, face, tokens, keep, locked, onClick = () => {} }: Props) {
+export default function Dice({
+  index,
+  face,
+  tokens,
+  keep,
+  locked,
+  onClick = (index: string) => {}
+}: Props) {
   const classes = classnames('dice', {
-    ['dice--tokens']: tokens > 0,
-    ['dice--kept']: keep,
-    ['dice--locked']: locked
+    'dice--tokens': tokens > 0,
+    'dice--kept': keep,
+    'dice--locked': locked
   })
 
   function determineFace(face: DiceFace) {
@@ -34,7 +41,5 @@ export default function Dice({ index, face, tokens, keep, locked, onClick = () =
     return faces[`${face.type}-${face.stance}`]
   }
 
-  return (
-    <img className={classes} alt="dice" src={determineFace(face)} onClick={() => onClick(index)} />
-  )
+  return <img className={classes} src={determineFace(face)} alt="" onClick={() => onClick(index)} />
 }

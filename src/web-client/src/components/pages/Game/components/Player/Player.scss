@@ -1,0 +1,46 @@
+.player {
+  align-self: flex-start;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__avatar {
+    width: 95px;
+    height: 95px;
+
+    border-radius: 50%;
+    border: 10px solid silver;
+    z-index: 5;
+  }
+
+  &__name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 250px;
+    height: 65px;
+    left: -20px;
+    border: 5px solid silver;
+    color: #000;
+    background-color: #fff;
+  }
+
+  &__health {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 30px;
+    height: 30px;
+
+    background-color: red;
+    color: #fff;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 90px;
+    left: 75px;
+    z-index: 6;
+  }
+}
