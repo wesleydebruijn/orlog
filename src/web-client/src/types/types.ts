@@ -2,7 +2,7 @@ import { Action } from '../reducers/gameLobby'
 
 export type GameState = {
   lobby: GameLobby
-  favors: {
+  favors?: {
     [index: number]: Favor
   }
 }
@@ -23,7 +23,7 @@ export type GameLobby = {
 export type Favor = {
   name: string
   tiers: {
-    [index: number]: Favor
+    [index: number]: FavorTier
   }
 }
 
@@ -102,6 +102,5 @@ export const initialState: GameState = {
       },
       players: {}
     }
-  },
-  favors: {}
+  }
 }

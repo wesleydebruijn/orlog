@@ -34,6 +34,15 @@ defmodule Api.Websocket do
         %{"type" => "toggleDice", "value" => index} ->
           Game.Lobby.Server.action(pid, {:toggle, index})
 
+        %{"type" => "selectFavor", "value" => favor_tier} ->
+          case favor_tier do
+            %{"favor" => favor, "tier" => tier} ->
+              Game.Lobby.Server.action(pid, {:select, %{favor: favor, tier: tier}})
+
+            _other ->
+              state
+          end
+
         _other ->
           state
       end

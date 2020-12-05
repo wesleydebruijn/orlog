@@ -16,6 +16,19 @@ export const getPlayers = (state: GameState) => state.lobby.game.players
 export const getFavors = (state: GameState) => state.favors
 
 export const getPlayer = createSelector(getPlayers, getTurn, (players, turn) => players[turn])
-export const getOpponentPlayer = createSelector(getPlayers, getPlayer, (players, player) =>
-  Object.values(players).find(opponent => opponent !== player)
+export const getPlayerFavors = createSelector(getPlayer, getFavors, (player, favors) => {
+  if (!favors || !player) return []
+
+  return Object.values(player.favors).map(index => favors[index])
+})
+
+export const getOpponentPlayer = createSelector(
+  getPlayers,
+  getTurn,
+  (players, turn) => players[(turn % 2) + 1]
 )
+export const getOpponentFavors = createSelector(getOpponentPlayer, getFavors, (player, favors) => {
+  if (!favors || !player) return []
+
+  return Object.values(player.favors).map(index => favors[index])
+})

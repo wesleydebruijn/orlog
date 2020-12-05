@@ -46,9 +46,16 @@ export function useGameLobby() {
       value: parseInt(index)
     })
 
+  const selectFavor = (favor: number, tier: number) =>
+    sendJsonMessage({
+      type: 'selectFavor',
+      value: { favor, tier }
+    })
+
   return {
     doContinue,
     toggleDice,
+    selectFavor,
     state
   }
 }
