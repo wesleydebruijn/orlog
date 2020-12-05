@@ -41,5 +41,5 @@ export default function Dice({
     return faces[`${face.type}-${face.stance}`]
   }
 
-  return <img className={classes} src={determineFace(face)} onClick={() => onClick(index)} />
+  return <img className={classes} src={determineFace(face)} alt="" onClick={() => onClick(index)} />
 }

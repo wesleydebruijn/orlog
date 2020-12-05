@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import React, { Children } from 'react'
-import Player from '../Player'
+import React from 'react'
 
 import './PlayerArea.scss'
 
