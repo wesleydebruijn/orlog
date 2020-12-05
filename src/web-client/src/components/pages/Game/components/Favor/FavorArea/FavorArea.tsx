@@ -1,14 +1,21 @@
 import React from 'react'
+
+import { Favor as FavorProps } from '../../../../../../types/types'
 import Favor from '../Favor'
 
 import './FavorArea.scss'
 
-export default function FavorArea() {
+type Props = {
+  favors: FavorProps[]
+  onFavorSelect?: (favorIndex: number, tier: number) => void
+}
+
+export default function FavorArea({ favors, onFavorSelect = undefined }: Props) {
   return (
     <section className="favor-area">
-      <Favor name="Thor's Strike" />
-      <Favor name="Thor's Dildo" />
-      <Favor name="Thor's Buttcheek" />
+      {favors.map(({ name, tiers }, index) => (
+        <Favor name={name} index={index + 1} key={name} onSelect={onFavorSelect} tiers={tiers} />
+      ))}
     </section>
   )
 }

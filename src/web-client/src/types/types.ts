@@ -1,16 +1,20 @@
-import { Action } from '../reducers/gameLobby'
+export type InitialGameState = {
+  status: 'initial'
+  lobby?: GameLobby
+  favors?: {
+    [index: number]: Favor
+  }
+}
 
-export type GameState = {
+export type NewGameState = {
+  status: 'new'
   lobby: GameLobby
   favors?: {
     [index: number]: Favor
   }
 }
 
-export type GameContext = {
-  state: GameState
-  dispatch: (action: Action) => void
-}
+export type GameState = InitialGameState | NewGameState
 
 export type GameLobby = {
   uuid?: string
@@ -78,29 +82,4 @@ export type DiceFace = {
   disabled: boolean
   type: 'melee' | 'ranged' | 'token'
   stance: 'attack' | 'block' | 'steal'
-}
-
-export const initialState: GameState = {
-  lobby: {
-    status: 'connecting',
-    turn: 0,
-    settings: {
-      dices: 0,
-      favors: 0,
-      health: 0,
-      tokens: 0
-    },
-    game: {
-      round: 0,
-      phase: 0,
-      turn: 0,
-      settings: {
-        dices: 0,
-        favors: 0,
-        health: 0,
-        tokens: 0
-      },
-      players: {}
-    }
-  }
 }
