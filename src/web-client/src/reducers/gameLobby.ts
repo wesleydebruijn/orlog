@@ -1,6 +1,7 @@
-import { GameLobby } from '../types/types'
+import { GameState, Favor, GameLobby } from '../types/types'
 
 export const NEXT_STATE = 'NEXT_STATE'
+export const SET_FAVORS = 'SET_FAVORS'
 
 type NextState = {
   type: typeof NEXT_STATE
@@ -9,12 +10,22 @@ type NextState = {
   }
 }
 
-export type Action = NextState
+type SetFavors = {
+  type: typeof SET_FAVORS
+  payload: {
+    data: {
+      [index: number]: Favor
+    }
+  }
+}
 
-export default function GameReducer(state: GameLobby, action: Action) {
-  console.log(state, action)
+export type Action = NextState | SetFavors
+
+export default function GameReducer(state: GameState, action: Action) {
   switch (action.type) {
     case NEXT_STATE:
-      return action.payload.data
+      return { ...state, lobby: action.payload.data }
+    case SET_FAVORS:
+      return { ...state, favors: action.payload.data }
   }
 }

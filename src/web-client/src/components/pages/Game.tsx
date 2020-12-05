@@ -5,7 +5,8 @@ import {
   getPlayer,
   getPhase,
   getRound,
-  getStatus
+  getStatus,
+  getFavors
 } from '../../selectors/selectors'
 
 import Dice from '../shared/Dice/Dice'
@@ -21,6 +22,8 @@ export default function Game() {
   const player = getPlayer(state)
   const opponent = getOpponentPlayer(state)
 
+  const favors = getFavors(state)
+
   return (
     <>
       <h2>Game: {status}</h2>
@@ -31,7 +34,7 @@ export default function Game() {
       </p>
       <p>
         <b>You are:</b> {player && player.health}{' '}
-        {state.game.turn === state.turn ? 'IK BEN' : 'IK BEN NIET'}
+        {state.lobby.game.turn === state.lobby.turn ? 'IK BEN' : 'IK BEN NIET'}
       </p>
       <p>
         {player &&
@@ -49,6 +52,7 @@ export default function Game() {
           ))}
       </p>
       <button onClick={() => doContinue()}>Continue</button>
+      <p>{JSON.stringify(favors)}</p>
     </>
   )
 }

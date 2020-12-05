@@ -1,20 +1,20 @@
 import React, { Reducer, useReducer } from 'react'
 
 import reducer, { Action } from '../reducers/gameLobby'
-import { GameLobby, GameLobbyContext, initialGameLobbyState } from '../types/types'
+import { GameState, GameContext, initialState } from '../types/types'
 
-export const Context = React.createContext<GameLobbyContext>({
-  state: initialGameLobbyState,
+export const Context = React.createContext<GameContext>({
+  state: initialState,
   dispatch: () => {}
 })
 
-type GameLobbyProviderProps = {
+type GameProviderProps = {
   children: React.ReactNode
 }
 
-export function GameLobbyProvider({ children }: GameLobbyProviderProps) {
+export function GameProvider({ children }: GameProviderProps) {
   // @ts-ignore
-  const [state, dispatch] = useReducer<Reducer<GameLobby, Action>>(reducer, initialGameLobbyState)
+  const [state, dispatch] = useReducer<Reducer<GameState, Action>>(reducer, initialState)
   const contextValue = { state, dispatch }
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>
