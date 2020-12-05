@@ -18,6 +18,7 @@ COPY src/server/mix.exs ./
 COPY src/server/mix.* ./
 
 COPY src/server/apps/api/mix.exs ./apps/api/
+COPY src/server/apps/game/mix.exs ./apps/game/
 COPY --from=build /usr/src/app/build/ ./apps/api/priv/static/
 
 ENV MIX_ENV=prod
@@ -26,6 +27,9 @@ RUN mix do deps.get --only $MIX_ENV, deps.compile
 COPY . ./
 
 WORKDIR /usr/src/app/apps/api
+RUN MIX_ENV=prod mix compile
+
+WORKDIR /usr/src/app/apps/game
 RUN MIX_ENV=prod mix compile
 
 WORKDIR /usr/src/app
