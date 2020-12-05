@@ -1,11 +1,11 @@
 import { useHistory } from 'react-router'
-import { createUuid } from '../../helpers/identifiers'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Dashboard() {
   const history = useHistory()
 
   function createGame() {
-    const gameId = createUuid()
+    const gameId = uuidv4()
     history.push(`/game/${gameId}`)
   }
 
