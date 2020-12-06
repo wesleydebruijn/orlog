@@ -4,8 +4,10 @@
   border: 2px solid gray;
   background-color: #fff;
 
-  &:hover {
-    cursor: pointer;
+  &--toggleable {
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   &--kept {

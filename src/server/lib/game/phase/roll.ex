@@ -34,11 +34,14 @@ defmodule Game.Phase.Roll do
   end
 
   def action(game, {:toggle, index}) do
-    # todo: only toggle when already rolled
     game
     |> Turn.update_player(fn player ->
-      player
-      |> IndexMap.update(:dices, index, &Dice.swap/1)
+      if player.rolled do
+        player
+        |> IndexMap.update(:dices, index, &Dice.swap/1)
+      else
+        player
+      end
     end)
   end
 

@@ -83,7 +83,10 @@ export default function Game() {
                             onFavorSelect={actions.selectFavor}
                           />
                         </div>
-                        <DiceGrid dices={player.dices} onToggleDice={actions.toggleDice} />
+                        <DiceGrid
+                          dices={player.dices}
+                          onToggleDice={player.rolled ? actions.toggleDice : undefined}
+                        />
                       </>
                     )}
                   </PlayerArea>
