@@ -25,19 +25,28 @@ defmodule Game.Phase.Resolution do
     |> Turn.opponent(&Action.Token.collect_tokens/1)
   end
 
-  def action(game, :start_turn), do: Turn.next(game)
+  def action(game, :start_turn) do
+    game
+    |> Turn.get_player()
+    |> case do
+      %{turns: 1} -> game
+      _other -> Turn.next(game)
+    end
+  end
+
+  def action(game, :continue), do: Turn.next(game)
 
   def action(game, :end_turn) do
     game
     |> Turn.get_player()
     |> case do
-      %{turns: 7} -> action(game, {:pre_resolution, :opponent})
-      %{turns: 6} -> action(game, {:pre_resolution, :player})
-      %{turns: 5} -> action(game, {:resolution, :resolve})
-      %{turns: 4} -> action(game, {:resolution, :attack})
-      %{turns: 3} -> action(game, {:resolution, :steal})
-      %{turns: 2} -> action(game, {:post_resolution, :opponent})
-      %{turns: 1} -> action(game, {:post_resolution, :player})
+      %{turns: 8} -> action(game, {:pre_resolution, :opponent})
+      %{turns: 7} -> action(game, {:pre_resolution, :player})
+      %{turns: 6} -> action(game, {:resolution, :resolve})
+      %{turns: 5} -> action(game, {:resolution, :attack})
+      %{turns: 4} -> action(game, {:resolution, :steal})
+      %{turns: 3} -> action(game, {:post_resolution, :opponent})
+      %{turns: 2} -> action(game, {:post_resolution, :player})
       _other -> game
     end
     |> Turn.update_player(&Player.increase(&1, :turns, -1))

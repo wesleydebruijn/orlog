@@ -37,8 +37,13 @@ export default function Game() {
               <section className="game">
                 <GameInfo
                   phase={getGamePhase(game).name}
-                  turn={getGamePhase(game).turns + 1 - getCurrentPlayer(game).turns}
-                  maxTurn={getGamePhase(game).turns}
+                  turn={
+                    getGamePhase(game).turns -
+                    getGamePhase(game).auto_turns +
+                    1 -
+                    getCurrentPlayer(game).turns
+                  }
+                  maxTurn={getGamePhase(game).turns - getGamePhase(game).auto_turns}
                   round={game.lobby.game.round}
                 />
                 <section className="game__field">

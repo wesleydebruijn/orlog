@@ -45,7 +45,7 @@ defmodule GameTest do
                phases: %{
                  1 => %{module: Game.Phase.Roll, turns: 3},
                  2 => %{module: Game.Phase.GodFavor, turns: 1},
-                 3 => %{module: Game.Phase.Resolution, turns: 7}
+                 3 => %{module: Game.Phase.Resolution, turns: 8}
                },
                tokens: 0
              },

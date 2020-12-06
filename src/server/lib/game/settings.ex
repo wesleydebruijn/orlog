@@ -2,6 +2,8 @@ defmodule Game.Settings do
   @moduledoc """
   Settings of the game
   """
+  alias Game.Phase
+
   @type t :: %Game.Settings{
           health: integer(),
           tokens: integer(),
@@ -15,8 +17,8 @@ defmodule Game.Settings do
             dices: 6,
             favors: 3,
             phases: %{
-              1 => %{module: Game.Phase.Roll, name: "Roll phase", turns: 3},
-              2 => %{module: Game.Phase.GodFavor, name: "God Favor phase", turns: 1},
-              3 => %{module: Game.Phase.Resolution, name: "Resolution phase", turns: 7}
+              1 => %Phase{name: "Roll", turns: 3, module: Phase.Roll},
+              2 => %Phase{name: "God Favor", turns: 1, module: Phase.GodFavor},
+              3 => %Phase{name: "Resolution", turns: 8, auto_turns: 7, module: Phase.Resolution}
             }
 end

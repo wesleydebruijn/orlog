@@ -4,6 +4,15 @@ defmodule Game.Phase do
   """
   @callback action(Game.t(), any()) :: Game.t()
 
+  @type t :: %Game.Phase{
+          name: String.t(),
+          turns: integer(),
+          auto_turns: integer(),
+          module: module()
+        }
+  @derive {Jason.Encoder, except: [:module]}
+  defstruct name: "", turns: 0, auto_turns: 0, module: nil
+
   @spec current(Game.t()) :: map()
   def current(game) do
     Map.get(game.settings.phases, game.phase)
