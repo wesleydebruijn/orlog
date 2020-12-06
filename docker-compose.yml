@@ -5,6 +5,8 @@ services:
     image: docker.pkg.github.com/wesleydebruijn/orlog/orlog:latest
     ports:
       - "4000:4000"
+    networks:
+      - backbone
   nginx:
     image: nginx:1.15-alpine
     restart: unless-stopped
@@ -15,6 +17,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    networks:
+      - backbone
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
   certbot:
     image: certbot/certbot
@@ -23,3 +27,6 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+networks:
+  backbone:
+    driver: bridge
