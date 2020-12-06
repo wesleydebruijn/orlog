@@ -34,6 +34,7 @@ export default function Game() {
                     <>
                       <div className="wrapper wrapper--flex">
                         <Player
+                          tokens={opponent.tokens}
                           name="Wesley"
                           avatar="https://images.ctfassets.net/cnu0m8re1exe/621LK0hTGKrRBzXdnqiuuE/e82b6415d8dec51658f2acd6ea6b70b7/viking.jpg?w=650&h=433&fit=fill"
                           health={opponent.health}
@@ -54,6 +55,7 @@ export default function Game() {
                     <>
                       <div className="wrapper wrapper--flex">
                         <Player
+                          tokens={player.tokens}
                           name="Jeffrey"
                           avatar="https://www.nationalgeographic.com/content/dam/news/2018/01/19/viking/01-viking-NationalGeographic_2515792.ngsversion.1516396230234.adapt.1900.1.jpg"
                           health={player.health}

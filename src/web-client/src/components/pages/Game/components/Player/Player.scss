@@ -26,21 +26,30 @@
     background-color: #fff;
   }
 
-  &__health {
+  &__health,
+  &__tokens {
     display: flex;
     justify-content: center;
     align-items: center;
 
     width: 30px;
     height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 6;
+  }
 
+  &__health {
     background-color: red;
     color: #fff;
-    border-radius: 50%;
-
-    position: absolute;
     top: 90px;
     left: 75px;
-    z-index: 6;
+  }
+
+  &__tokens {
+    background-color: orange;
+    color: #fff;
+    top: 90px;
+    left: 10px;
   }
 }
