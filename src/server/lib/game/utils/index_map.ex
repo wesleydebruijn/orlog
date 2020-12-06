@@ -60,9 +60,11 @@ defmodule IndexMap do
     |> Enum.sum()
   end
 
-  @spec take(any(), integer()) :: [any()]
+  @spec take(any(), integer()) :: map()
   def take(items, amount) do
-    Enum.take(items, amount)
+    items
+    |> Enum.take(amount)
+    |> Enum.into(%{})
   end
 
   @spec take_random(map(), integer()) :: [any()]

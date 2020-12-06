@@ -138,9 +138,9 @@ defmodule IndexMapTest do
 
     actual = IndexMap.take(items, 1)
 
-    expected = [
-      {1, %{items: [1, 2], name: "test"}}
-    ]
+    expected = %{
+      1 => %{items: [1, 2], name: "test"}
+    }
 
     assert actual == expected
   end

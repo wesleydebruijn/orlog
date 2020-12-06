@@ -39,8 +39,8 @@ export type FavorTier = {
 export type Phases = {
   [index: number]: {
     name: string
-    module: string
     turns: number
+    auto_turns: number
   }
 }
 
