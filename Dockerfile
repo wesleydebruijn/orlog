@@ -44,8 +44,7 @@ ENV PORT=4000 \
   MIX_ENV=prod \
   SHELL=/bin/bash
 
-WORKDIR /app
+WORKDIR /usr/src/app
 COPY --from=releaser /usr/src/app/_build/prod/rel/api .
-COPY --from=releaser /usr/src/app/bin/ ./bin
 
-CMD ["./bin/start"]
+CMD ["bin/api start"]
