@@ -1,3 +1,0 @@
-# Game
-
-Gameplay core logic

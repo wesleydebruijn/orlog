@@ -1,7 +1,7 @@
 defmodule Api.Router do
   use Plug.Router
 
-  plug(Plug.Static, at: "/", from: :api)
+  plug(Plug.Static, at: "/", from: :orlog)
 
   plug(:match)
 
@@ -21,7 +21,7 @@ defmodule Api.Router do
   end
 
   defp favors do
-    Application.get_env(:game, :favors)
+    Application.get_env(:orlog, :favors)
     |> Enum.into(%{}, fn {index, item} ->
       {index, %{name: item.name, tiers: item.tiers}}
     end)

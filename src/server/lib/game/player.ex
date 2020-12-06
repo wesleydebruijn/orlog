@@ -7,7 +7,7 @@ defmodule Game.Player do
     Dice
   }
 
-  @favors Application.get_env(:game, :favors)
+  @favors Application.get_env(:orlog, :favors)
 
   @type t :: %Player{
           uuid: String.t(),

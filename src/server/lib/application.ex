@@ -1,4 +1,4 @@
-defmodule Api do
+defmodule Orlog do
   use Application
 
   @spec start(any, any) :: {:error, any} | {:ok, pid}
@@ -12,7 +12,7 @@ defmodule Api do
       Game.Lobby.Supervisor
     ]
 
-    opts = [strategy: :one_for_one, name: Api.Application]
+    opts = [strategy: :one_for_one, name: Orlog.Application]
     Supervisor.start_link(children, opts)
   end
 

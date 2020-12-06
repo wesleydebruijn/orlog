@@ -19,6 +19,11 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
+# Ignore package tarball (built via "mix hex.build").
+server-*.tar
+
 
 # Temporary files for e.g. tests
 /tmp
+
+.elixir_ls

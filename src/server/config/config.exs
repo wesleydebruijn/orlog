@@ -9,7 +9,7 @@
 # move said applications out of the umbrella.
 import Config
 
-config :game,
+config :orlog,
   favors: %{
     1 => %{
       name: "Thors's Strike",

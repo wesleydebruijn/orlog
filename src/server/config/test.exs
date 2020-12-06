@@ -1,6 +1,6 @@
 import Config
 
-config :game,
+config :orlog,
   favors: %{
     1 => %{
       name: "Fake Favor",
