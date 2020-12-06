@@ -1,3 +1,4 @@
+# ---- Client - Build Stage ----
 FROM node:14.15-alpine as build
 
 WORKDIR /usr/src/app
@@ -6,44 +7,24 @@ RUN yarn cache clean && yarn --update-checksums
 COPY src/web-client/. ./
 RUN yarn && yarn build
 
-FROM elixir:1.11.2-alpine as releaser
-
-WORKDIR /usr/src/app
-
-# Install Hex + Rebar
-RUN mix do local.hex --force, local.rebar --force
-
-COPY src/server/config/ ./config/
-COPY src/server/mix.exs ./
-COPY src/server/mix.* ./
-
-COPY src/server/apps/api/mix.exs ./apps/api/
-COPY src/server/apps/game/mix.exs ./apps/game/
-COPY --from=build /usr/src/app/build/ ./apps/api/priv/static/
-
+# ---- Server - Build Stage ----
+FROM elixir:1.11.2-alpine as builder
 ENV MIX_ENV=prod
-RUN mix do deps.get --only $MIX_ENV, deps.compile
+COPY src/server/lib ./lib
+COPY src/server/mix.exs .
+COPY src/server/mix.lock .
+COPY --from=build /usr/src/app/build/ ./priv/static/
+RUN mix local.rebar --force \
+  && mix local.hex --force \
+  && mix deps.get \
+  && mix release
 
-COPY . ./
-
-WORKDIR /usr/src/app/apps/api
-RUN MIX_ENV=prod mix compile
-
-WORKDIR /usr/src/app/apps/game
-RUN MIX_ENV=prod mix compile
-
-WORKDIR /usr/src/app
-RUN MIX_ENV=prod mix release
-
-########################################################################
-
-FROM elixir:1.11.2-alpine
-
+# ---- Application Stage ----
+FROM alpine:3
+RUN apk add --no-cache --update bash openssl
 EXPOSE 4000
 ENV PORT=4000 \
   MIX_ENV=prod
-
-WORKDIR /usr/src/app
-COPY --from=releaser /usr/src/app/_build/prod/rel/orlog .
-
-CMD ["/usr/src/app/bin/orlog start"]
+WORKDIR /app
+COPY --from=builder _build/prod/rel/orlog/ .
+CMD ["/app/bin/orlog", "start"]
