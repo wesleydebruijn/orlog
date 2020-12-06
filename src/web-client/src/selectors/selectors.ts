@@ -9,6 +9,8 @@ export const getTurn = (state: NewGameState) => state.lobby.turn
 export const getGame = (state: NewGameState) => state.lobby.game
 export const getGameSettings = (state: NewGameState) => state.lobby.game.settings
 export const getGameTurn = (state: NewGameState) => state.lobby.game.turn
+export const getGamePhase = (state: NewGameState) =>
+  state.lobby.game.settings.phases[state.lobby.game.phase]
 export const getRound = (state: NewGameState) => state.lobby.game.round
 export const getPhase = (state: NewGameState) => state.lobby.game.phase
 export const getPlayers = (state: NewGameState) => state.lobby.game.players
@@ -27,6 +29,13 @@ export const getOpponentPlayer = createSelector(
   getTurn,
   (players, turn) => players[(turn % 2) + 1]
 )
+
+export const getCurrentPlayer = createSelector(
+  getPlayers,
+  getGameTurn,
+  (players, turn) => players[turn]
+)
+
 export const getOpponentFavors = createSelector(getOpponentPlayer, getFavors, (player, favors) => {
   if (!favors || !player) return []
 

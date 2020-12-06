@@ -16,10 +16,10 @@ type GameActions = {
 
 type GameProviderProps = {
   children: ({
-    state,
+    game,
     actions
   }: {
-    state: NewGameState
+    game: NewGameState
     actions: GameActions
     status: GameLobby['status']
   }) => React.ReactNode
@@ -87,7 +87,7 @@ export function GameLobbyProvider({ children, gameId, userId }: GameProviderProp
   } else {
     return (
       <Context.Provider value={gameState}>
-        {children({ state: gameState, actions, status: gameState.lobby.status })}
+        {children({ game: gameState, actions, status: gameState.lobby.status })}
       </Context.Provider>
     )
   }
