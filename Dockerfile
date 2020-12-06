@@ -41,10 +41,9 @@ FROM elixir:1.11.2-alpine
 
 EXPOSE 4000
 ENV PORT=4000 \
-  MIX_ENV=prod \
-  SHELL=/bin/bash
+  MIX_ENV=prod
 
 WORKDIR /usr/src/app
-COPY --from=releaser /usr/src/app/_build/prod/rel/api .
+COPY --from=releaser /usr/src/app/_build/prod/rel/orlog .
 
-CMD ["bin/api start"]
+CMD ["/usr/src/app/bin/orlog start"]
