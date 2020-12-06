@@ -36,11 +36,20 @@ export type FavorTier = {
   value: number
 }
 
+export type Phases = {
+  [index: number]: {
+    name: string
+    module: string
+    turns: number
+  }
+}
+
 export type Settings = {
   dices: number
   favors: number
   health: number
   tokens: number
+  phases: Phases
 }
 
 export type Game = {
