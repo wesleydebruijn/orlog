@@ -1,17 +1,17 @@
-# # ---- Client - Build Stage ----
-# FROM node:14.15-alpine as client-build
+# ---- Client - Build Stage ----
+FROM node:14.15-alpine as client-build
 
-# WORKDIR /usr/src/app
-# COPY src/web-client/package*.json ./
-# RUN yarn cache clean && yarn --update-checksums
-# COPY src/web-client/. ./
-# RUN yarn && yarn build
+WORKDIR /usr/src/app
+COPY src/web-client/package*.json ./
+RUN yarn cache clean && yarn --update-checksums
+COPY src/web-client/. ./
+RUN yarn && yarn build
 
 # ---- Server - Build Stage ----
 FROM elixir:1.11.2-alpine as server-build
 ENV MIX_ENV=prod
 COPY src/server .
-# COPY --from=client-build /usr/src/app/build/ ./priv/static/
+RUN rm -rf _build
 RUN mix local.rebar --force \
   && mix local.hex --force \
   && mix deps.get \
@@ -24,5 +24,6 @@ EXPOSE 4000
 ENV PORT=4000 \
   MIX_ENV=prod
 WORKDIR /app
+COPY --from=client-build /usr/src/app/build/ /app/build/
 COPY --from=server-build _build/ .
 CMD ["/app/prod/rel/orlog/bin/orlog", "start"]

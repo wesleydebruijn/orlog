@@ -1,7 +1,7 @@
 defmodule Api.Router do
   use Plug.Router
 
-  plug(Plug.Static, at: "/", from: :orlog)
+  plug(Plug.Static, at: "/static", from: "build/static")
 
   plug(:match)
 
@@ -13,7 +13,7 @@ defmodule Api.Router do
 
   get "/" do
     conn = put_resp_content_type(conn, "text/html")
-    send_file(conn, 200, "priv/static/index.html")
+    send_file(conn, 200, "./build/index.html")
   end
 
   get "/api/favors" do
