@@ -28,14 +28,14 @@ type GameProviderProps = {
 }
 
 export function GameLobbyProvider({ children, gameId, userId }: GameProviderProps) {
-  const socketUrl = `ws://localhost:4000/ws/${gameId}/${userId}`
+  const socketUrl = `${process.env.REACT_APP_WS_URL}/${gameId}/${userId}`
   const [gameState, setGameState] = useState<GameState>({
     status: 'initial'
   })
 
   useEffect(() => {
     async function fetchFavors() {
-      const response = await fetch('http://localhost:4000/favors')
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/favors`)
       const data = await response.json()
 
       setGameState(prev => ({
