@@ -1,4 +1,4 @@
-name: Node.js Deploy
+name: Deploy
 
 on:
   push:
@@ -8,32 +8,20 @@ on:
 
 jobs:
   build:
-    name: Build and test
+    name: Deploy
     runs-on: ubuntu-latest
     env:
       CI: true
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - run: npm install -g yarn
-      - name: yarn install, build, and test
-        working-directory: ./src/web-client
-        run: |
-          yarn install
-          yarn run build
-          yarn test --passWithNoTests
       - name: Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: wesleydebruijn/orlog/web-client
+          name: wesleydebruijn/orlog/orlog
           registry: docker.pkg.github.com
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: src/web-client/Dockerfile
+          dockerfile: Dockerfile
           tags: latest
       - name: Deploy package to DigitalOcean
         uses: appleboy/ssh-action@master
@@ -47,7 +35,6 @@ jobs:
           port: ${{ secrets.DIGITALOCEAN_PORT }}
           envs: GH_USERNAME, GH_TOKEN
           script: |
-            docker stop $(docker ps -a -q)
-            docker login docker.pkg.github.com -u $GH_USERNAME -p $GH_TOKEN
-            docker pull docker.pkg.github.com/wesleydebruijn/orlog/web-client:latest
-            docker run -dit -p 80:80 docker.pkg.github.com/wesleydebruijn/orlog/web-client:latest
+            cd orlog
+            git pull
+            docker-compose up -d
