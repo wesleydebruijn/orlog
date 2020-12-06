@@ -18,7 +18,7 @@ export type GameState = InitialGameState | NewGameState
 
 export type GameLobby = {
   uuid?: string
-  status: 'connecting' | 'waiting' | 'playing'
+  status: 'connecting' | 'waiting' | 'playing' | 'finished'
   settings: Settings
   turn: number
   game: Game
@@ -56,6 +56,7 @@ export type Game = {
   round: number
   phase: number
   turn: number
+  winner: number
   settings: Settings
   players: {
     [index: number]: Player

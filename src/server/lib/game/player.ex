@@ -35,7 +35,7 @@ defmodule Game.Player do
   @spec increase(Player.t(), atom(), integer()) :: Player.t()
   def increase(player, key, amount) do
     player
-    |> Map.put(key, Map.get(player, key) + amount)
+    |> Map.put(key, Enum.max([0, Map.get(player, key) + amount]))
   end
 
   @spec get_favor(Player.t()) :: map()

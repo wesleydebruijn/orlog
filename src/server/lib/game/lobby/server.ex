@@ -81,7 +81,10 @@ defmodule Game.Lobby.Server do
     notify_pids()
 
     if Game.Lobby.turn?(state, pid) do
-      new_state = %{state | game: Game.invoke(state.game, action)}
+      new_state =
+        state
+        |> Map.put(:game, Game.invoke(state.game, action))
+        |> Game.Lobby.update_status()
 
       {:reply, new_state, new_state}
     else
@@ -122,7 +125,7 @@ defmodule Game.Lobby.Server do
   end
 
   defp schedule_terminate do
-    Process.send_after(self(), :terminate, 1_000)
+    Process.send_after(self(), :terminate, 120_000)
   end
 
   defp to_name(uuid), do: String.to_atom(uuid)

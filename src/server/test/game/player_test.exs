@@ -22,8 +22,8 @@ defmodule Game.PlayerTest do
     end
 
     test "when turns are substracted" do
-      actual = Player.increase(%Player{}, :turns, -2)
-      expected = %Player{turns: -2}
+      actual = Player.increase(%Player{turns: 1}, :turns, -2)
+      expected = %Player{turns: 0}
 
       assert actual == expected
     end

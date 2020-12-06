@@ -4,6 +4,7 @@ defmodule Game.Phase.Resolution do
   and previously selected God Favors are triggered before
   and/or after the standoff
   """
+  require Logger
   @behaviour Game.Phase
 
   alias Game.{
@@ -84,6 +85,18 @@ defmodule Game.Phase.Resolution do
       |> Player.update(%{dices: IndexMap.take(player.dices, game.settings.dices)})
     end)
     |> Favor.invoke(:post_resolution, :player)
+  end
+
+  def action(game, :end_phase) do
+    players = IndexMap.filter(game.players, fn player -> player.health > 0 end)
+
+    players
+    |> Enum.count()
+    |> case do
+      0 -> Map.put(game, :winner, Turn.determine_next(game))
+      1 -> Map.put(game, :winner, players |> Enum.at(0) |> elem(0))
+      2 -> game
+    end
   end
 
   def action(game, _other) do
