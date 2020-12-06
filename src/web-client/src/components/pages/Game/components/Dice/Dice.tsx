@@ -22,16 +22,10 @@ type Props = DiceProps & {
   onClick?: (index: string) => void
 }
 
-export default function Dice({
-  index,
-  face,
-  tokens,
-  keep,
-  locked,
-  onClick = (index: string) => {}
-}: Props) {
+export default function Dice({ index, face, tokens, keep, locked, onClick }: Props) {
   const classes = classnames('dice', {
     'dice--tokens': tokens > 0,
+    'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
     'dice--locked': locked
   })
@@ -41,5 +35,12 @@ export default function Dice({
     return faces[`${face.type}-${face.stance}`]
   }
 
-  return <img className={classes} src={determineFace(face)} alt="" onClick={() => onClick(index)} />
+  return (
+    <img
+      className={classes}
+      src={determineFace(face)}
+      alt=""
+      onClick={() => onClick && onClick(index)}
+    />
+  )
 }

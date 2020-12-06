@@ -8,7 +8,39 @@ defmodule Game.Phase.RollTest do
   }
 
   describe "action/2" do
-    test "swap dice" do
+    test "swap dice when already rolled" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            rolled: true,
+            dices: %{
+              1 => %Dice{},
+              2 => %Dice{}
+            }
+          }
+        },
+        turn: 1
+      }
+
+      actual = Phase.Roll.action(game, {:toggle, 2})
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            rolled: true,
+            dices: %{
+              1 => %Dice{},
+              2 => %Dice{keep: true}
+            }
+          }
+        },
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
+    test "swap dice when not rolled" do
       game = %Game{
         players: %{
           1 => %Player{
@@ -28,7 +60,7 @@ defmodule Game.Phase.RollTest do
           1 => %Player{
             dices: %{
               1 => %Dice{},
-              2 => %Dice{keep: true}
+              2 => %Dice{}
             }
           }
         },
