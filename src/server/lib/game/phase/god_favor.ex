@@ -14,6 +14,8 @@ defmodule Game.Phase.GodFavor do
 
   @impl Game.Phase
   @spec action(Game.t(), any()) :: Game.t()
+  def action(%{round: 1} = game, :start_phase), do: Phase.next(game)
+
   def action(game, :start_phase) do
     %{turns: turns} = Phase.current(game)
 
