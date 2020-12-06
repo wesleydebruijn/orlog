@@ -14,12 +14,13 @@ defmodule Game do
   @type t :: %Game{
           settings: Settings.t(),
           players: any(),
+          winner: integer(),
           round: integer(),
           phase: integer(),
           turn: integer()
         }
   @derive Jason.Encoder
-  defstruct settings: %Settings{}, players: %{}, round: 0, phase: 0, turn: 0
+  defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0
 
   @spec start([String.t()], Settings.t()) :: Game.t()
   def start(uuids, settings \\ %Settings{}) do

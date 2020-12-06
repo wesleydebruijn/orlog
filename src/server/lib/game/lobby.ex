@@ -13,7 +13,7 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
-          status: :waiting | :playing,
+          status: :waiting | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{}
@@ -47,6 +47,15 @@ defmodule Game.Lobby do
     %{uuid: uuid} = Game.Turn.get_player(state.game)
 
     Map.get(state.pids, uuid) == pid
+  end
+
+  @spec update_status(Lobby.t()) :: Lobby.t()
+  def update_status(state) do
+    if state.game.winner > 0 do
+      %{state | status: :finished}
+    else
+      state
+    end
   end
 
   @spec turn(Lobby.t(), pid()) :: integer()

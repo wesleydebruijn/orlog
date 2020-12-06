@@ -31,7 +31,13 @@ export default function Game() {
       {({ game, actions, status }) => {
         switch (status) {
           case 'waiting':
-            return <h2>Wachten op enemy</h2>
+            return <h2>Wait for opponent</h2>
+          case 'finished':
+            return (
+              <h2>
+                {game.lobby.game.winner === game.lobby.turn ? 'You won! (^:' : 'You lost! );'}
+              </h2>
+            )
           case 'playing':
             return (
               <section className="game">
