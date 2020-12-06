@@ -38,4 +38,5 @@ jobs:
           script: |
             cd orlog
             git pull
+            docker-compose pull orlog
             docker-compose up -d --force-recreate
