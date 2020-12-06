@@ -7,12 +7,39 @@ defmodule Game.Phase.GodFavorTest do
   }
 
   describe "action/2" do
+    test "start phase when first round, skips phase" do
+      game = %Game{
+        players: %{
+          1 => %Player{turns: 0},
+          2 => %Player{turns: 0}
+        },
+        round: 1,
+        phase: 1,
+        turn: 1
+      }
+
+      actual = Phase.GodFavor.action(game, :start_phase)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{turns: 7},
+          2 => %Player{turns: 7}
+        },
+        round: 1,
+        phase: 3,
+        turn: 1
+      }
+
+      assert actual == expected
+    end
+
     test "start phase" do
       game = %Game{
         players: %{
           1 => %Player{turns: 0},
           2 => %Player{turns: 0}
         },
+        round: 2,
         phase: 1,
         turn: 1
       }
@@ -24,6 +51,7 @@ defmodule Game.Phase.GodFavorTest do
           1 => %Player{turns: 3},
           2 => %Player{turns: 3}
         },
+        round: 2,
         phase: 1,
         turn: 1
       }
