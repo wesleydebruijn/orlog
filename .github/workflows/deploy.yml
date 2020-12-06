@@ -14,6 +14,7 @@ jobs:
       CI: true
 
     steps:
+      - uses: actions/checkout@v2
       - name: Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
@@ -21,7 +22,7 @@ jobs:
           registry: docker.pkg.github.com
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: ./Dockerfile
+          dockerfile: Dockerfile
           tags: latest
       - name: Deploy package to DigitalOcean
         uses: appleboy/ssh-action@master
