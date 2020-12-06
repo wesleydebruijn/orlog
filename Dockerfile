@@ -10,8 +10,10 @@ RUN yarn && yarn build
 # ---- Server - Build Stage ----
 FROM elixir:1.11.2-alpine as server-build
 ENV MIX_ENV=prod
-COPY src/server .
-RUN rm -rf _build
+COPY src/server/config ./config
+COPY src/server/lib ./lib
+COPY src/server/mix.exs .
+COPY src/server/mix.lock .
 RUN mix local.rebar --force \
   && mix local.hex --force \
   && mix deps.get \
@@ -25,5 +27,5 @@ ENV PORT=4000 \
   MIX_ENV=prod
 WORKDIR /app
 COPY --from=client-build /usr/src/app/build/ /app/build/
-COPY --from=server-build _build/ .
-CMD ["/app/prod/rel/orlog/bin/orlog", "start"]
+COPY --from=server-build _build/prod/rel/orlog/ .
+CMD ["/app//bin/orlog", "start"]
