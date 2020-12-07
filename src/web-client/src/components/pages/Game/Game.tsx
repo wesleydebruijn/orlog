@@ -16,7 +16,7 @@ export default function Game() {
       {({ game, status, actions }) => {
         switch (status) {
           case 'finished':
-            return <GameStateFinished won={game.lobby.winner === game.lobby.turn} />
+            return <GameStateFinished won={game.lobby.game.winner === game.lobby.turn} />
           case 'waiting':
             return <GameStateWaiting />
           case 'playing':
