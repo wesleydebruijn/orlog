@@ -3,7 +3,7 @@ import React from 'react'
 import { GameLobbyProvider } from '../../../providers/GameLobbyProvider'
 import { useParams } from 'react-router'
 import { useUser } from '../../../hooks/useAuth'
-import GameStateWaiting from './components/GameState/GameStateWaiting'
+import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
 import GameBoard from './components/GameBoard/GameBoard'
 import GameStateFinished from './components/GameState/GameStateFinished'
 
