@@ -27,7 +27,7 @@ $player__title: #606060;
     border-bottom: 8px solid $border;
 
     .player {
-      font-family: calibri;
+      font-family: 'Signika' sans-serif;
       display: flex;
       flex-grow: 1;
       align-items: center;
@@ -47,7 +47,7 @@ $player__title: #606060;
       }
 
       &__info {
-        flex-basis: 140px;
+        flex-basis: 160px;
         align-self: flex-start;
         display: flex;
         flex-direction: column;
@@ -61,7 +61,7 @@ $player__title: #606060;
         }
 
         &__title {
-          font-size: 16px;
+          font-size: 0.8rem;
           color: $player__title;
         }
       }
@@ -70,14 +70,15 @@ $player__title: #606060;
 
   main {
     margin: auto;
-    width: 1040px;
+    max-width: 1040px;
     position: relative;
     top: 20%;
     display: flex;
     justify-content: space-between;
 
     .news {
-      flex-basis: 400px;
+      flex: 0.35;
+      min-width: 300px;
       height: 330px;
 
       &__header {
@@ -100,7 +101,6 @@ $player__title: #606060;
         flex-direction: column;
         justify-content: space-evenly;
 
-        min-width: 305px;
         min-height: 175px;
         padding: 0 25px 10px 25px;
 
@@ -128,10 +128,11 @@ $player__title: #606060;
     }
 
     .game-menu {
-      flex-basis: 400px;
+      flex: 0.2;
       margin: 0 auto;
 
       > button {
+        border-top-left-radius: 5px;
         min-width: 250px;
         font-family: 'Signika', sans-serif;
         font-size: 1rem;
@@ -140,17 +141,41 @@ $player__title: #606060;
       }
 
       &__play {
-        padding: 25px 60px;
-        border: 2px solid #c47220;
-        background: linear-gradient(#a1723c, #c47220);
+        position: relative;
+        width: auto;
+        display: inline-block;
+        color: #ecf0f1;
+        text-decoration: none;
+        border-radius: 5px;
+        border: solid 1px #f39c12;
+        background: #e67e22;
+        text-align: center;
+        padding: 16px 18px 14px;
+
+        -webkit-transition: all 0.1s;
+        -moz-transition: all 0.1s;
+        transition: all 0.1s;
+
+        -webkit-box-shadow: 0px 6px 0px #d35400;
+        -moz-box-shadow: 0px 6px 0px #d35400;
+        box-shadow: 0px 6px 0px #d35400;
+
+        &:active {
+          -webkit-box-shadow: 0px 2px 0px #d35400;
+          -moz-box-shadow: 0px 2px 0px #d35400;
+          box-shadow: 0px 2px 0px #d35400;
+          position: relative;
+          top: 4px;
+        }
 
         &:hover {
-          color: orange;
-          background: linear-gradient(lighten(#a1723c, 5%), lighten(#c47220, 10%));
-          border: 2px solid lighten(#a1723c, 5%);
           cursor: pointer;
         }
       }
+    }
+
+    .empty {
+      flex: 0.35;
     }
   }
 }

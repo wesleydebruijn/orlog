@@ -65,6 +65,7 @@ export default function Dashboard() {
         <section className="game-menu">
           <button className="game-menu__play">New game</button>
         </section>
+        <section className="empty"></section>
       </main>
     </div>
   )
