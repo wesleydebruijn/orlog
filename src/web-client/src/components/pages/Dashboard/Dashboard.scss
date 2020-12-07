@@ -9,7 +9,8 @@ $player__title: #606060;
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('./assets/background.jpg');
+  background: url('./assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
 
   .container {
     display: flex;
@@ -66,6 +67,92 @@ $player__title: #606060;
       }
     }
   }
+
+  main {
+    margin: auto;
+    width: 1040px;
+    position: relative;
+    top: 20%;
+    display: flex;
+    justify-content: space-between;
+
+    .news {
+      flex-basis: 400px;
+      height: 330px;
+
+      &__header {
+        background-color: $primary;
+        border-bottom: 2px solid $border;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        padding: 12.5px 25px;
+
+        h2 {
+          color: $player__name;
+          line-height: 0;
+          font-weight: 400;
+          font-size: 1.2rem;
+        }
+      }
+
+      &__article {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+        min-width: 305px;
+        min-height: 175px;
+        padding: 0 25px 10px 25px;
+
+        background-color: rgba(33, 28, 28, 0.7);
+        color: #e4bd8d;
+
+        &__title {
+          color: $player__name;
+          line-height: 0;
+          font-size: 1rem;
+        }
+
+        &__text {
+          font-size: 0.8rem;
+        }
+
+        &__meta {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          color: $player__name;
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .game-menu {
+      flex-basis: 400px;
+      margin: 0 auto;
+
+      > button {
+        min-width: 250px;
+        font-family: 'Signika', sans-serif;
+        font-size: 1rem;
+        text-transform: uppercase;
+        color: #794d1f;
+      }
+
+      &__play {
+        padding: 25px 60px;
+        border: 2px solid #c47220;
+        background: linear-gradient(#a1723c, #c47220);
+
+        &:hover {
+          color: orange;
+          background: linear-gradient(lighten(#a1723c, 5%), lighten(#c47220, 10%));
+          border: 2px solid lighten(#a1723c, 5%);
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -89,6 +176,27 @@ $player__title: #606060;
 
         &__info {
           height: 70px;
+        }
+      }
+    }
+
+    main {
+      margin-top: 1rem;
+      width: 90%;
+      top: 50px;
+      flex-direction: column;
+
+      .news {
+        order: 1;
+      }
+
+      .game-menu {
+        width: 100%;
+        flex-basis: 100px;
+        order: 0;
+
+        > button {
+          width: 100%;
         }
       }
     }

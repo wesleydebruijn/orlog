@@ -33,6 +33,39 @@ export default function Dashboard() {
           <Navigation />
         </div>
       </section>
+      <main>
+        <section className="news">
+          <div className="news__header">
+            <h2>News</h2>
+          </div>
+          <article className="news__article">
+            <h3 className="news__article__title">Welcome to Orlog</h3>
+            <span className="news__article__text">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quidem beatae possimus
+              recusandae, libero adipisci laborum natus, iusto laboriosam animi odit omnis. Fuga,
+              consequatur facilis. Et pariatur neque similique magni placeat.
+            </span>
+            <span className="news__article__meta">
+              <span>by Sigurd Styrbjornson</span>
+              <span>12/07/2020 at 11:13</span>
+            </span>
+          </article>
+          <article className="news__article">
+            <h3 className="news__article__title">Patch notes v1.0.3</h3>
+            <span className="news__article__text">
+              We've made it so Jeffrey always wins, no matter what. This is very important since it
+              sets a statement. It's just the way it should be and will ever be.
+            </span>
+            <span className="news__article__meta">
+              <span>by Basim Ibn Ishaq</span>
+              <span>14/07/2020 at 14:24</span>
+            </span>
+          </article>
+        </section>
+        <section className="game-menu">
+          <button className="game-menu__play">New game</button>
+        </section>
+      </main>
     </div>
   )
 }
