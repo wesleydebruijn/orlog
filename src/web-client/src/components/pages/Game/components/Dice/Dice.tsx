@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { Dice as DiceProps, DiceFace } from '../../../../../types/types'
 
@@ -23,12 +24,19 @@ type Props = DiceProps & {
 }
 
 export default function Dice({ index, face, tokens, keep, locked, onClick }: Props) {
+  const [noAnimate, setNoAnimate] = useState(true)
   const classes = classnames('dice', `${face.type}-${face.stance}`, {
     'dice--tokens': tokens > 0,
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
-    'dice--locked': locked
+    'dice--locked': locked,
+    'dice--no-animate': noAnimate
   })
+
+  useEffect(() => {
+    setTimeout(() => setNoAnimate(false), 1000)
+  }, [])
+
   return (
     <div className={classes} onClick={() => onClick && onClick(index)}>
       <div className="front">
