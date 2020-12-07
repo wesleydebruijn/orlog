@@ -16,20 +16,39 @@ defmodule Api.Router do
   end
 
   get "api/player" do
-    send_resp(conn, 200, Jason.encode!(%{name: "RandomViking9001", level: 1, title: "Beginner"}))
+    send_resp(
+      conn,
+      200,
+      Jason.encode!(%{
+        name: "RandomViking9001",
+        avatar: "https://avatarfiles.alphacoders.com/261/thumb-1920-261090.jpg",
+        level: 1,
+        title: "Drang"
+      })
+    )
   end
 
   get "api/news" do
     send_resp(
       conn,
       200,
-      Jason.encode!(%{
-        title: "Welcome to Orlog",
-        content:
-          "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quidem beatae possimus recusandae, libero adipisci laborum natus, iusto laboriosam animi odit omnis. Fuga, consequatur facilis. Et pariatur neque similique magni placeat.",
-        author: "Sigurd Styrbjornson",
-        timestamp: "12/07/2020 at 11:13"
-      })
+      Jason.encode!([
+        %{
+          title: "Welcome to Orlog",
+          content:
+            "Orlog, the Viking game from Assassin's Creed Valhalla is now available on the web!",
+          author: "Sigurd Styrbjornson",
+          timestamp: "12/07/2020 at 11:13"
+        },
+        %{
+          title: "Patch Notes v1.0.3",
+          content:
+            "We've made it so Jeffrey always wins, no matter what. This is very important since it sets
+          a statement. It's just the way it should be and will ever be.",
+          author: "Basim Ibn Ishaq",
+          timestamp: "14/07/2020 at 14:24"
+        }
+      ])
     )
   end
 

@@ -18,9 +18,9 @@ export default function App() {
               <Dashboard />
             </PrivateRoute>
 
-            {/* <PrivateRoute path="/game/:gameId" exact>
+            <PrivateRoute path="/game/:gameId" exact>
               <Game />
-            </PrivateRoute> */}
+            </PrivateRoute>
 
             <Route path="/login" exact>
               <Login />

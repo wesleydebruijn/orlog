@@ -1,4 +1,50 @@
+$primary: #211c1c;
+$border: #403535;
+$player__name: orange;
+$player__title: #606060;
+
 .player {
+  font-family: 'Signika' sans-serif;
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  border-radius: 50%;
+
+  &__avatar {
+    flex-basis: 160px;
+    margin-top: 10px;
+
+    img {
+      width: 125px;
+      height: 125px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 8px solid green;
+    }
+  }
+
+  &__info {
+    flex-basis: 160px;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 80px;
+
+    &__name {
+      font-size: 22px;
+      color: $player__name;
+      font-weight: 200;
+    }
+
+    &__title {
+      font-size: 0.8rem;
+      color: $player__title;
+    }
+  }
+}
+
+.game-player {
   align-self: flex-start;
   position: relative;
   display: flex;

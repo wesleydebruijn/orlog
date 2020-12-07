@@ -25,47 +25,6 @@ $player__title: #606060;
     background-color: $primary;
     border-top: 8px solid $border;
     border-bottom: 8px solid $border;
-
-    .player {
-      font-family: 'Signika' sans-serif;
-      display: flex;
-      flex-grow: 1;
-      align-items: center;
-      border-radius: 50%;
-
-      &__avatar {
-        flex-basis: 160px;
-        margin-top: 10px;
-
-        img {
-          width: 125px;
-          height: 125px;
-          object-fit: cover;
-          border-radius: 50%;
-          border: 8px solid green;
-        }
-      }
-
-      &__info {
-        flex-basis: 160px;
-        align-self: flex-start;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 80px;
-
-        &__name {
-          font-size: 22px;
-          color: $player__name;
-          font-weight: 200;
-        }
-
-        &__title {
-          font-size: 0.8rem;
-          color: $player__title;
-        }
-      }
-    }
   }
 
   main {
@@ -75,57 +34,6 @@ $player__title: #606060;
     top: 20%;
     display: flex;
     justify-content: space-between;
-
-    .news {
-      flex: 0.35;
-      min-width: 300px;
-      height: 330px;
-
-      &__header {
-        background-color: $primary;
-        border-bottom: 2px solid $border;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding: 12.5px 25px;
-
-        h2 {
-          color: $player__name;
-          line-height: 0;
-          font-weight: 400;
-          font-size: 1.2rem;
-        }
-      }
-
-      &__article {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-
-        min-height: 175px;
-        padding: 0 25px 10px 25px;
-
-        background-color: rgba(33, 28, 28, 0.7);
-        color: #e4bd8d;
-
-        &__title {
-          color: $player__name;
-          line-height: 0;
-          font-size: 1rem;
-        }
-
-        &__text {
-          font-size: 0.8rem;
-        }
-
-        &__meta {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          color: $player__name;
-          font-size: 0.75rem;
-        }
-      }
-    }
 
     .game-menu {
       flex: 0.2;

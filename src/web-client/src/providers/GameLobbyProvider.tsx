@@ -8,7 +8,7 @@ export const Context = React.createContext<GameState>({
   status: 'initial'
 })
 
-type GameActions = {
+export type GameActions = {
   doContinue: () => void
   toggleDice: (diceIndex: string) => void
   selectFavor: (favor: number, tier: number) => void
@@ -56,7 +56,6 @@ export function GameLobbyProvider({ children, gameId, userId }: GameProviderProp
       if (!event.data) return
 
       const data = (await JSON.parse(event.data)) as GameLobby
-      console.log(data)
       setGameState(prev => ({
         ...prev,
         lobby: data,
