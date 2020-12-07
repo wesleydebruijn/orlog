@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { AuthProvider } from './providers/AuthProvider'
 import PrivateRoute from './components/shared/PrivateRoute'
 
-import Dashboard from './components/pages/Dashboard'
+import Dashboard from './components/pages/Dashboard/Dashboard'
 import Game from './components/pages/Game/Game'
 import Login from './components/pages/Login'
 
