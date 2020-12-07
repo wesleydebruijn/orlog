@@ -1,8 +1,8 @@
+import React from 'react'
 import { useHistory } from 'react-router'
 import { v4 as uuidv4 } from 'uuid'
 
-import godFavorIcon from './assets/icons/god_favors.svg'
-import userIcon from './assets/icons/user.svg'
+import Navigation from './components/Navigation/Navigation'
 
 import './Dashboard.scss'
 
@@ -30,21 +30,7 @@ export default function Dashboard() {
               <span className="player__info__title">The Devil's Advocate</span>
             </div>
           </section>
-          <nav className="menu">
-            <div className="menu__item">
-              <img
-                className="menu__item__icon menu__item__icon--god-favors"
-                src={godFavorIcon}
-                alt=""
-              />
-              <span className="menu__item__text">God Favors</span>
-            </div>
-
-            <div className="menu__item">
-              <img className="menu__item__icon menu__item__icon--settings" src={userIcon} alt="" />
-              <span className="menu__item__text">Settings</span>
-            </div>
-          </nav>
+          <Navigation />
         </div>
       </section>
     </div>

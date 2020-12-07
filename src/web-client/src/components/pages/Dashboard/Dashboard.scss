@@ -14,9 +14,8 @@ $player__title: #606060;
   .container {
     display: flex;
     margin: 0 auto;
-    width: 90vw;
+    width: 90%;
     max-width: 1680px;
-    min-width: 520px;
   }
 
   .topbar {
@@ -34,12 +33,12 @@ $player__title: #606060;
       border-radius: 50%;
 
       &__avatar {
-        flex-basis: 190px;
-        margin-top: 8px;
+        flex-basis: 160px;
+        margin-top: 10px;
 
         img {
-          width: 150px;
-          height: 150px;
+          width: 125px;
+          height: 125px;
           object-fit: cover;
           border-radius: 50%;
           border: 8px solid green;
@@ -47,12 +46,12 @@ $player__title: #606060;
       }
 
       &__info {
+        flex-basis: 140px;
         align-self: flex-start;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        height: 40px;
-        margin-top: 12.5px;
+        justify-content: center;
+        height: 80px;
 
         &__name {
           font-size: 22px;
@@ -66,42 +65,30 @@ $player__title: #606060;
         }
       }
     }
+  }
+}
 
-    .menu {
-      display: flex;
-      flex: 0.3;
-      justify-content: space-evenly;
-      align-items: center;
-      height: 80px;
+@media (max-width: 575.98px) {
+  .dashboard {
+    .container {
+      width: 100%;
+    }
 
-      &__item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        height: 60px;
+    .topbar {
+      height: 70px;
 
-        &:hover {
-          cursor: pointer;
-
-          .menu__item__text {
-            color: orange;
+      .player {
+        &__avatar {
+          flex-basis: 135px;
+          img {
+            width: 100px;
+            height: 100px;
+            border-radius: 4px solid green;
           }
         }
 
-        &__icon {
-          width: 25px;
-          height: 25px;
-
-          &--god-favors {
-            width: 40px;
-            height: 40px;
-          }
-        }
-
-        &__text {
-          color: #755123;
-          font-size: 14px;
+        &__info {
+          height: 70px;
         }
       }
     }
