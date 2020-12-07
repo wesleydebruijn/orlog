@@ -5,6 +5,10 @@
   position: relative;
   transform-style: preserve-3d;
   user-select: none;
+  animation-iteration-count: 1;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 
   > div {
     height: 60px;
@@ -49,11 +53,6 @@
   }
   .back {
     transform: rotateX(180deg) translateZ(30px);
-
-    img {
-      // todo: smeerlap
-      transform: rotateX(180deg) rotateY(180deg);
-    }
   }
   .right {
     transform: rotateY(90deg) translateZ(30px);
@@ -70,45 +69,19 @@
 }
 
 .melee-attack {
-  transform-style: preserve-3d;
   animation-name: rotate1;
-  animation-iteration-count: 1;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
-
 .token-steal {
-  transform-style: preserve-3d;
   animation-name: rotate3;
-  animation-iteration-count: 1;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
 .ranged-block {
-  transform-style: preserve-3d;
   animation-name: rotate4;
-  animation-iteration-count: 1;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
 .melee-block {
-  transform-style: preserve-3d;
   animation-name: rotate5;
-  animation-iteration-count: 1;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
 .ranged-attack {
-  transform-style: preserve-3d;
   animation-name: rotate6;
-  animation-iteration-count: 1;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
 
 @keyframes rotate1 {
@@ -131,7 +104,7 @@
     transform: rotateX(-90deg) rotateY(-90deg) rotateZ(90deg) translateX(0);
   }
   100% {
-    transform: rotateY(180deg);
+    transform: rotateY(180deg) rotateZ(-180deg);
   }
 }
 @keyframes rotate2 {
