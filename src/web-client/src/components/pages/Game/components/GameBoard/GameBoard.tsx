@@ -11,7 +11,8 @@ import {
   getCurrentPlayer,
   getOpponentPlayer,
   getPlayer,
-  getPlayerFavors
+  getPlayerFavors,
+  getTurnRemainingTime
 } from '../../../../../selectors/selectors'
 
 import './GameBoard.scss'
@@ -22,17 +23,15 @@ type Props = {
 }
 
 export default function GameBoard({ game, actions }: Props) {
+  const phase = getGamePhase(game)
+  const remainingTime = getTurnRemainingTime(game)
+
   return (
     <section className="game-board">
       <GameInfo
-        phase={getGamePhase(game).name}
-        turn={
-          getGamePhase(game).turns -
-          getGamePhase(game).auto_turns +
-          1 -
-          getCurrentPlayer(game).turns
-        }
-        maxTurn={getGamePhase(game).turns - getGamePhase(game).auto_turns}
+        phase={phase.name}
+        turn={phase.turns - phase.auto_turns + 1 - getCurrentPlayer(game).turns}
+        maxTurn={phase.turns - phase.auto_turns}
         round={game.lobby.game.round}
       />
       <section className="game-board__field">
@@ -47,7 +46,11 @@ export default function GameBoard({ game, actions }: Props) {
           ></PlayerArea>
         ))}
         {game.lobby.turn === game.lobby.game.turn && (
-          <ContinueButton text="Continue" onClick={() => actions.doContinue()} />
+          <ContinueButton
+            text="Continue"
+            seconds={remainingTime}
+            onClick={() => actions.doContinue()}
+          />
         )}
       </section>
     </section>

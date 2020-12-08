@@ -29,6 +29,11 @@ defmodule Game.Turn do
     |> Game.invoke(:start_turn)
   end
 
+  @spec reset(Game.t()) :: Game.t()
+  def reset(game) do
+    %{game | turn_start: DateTime.utc_now()}
+  end
+
   @spec opponent(Game.t(), fun()) :: Game.t()
   def opponent(game, fun) do
     game

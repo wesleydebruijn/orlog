@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@types/classnames": "2.2.11",
     "@types/react-router-dom": "5.1.6",
+    "@types/styled-components": "^5.1.4",
     "classnames": "^2.2.6",
     "react": "^17.0.1",
     "react-async": "10.0.1",
@@ -17,6 +18,7 @@
     "react-scripts": "4.0.1",
     "react-use-websocket": "^2.2.0",
     "reselect": "^4.0.0",
+    "styled-components": "^5.2.1",
     "uuid": "8.3.1",
     "web-vitals": "^0.2.4"
   },
