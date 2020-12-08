@@ -10,7 +10,7 @@ import rangedAttack from './assets/ranged-attack.svg'
 import rangedBlock from './assets/ranged-block.svg'
 import tokenSteal from './assets/token-steal.svg'
 
-const faces = {
+const faces: { [index: string]: any } = {
   'melee-attack': meleeAttack,
   'melee-block': meleeBlock,
   'ranged-attack': rangedAttack,
@@ -24,38 +24,52 @@ type Props = DiceProps & {
 }
 
 export default function Dice({ index, face, tokens, keep, locked, onClick }: Props) {
-  const [noAnimate, setNoAnimate] = useState(true)
-  const classes = classnames('dice', `${face.type}-${face.stance}`, {
-    'dice--tokens': tokens > 0,
+  const [rollAnimation, setRollAnimation] = useState(false)
+  const activeFace = `${face.type}-${face.stance}`
+
+  const classes = classnames('dice', activeFace, {
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
     'dice--locked': locked,
-    'dice--no-animate': noAnimate
+    roll: rollAnimation
   })
 
+  function faceClasses(hasTokens: boolean) {
+    return classnames({
+      tokens: hasTokens
+    })
+  }
+
+  const randomFace = () => Object.keys(faces)[Math.floor(Math.random() * Object.keys(faces).length)]
+  const randomTokens = () => Math.round(Math.random())
+
   useEffect(() => {
-    setTimeout(() => setNoAnimate(false), 1000)
-  }, [])
+    setRollAnimation(true)
+
+    setTimeout(() => {
+      setRollAnimation(false)
+    }, 500)
+  }, [face.type, face.stance])
 
   return (
     <div className={classes} onClick={() => onClick && onClick(index)}>
-      <div className="front">
-        <img src={faces['ranged-attack']} alt="" />
+      <div className="front active">
+        <img src={faces[activeFace]} className={faceClasses(tokens > 0)} alt="" />
       </div>
       <div className="back">
-        <img src={faces['melee-attack']} alt="" />
+        <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
       <div className="right">
-        <img src={faces['melee-block']} alt="" />
+        <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
       <div className="left">
-        <img src={faces['ranged-block']} alt="" />
+        <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
       <div className="top">
-        <img src={faces['token-steal']} alt="" />
+        <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
       <div className="bottom">
-        <img src={faces['ranged-block']} alt="" />
+        <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
     </div>
   )

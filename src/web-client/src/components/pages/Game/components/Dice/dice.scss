@@ -10,16 +10,26 @@
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 
-  &--no-animate {
-    animation-duration: 0s;
-  }
-
   > div {
     height: 60px;
     width: 60px;
     position: absolute;
-    background: #fff;
-    border: 2px solid black;
+    background-color: #211c1c;
+    border: 4px solid #403535;
+  }
+
+  img {
+    width: 30px;
+    margin: 5px;
+    padding: 10px;
+    position: absolute;
+    filter: invert(100%) sepia(0%) saturate(7489%) hue-rotate(194deg) brightness(104%)
+      contrast(102%);
+  }
+
+  .tokens {
+    border: 2px dashed #f39c12;
+    padding: 8px;
   }
 
   &--toggleable {
@@ -32,24 +42,6 @@
     position: relative;
     top: 10px;
     margin-top: -10px;
-  }
-
-  &--locked {
-    > div {
-      background: lightgrey;
-    }
-  }
-
-  &--tokens {
-    > div {
-      border: 2px solid #e67e22;
-    }
-  }
-
-  img {
-    width: 30px;
-    padding: 15px;
-    position: absolute;
   }
 
   .front {
@@ -72,59 +64,15 @@
   }
 }
 
-.melee-attack {
-  animation-name: melee-attack-animation;
-}
-.melee-block {
-  animation-name: melee-block-animation;
-}
-.ranged-attack {
-  animation-name: ranged-attack-animation;
-}
-.ranged-block {
-  animation-name: ranged-block-animation;
-}
-.token-steal {
-  animation-name: token-steal-animation;
+.roll {
+  animation-name: roll-animation;
 }
 
-@keyframes melee-attack-animation {
-  0% {
-    transform: rotateX(180deg) rotateY(360deg) rotateZ(0deg) translateX(0);
-  }
-  100% {
-    transform: rotateX(-180deg) rotateY(0deg) rotateZ(0deg) translateX(0);
-  }
-}
-@keyframes melee-block-animation {
-  0% {
-    transform: rotateX(180deg) rotateY(360deg) rotateZ(0deg) translateX(0);
-  }
-  100% {
-    transform: rotateX(-180deg) rotateY(-90deg) rotateZ(-180deg) translateX(0);
-  }
-}
-@keyframes ranged-attack-animation {
+@keyframes roll-animation {
   0% {
     transform: rotateX(90deg) rotateY(360deg) rotateZ(0deg) translateX(0);
   }
   100% {
     transform: rotateX(-180deg) rotateY(-180deg) rotateZ(-180deg) translateX(0);
-  }
-}
-@keyframes ranged-block-animation {
-  0% {
-    transform: rotateX(90deg) rotateY(360deg) rotateZ(0deg) translateX(0);
-  }
-  100% {
-    transform: rotateX(-90deg) rotateY(-180deg) rotateZ(-180deg) translateX(0);
-  }
-}
-@keyframes token-steal-animation {
-  0% {
-    transform: rotateX(180deg) rotateY(360deg) rotateZ(0deg) translateX(0);
-  }
-  100% {
-    transform: rotateX(-90deg) rotateY(0deg) rotateZ(0deg) translateX(0);
   }
 }
