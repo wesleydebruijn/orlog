@@ -35,7 +35,7 @@ export default function Test() {
   return (
     <>
       <button onClick={onToggle}>Toggle</button>
-      <DiceGrid dices={dices} onToggleDice={onToggle} />
+      <DiceGrid dices={dices} onToggleDice={onToggle} rolling={true} />
     </>
   )
 }

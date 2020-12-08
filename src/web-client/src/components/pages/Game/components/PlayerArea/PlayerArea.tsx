@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { ActionTypes } from 'react-async'
+import { useAnimation } from '../../../../../hooks/useAnimation'
 import { GameActions } from '../../../../../providers/GameLobbyProvider'
 import { getPlayerFavors } from '../../../../../selectors/selectors'
 
@@ -31,6 +32,8 @@ export default function PlayerArea({
     'player-area--self': self
   })
 
+  const rolling = useAnimation(player.rolled, 500)
+
   return (
     <div className={classes}>
       <div className="wrapper wrapper--flex">
@@ -44,6 +47,7 @@ export default function PlayerArea({
       </div>
       <DiceGrid
         dices={player.dices}
+        rolling={rolling}
         onToggleDice={self && player.rolled ? onToggleDice : undefined}
       />
     </div>

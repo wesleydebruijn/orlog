@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { Dice as DiceProps, DiceFace } from '../../../../../types/types'
 
@@ -21,17 +20,17 @@ const faces: { [index: string]: any } = {
 type Props = DiceProps & {
   index: string
   onClick?: (index: string) => void
+  rolling: boolean
 }
 
-export default function Dice({ index, face, tokens, keep, locked, onClick }: Props) {
-  const [rollAnimation, setRollAnimation] = useState(false)
+export default function Dice({ index, face, tokens, keep, locked, rolling, onClick }: Props) {
   const activeFace = `${face.type}-${face.stance}`
 
   const classes = classnames('dice', activeFace, {
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
     'dice--locked': locked,
-    roll: rollAnimation
+    roll: rolling
   })
 
   function faceClasses(hasTokens: boolean) {
@@ -42,14 +41,6 @@ export default function Dice({ index, face, tokens, keep, locked, onClick }: Pro
 
   const randomFace = () => Object.keys(faces)[Math.floor(Math.random() * Object.keys(faces).length)]
   const randomTokens = () => Math.round(Math.random())
-
-  useEffect(() => {
-    setRollAnimation(true)
-
-    setTimeout(() => {
-      setRollAnimation(false)
-    }, 500)
-  }, [face.type, face.stance])
 
   return (
     <div className={classes} onClick={() => onClick && onClick(index)}>
