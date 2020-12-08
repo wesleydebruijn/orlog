@@ -11,7 +11,9 @@ export function useAnimation(active: boolean, duration: number): boolean {
     } else if (!activated) {
       setAnimation(true)
 
-      setTimeout(() => setAnimation(false), duration)
+      const timeout = setTimeout(() => setAnimation(false), duration)
+
+      return () => clearTimeout(timeout)
     }
   }, [active])
 
