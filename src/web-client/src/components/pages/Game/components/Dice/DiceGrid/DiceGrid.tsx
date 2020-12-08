@@ -8,14 +8,15 @@ type Props = {
   dices: {
     [index: number]: DiceProps
   }
+  rolled: boolean
   onToggleDice?: (index: string) => void
 }
 
-export default function DiceGrid({ dices, onToggleDice }: Props) {
+export default function DiceGrid({ dices, rolled, onToggleDice }: Props) {
   return (
     <div className="dice-grid">
       {Object.entries(dices).map(([index, dice]) => (
-        <Dice key={index} {...dice} index={index} onClick={onToggleDice} />
+        <Dice key={index} {...dice} index={index} rolled={rolled} onClick={onToggleDice} />
       ))}
     </div>
   )

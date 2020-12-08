@@ -190,7 +190,7 @@ defmodule Game.Phase.RollTest do
               1 => %Dice{face: Dice.Face.MeleeAttack},
               2 => %Dice{face: Dice.Face.MeleeAttack, keep: true, locked: true}
             },
-            rolled: true,
+            rolled: false,
             turns: 1
           }
         },
