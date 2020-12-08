@@ -7,7 +7,6 @@ import PrivateRoute from './components/shared/PrivateRoute'
 import Dashboard from './components/pages/Dashboard/Dashboard'
 import Game from './components/pages/Game/Game'
 import Login from './components/pages/Login'
-import Test from './components/pages/Test'
 
 export default function App() {
   return (
@@ -25,10 +24,6 @@ export default function App() {
 
             <Route path="/login" exact>
               <Login />
-            </Route>
-
-            <Route path="/test" exact>
-              <Test />
             </Route>
           </Switch>
         </div>

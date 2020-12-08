@@ -32,8 +32,6 @@ export default function PlayerArea({
     'player-area--self': self
   })
 
-  const rolling = useAnimation(player.rolled, 500)
-
   return (
     <div className={classes}>
       <div className="wrapper wrapper--flex">
@@ -47,7 +45,7 @@ export default function PlayerArea({
       </div>
       <DiceGrid
         dices={player.dices}
-        rolling={rolling}
+        rolled={player.rolled}
         onToggleDice={self && player.rolled ? onToggleDice : undefined}
       />
     </div>
