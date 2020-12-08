@@ -1,0 +1,30 @@
+$primary: #211c1c;
+$border: #403535;
+$player__name: orange;
+$player__title: #606060;
+
+.content-box {
+  min-height: 200px;
+
+  &__title {
+    font-family: 'Signika', sans-serif;
+    background-color: $primary;
+    border-bottom: 2px solid $border;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 12.5px 25px;
+
+    h2 {
+      color: $player__name;
+      line-height: 0;
+      font-weight: 400;
+      font-size: 1.2rem;
+    }
+  }
+
+  &__content {
+    background-color: rgba(33, 28, 28, 0.7);
+    padding: 0 25px 10px 25px;
+    color: #e4bd8d;
+  }
+}
