@@ -42,17 +42,11 @@ defmodule Game.Phase.Roll do
     game
     |> Turn.get_player()
     |> case do
-      %{turns: 1} ->
-        game
-        |> action(:roll)
-        |> action(:keep)
-        |> Turn.next()
+      %{rolled: true} ->
+        Turn.next(game)
 
       %{rolled: false} ->
         action(game, :roll)
-
-      %{rolled: true} ->
-        Turn.next(game)
     end
   end
 
@@ -65,16 +59,20 @@ defmodule Game.Phase.Roll do
     end)
   end
 
-  def action(game, :keep) do
-    game
-    |> Turn.update_player(fn player ->
-      player
-      |> IndexMap.update_all(:dices, &Dice.keep/1)
-    end)
-  end
-
   def action(game, :end_turn) do
     game
+    |> Turn.get_player()
+    |> case do
+      %{turns: 1} ->
+        game
+        |> Turn.update_player(fn player ->
+          player
+          |> IndexMap.update_all(:dices, &Dice.keep/1)
+        end)
+
+      _other ->
+        game
+    end
     |> Turn.update_player(fn player ->
       player
       |> Player.increase(:turns, -1)

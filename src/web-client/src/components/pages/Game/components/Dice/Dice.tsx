@@ -30,7 +30,7 @@ export default function Dice({ index, face, tokens, keep, locked, rolling, onCli
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
     'dice--locked': locked,
-    roll: rolling
+    roll: rolling && !keep && !locked
   })
 
   function faceClasses(hasTokens: boolean) {
