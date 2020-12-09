@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect'
 import { NewGameState, Player } from '../types/types'
 
-const timePerTurn = 30
-
 export const getGameUUID = (state: NewGameState) => state.lobby.uuid
 export const getSettings = (state: NewGameState) => state.lobby.settings
 export const getStatus = (state: NewGameState) => state.lobby.status
@@ -16,12 +14,14 @@ export const getGamePhase = (state: NewGameState) =>
 export const getRound = (state: NewGameState) => state.lobby.game.round
 export const getPhase = (state: NewGameState) => state.lobby.game.phase
 export const getPlayers = (state: NewGameState) => state.lobby.game.players
+export const getTurnTime = (state: NewGameState) => state.lobby.game.settings.seconds_per_turn
 export const getTurnRemainingTime = (state: NewGameState) => {
   const date = new Date(state.lobby.game.turn_start)
+  const seconds = getTurnTime(state)
 
-  if (!date) return timePerTurn
+  if (!date) return seconds
 
-  date.setSeconds(date.getSeconds() + timePerTurn)
+  date.setSeconds(date.getSeconds() + seconds)
 
   return (date.getTime() - new Date().getTime()) / 1000
 }

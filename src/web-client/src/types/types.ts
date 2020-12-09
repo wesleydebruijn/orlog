@@ -50,6 +50,7 @@ export type Settings = {
   health: number
   tokens: number
   phases: Phases
+  seconds_per_turn: number
 }
 
 export type Game = {
