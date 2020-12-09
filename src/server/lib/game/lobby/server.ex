@@ -4,6 +4,8 @@ defmodule Game.Lobby.Server do
   """
   use GenServer
 
+  require Logger
+
   @spec start_link([String.t(), ...]) :: {:ok, pid()}
   def start_link([uuid]) do
     case GenServer.start_link(__MODULE__, %Game.Lobby{uuid: uuid}, name: to_name(uuid)) do
@@ -63,12 +65,15 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_call({:join, user_uuid, pid}, _from, state) do
-    notify_pids()
+    schedule_update()
 
     new_state = Game.Lobby.join(state, user_uuid, pid)
 
     if Game.Lobby.startable?(new_state) do
-      new_state = Game.Lobby.start(new_state)
+      new_state =
+        new_state
+        |> Game.Lobby.start()
+        |> schedule_auto_turn()
 
       {:reply, new_state, new_state}
     else
@@ -78,13 +83,10 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_call({:action, action, pid}, _from, state) do
-    notify_pids()
-
     if Game.Lobby.turn?(state, pid) do
-      new_state =
-        state
-        |> Map.put(:game, Game.invoke(state.game, action))
-        |> Game.Lobby.update_status()
+      new_state = do_action(state, action)
+
+      schedule_update()
 
       {:reply, new_state, new_state}
     else
@@ -94,7 +96,7 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_cast({:leave, pid}, state) do
-    notify_pids()
+    schedule_update()
 
     new_state = Game.Lobby.leave(state, pid)
 
@@ -103,6 +105,19 @@ defmodule Game.Lobby.Server do
     end
 
     {:noreply, new_state}
+  end
+
+  @impl true
+  def handle_info({:auto_turn, turn_start}, state) do
+    if turn_start == state.turn_start do
+      new_state = do_action(state, :continue)
+
+      schedule_update()
+
+      {:noreply, new_state}
+    else
+      {:noreply, state}
+    end
   end
 
   @impl true
@@ -120,12 +135,34 @@ defmodule Game.Lobby.Server do
     end
   end
 
-  defp notify_pids do
+  defp do_action(state, action) do
+    state
+    |> Map.put(:game, Game.invoke(state.game, action))
+    |> Game.Lobby.update_status()
+    |> schedule_auto_turn()
+  end
+
+  defp schedule_update do
     Process.send(self(), :notify_pids, [])
   end
 
   defp schedule_terminate do
     Process.send_after(self(), :terminate, 120_000)
+  end
+
+  defp schedule_auto_turn(state) do
+    if Game.Lobby.schedule_auto_turn?(state) do
+      turn_start = state.game.turn_start
+
+      seconds =
+        DateTime.diff(DateTime.utc_now(), turn_start) + state.game.settings.seconds_per_turn
+
+      Process.send_after(self(), {:auto_turn, turn_start}, seconds * 1000)
+
+      %{state | turn_start: turn_start}
+    else
+      state
+    end
   end
 
   defp to_name(uuid), do: String.to_atom(uuid)

@@ -24,8 +24,9 @@ defmodule Game.Phase.Roll do
       |> Player.update(%{turns: turns})
       |> IndexMap.update_all(:dices, &Dice.unlock/1)
     end)
-    |> Turn.reset()
   end
+
+  def action(game, :start_turn), do: Turn.reset(game)
 
   def action(game, {:toggle, index}) do
     game
@@ -47,9 +48,10 @@ defmodule Game.Phase.Roll do
         Turn.next(game)
 
       %{rolled: false} ->
-        action(game, :roll)
+        game
+        |> action(:roll)
+        |> Turn.reset()
     end
-    |> Turn.reset()
   end
 
   def action(game, :roll) do

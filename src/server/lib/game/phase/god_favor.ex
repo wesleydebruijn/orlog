@@ -23,6 +23,7 @@ defmodule Game.Phase.GodFavor do
     |> IndexMap.update_all(:players, &Player.update(&1, %{turns: turns}))
   end
 
+  def action(game, :start_turn), do: Turn.reset(game)
   def action(game, :continue), do: Turn.next(game)
 
   def action(game, {:select, favor_tier}) do

@@ -13,6 +13,7 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
+          turn_start: DateTime.utc_now(),
           status: :waiting | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
@@ -23,6 +24,7 @@ defmodule Game.Lobby do
   defstruct uuid: "",
             status: :waiting,
             turn: 0,
+            turn_start: nil,
             settings: %Settings{},
             game: %Game{},
             pids: %{}
@@ -40,6 +42,11 @@ defmodule Game.Lobby do
   @spec startable?(Lobby.t()) :: boolean()
   def startable?(state) do
     state.status != :playing && Enum.count(state.pids) == @pids
+  end
+
+  @spec startable?(Lobby.t()) :: boolean()
+  def schedule_auto_turn?(state) do
+    state.status == :playing && state.turn_start != state.game.turn_start
   end
 
   @spec turn?(Lobby.t(), pid()) :: boolean()
