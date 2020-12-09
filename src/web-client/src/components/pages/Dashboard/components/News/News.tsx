@@ -37,8 +37,8 @@ type NewsArticle = {
   timestamp: string
 }
 
-const fetchNews: PromiseFn<NewsArticle[]> = async ({}, { signal }) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/news`, { signal })
+const fetchNews: PromiseFn<NewsArticle[]> = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/news`)
   if (!response.ok) throw new Error(response.statusText)
   return response.json()
 }

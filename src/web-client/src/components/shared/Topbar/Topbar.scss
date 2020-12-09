@@ -4,14 +4,16 @@ $player__name: orange;
 $player__title: #606060;
 
 .topbar {
-  display: flex;
-  justify-content: center;
-
   width: 100vw;
   height: 45px;
   background-color: $primary;
   border-top: 8px solid $border;
   border-bottom: 8px solid $border;
+
+  &--game {
+    display: flex;
+    justify-content: center;
+  }
 
   &__center {
     display: flex;

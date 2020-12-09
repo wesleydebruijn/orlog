@@ -50,3 +50,22 @@
     }
   }
 }
+
+@media (max-width: 575.98px) {
+  .game-state-waiting {
+    main {
+      .content-box {
+        width: 90vw;
+        &__content {
+          p {
+            width: 300px;
+          }
+        }
+      }
+
+      input {
+        display: none;
+      }
+    }
+  }
+}

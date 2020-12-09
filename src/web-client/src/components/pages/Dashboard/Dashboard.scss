@@ -95,25 +95,6 @@ $player__title: #606060;
       width: 100%;
     }
 
-    .topbar {
-      height: 70px;
-
-      .player {
-        &__avatar {
-          flex-basis: 135px;
-          img {
-            width: 100px;
-            height: 100px;
-            border-radius: 4px solid green;
-          }
-        }
-
-        &__info {
-          height: 70px;
-        }
-      }
-    }
-
     main {
       margin-top: 1rem;
       width: 90%;
