@@ -1,20 +1,13 @@
-import classNames from 'classnames'
-import './Topbar.scss'
-
 type Props = {
-  title: string
-  variant?: 'default' | 'game'
+  children: React.ReactNode
 }
 
-export default function Topbar({ title, variant = 'default' }: Props) {
-  const classes = classNames('topbar', {
-    'topbar--game': variant === 'game'
-  })
+export default function Topbar({ children }: Props) {
   return (
-    <section className={classes}>
-      <div className="topbar__center">
-        <span>{title}</span>
+    <div className="md:fixed md:w-full bg-primary border-t-8 border-b-8 border-secondary h-24">
+      <div className="md:container md:mx-auto flex items-center h-full justify-between">
+        {children}
       </div>
-    </section>
+    </div>
   )
 }

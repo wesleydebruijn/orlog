@@ -5,7 +5,6 @@ import { AuthProvider } from './providers/AuthProvider'
 import PrivateRoute from './components/shared/PrivateRoute'
 
 import Dashboard from './components/pages/Dashboard/Dashboard'
-import Game from './components/pages/Game/Game'
 import Login from './components/pages/Login'
 
 export default function App() {
@@ -16,10 +15,6 @@ export default function App() {
           <Switch>
             <PrivateRoute path="/" exact>
               <Dashboard />
-            </PrivateRoute>
-
-            <PrivateRoute path="/game/:gameId" exact>
-              <Game />
             </PrivateRoute>
 
             <Route path="/login" exact>

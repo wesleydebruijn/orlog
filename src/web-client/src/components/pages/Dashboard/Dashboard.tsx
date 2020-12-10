@@ -1,36 +1,29 @@
 import React from 'react'
-import { useHistory } from 'react-router'
-import { v4 as uuidv4 } from 'uuid'
-
-import Navigation from './components/Navigation/Navigation'
-import News from './components/News/News'
 import Player from '../../shared/Player/Player'
+import Topbar from '../../shared/Topbar/Topbar'
+import Navigation from './components/Navigation'
+
+import godFavorIcon from '../Dashboard/assets/icons/god_favors.svg'
+import userIcon from '../Dashboard/assets/icons/user.svg'
 
 export default function Dashboard() {
-  const history = useHistory()
-
-  function createGame() {
-    const gameId = uuidv4()
-    history.push(`/game/${gameId}`)
-  }
-
   return (
-    <div className="dashboard">
-      <section className="mt-4 bg-brown-100 h-4 w-10">
-        <div className="container">
-          <Player />
-          <Navigation />
-        </div>
-      </section>
-      <main>
-        <News />
-        <section className="game-menu">
-          <button className="game-menu__play" onClick={() => createGame()}>
-            New game
-          </button>
-        </section>
-        <section className="empty"></section>
-      </main>
+    <div className="w-full h-screen bg-dashboard">
+      <Topbar>
+        <Player />
+        <Navigation
+          items={[
+            { text: 'God Favors', icon: godFavorIcon },
+            { text: 'Settings', icon: userIcon }
+          ]}
+        />
+      </Topbar>
+      <div
+        className="flex absolute top-1/4 left-1/2 width-1/2"
+        style={{
+          transform: 'translate(-50%, -50%)'
+        }}
+      ></div>
     </div>
   )
 }
