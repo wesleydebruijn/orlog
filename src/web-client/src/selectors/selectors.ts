@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { NewGameState, Player } from '../types/types'
+import { NewGameState } from '../types/types'
 
 export const getGameUUID = (state: NewGameState) => state.lobby.uuid
 export const getSettings = (state: NewGameState) => state.lobby.settings
