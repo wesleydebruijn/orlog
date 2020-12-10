@@ -6,8 +6,6 @@ import Navigation from './components/Navigation/Navigation'
 import News from './components/News/News'
 import Player from '../../shared/Player/Player'
 
-import './Dashboard.scss'
-
 export default function Dashboard() {
   const history = useHistory()
 
@@ -18,7 +16,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <section className="topbar">
+      <section className="mt-4 bg-brown-100 h-4 w-10">
         <div className="container">
           <Player />
           <Navigation />
