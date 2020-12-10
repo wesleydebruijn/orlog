@@ -6,10 +6,12 @@
   justify-content: center;
   align-self: flex-end;
 
-  > div {
-    width: 60px;
+  &__container {
     height: 60px;
-    margin: 15px;
     position: relative;
+
+    > div {
+      position: absolute;
+    }
   }
 }

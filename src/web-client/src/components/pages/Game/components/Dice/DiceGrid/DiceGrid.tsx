@@ -19,8 +19,7 @@ export default function DiceGrid({ dices, rolled, onToggleDice }: Props) {
   const extendedDices = Object.entries(dices).map(([index, dice]) => ({ ...dice, index }))
   const [animateDices, setAnimatedDices] = useState(extendedDices)
 
-  const diceWidth = 60
-  const diceMargin = 15
+  const diceWidth = 85
 
   let width = 0
   const transitions = useTransition(
@@ -42,21 +41,23 @@ export default function DiceGrid({ dices, rolled, onToggleDice }: Props) {
     <>
       <button onClick={() => setAnimatedDices(shuffle)}>Test</button>
       <div className="dice-grid">
-        {
-          // @ts-ignore
-          transitions.map(({ item, props: { x, ...rest }, key }, index) => (
-            <animated.div
-              key={key}
-              style={{
-                zIndex: animateDices.length - index,
-                transform: interpolate([x], x => `translate3d(${x}px,0,0)`),
-                ...rest
-              }}
-            >
-              <Dice key={item.index} {...item} rolled={rolled} onClick={onToggleDice} />
-            </animated.div>
-          ))
-        }
+        <div className="dice-grid__container" style={{ width }}>
+          {
+            // @ts-ignore
+            transitions.map(({ item, props: { x, ...rest }, key }, index) => (
+              <animated.div
+                key={key}
+                style={{
+                  zIndex: animateDices.length - index,
+                  transform: interpolate([x], x => `translate3d(${x}px,0,0)`),
+                  ...rest
+                }}
+              >
+                <Dice key={item.index} {...item} rolled={rolled} onClick={onToggleDice} />
+              </animated.div>
+            ))
+          }
+        </div>
       </div>
     </>
   )

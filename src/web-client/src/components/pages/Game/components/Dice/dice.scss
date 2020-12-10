@@ -1,7 +1,6 @@
 .dice {
   width: 60px;
   height: 60px;
-  margin: 15px;
   position: relative;
   transform-style: preserve-3d;
   user-select: none;
@@ -45,9 +44,7 @@
   }
 
   &--kept {
-    position: relative;
-    top: 10px;
-    margin-top: -10px;
+    margin-top: -20px;
   }
 
   .front {
