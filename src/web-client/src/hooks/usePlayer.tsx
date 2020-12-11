@@ -3,7 +3,7 @@ import { PlayerContext } from '../components/pages/Game/components/GameBoard/Gam
 import { Context } from '../providers/GameLobbyProvider'
 
 export function usePlayer() {
-  const { lobby } = useContext(Context)
+  const { lobby, favors } = useContext(Context)
   const { player, opponent } = useContext(PlayerContext)
 
   if (!player || !opponent || !lobby) {
@@ -18,6 +18,9 @@ export function usePlayer() {
     started: lobby.game.start === player,
     won: lobby.game.winner === player,
     player: lobby.game.players[player],
+    favors: favors
+      ? Object.values(lobby.game.players[player].favors).map(index => favors[index])
+      : [],
     opponent: lobby.game.players[opponent]
   }
 }

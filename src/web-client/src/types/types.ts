@@ -92,5 +92,5 @@ export type DiceFace = {
   intersects: number
   disabled: boolean
   type: 'melee' | 'ranged' | 'token'
-  stance: 'attack' | 'block' | 'steal'
+  stance: 'attack' | 'block'
 }

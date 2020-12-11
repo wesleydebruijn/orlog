@@ -15,6 +15,7 @@ import {
 } from '../../../../../selectors/selectors'
 
 import './GameBoard.scss'
+import { useGame } from '../../../../../hooks/useGame'
 
 type Props = {
   game: NewGameState
@@ -27,17 +28,14 @@ export const PlayerContext = React.createContext<{ player?: number; opponent?: n
 })
 
 export default function GameBoard({ game, actions }: Props) {
+  const { phase } = useGame()
+
   return (
     <section className="game-board">
       <GameInfo
-        phase={getGamePhase(game).name}
-        turn={
-          getGamePhase(game).turns -
-          getGamePhase(game).auto_turns +
-          1 -
-          getCurrentPlayer(game).turns
-        }
-        maxTurn={getGamePhase(game).turns - getGamePhase(game).auto_turns}
+        phase={phase.name}
+        turn={phase.turns - phase.auto_turns + 1 - getCurrentPlayer(game).turns}
+        maxTurn={phase.turns - phase.auto_turns}
         round={game.lobby.game.round}
       />
       <section className="game-board__field">
@@ -48,9 +46,7 @@ export default function GameBoard({ game, actions }: Props) {
               value={{ player: parseInt(index), opponent: (parseInt(index) % 2) + 1 }}
             >
               <PlayerArea
-                favors={getPlayerFavors(game)}
                 key={index}
-                player={player}
                 onSelectFavor={actions.selectFavor}
                 onToggleDice={actions.toggleDice}
               />

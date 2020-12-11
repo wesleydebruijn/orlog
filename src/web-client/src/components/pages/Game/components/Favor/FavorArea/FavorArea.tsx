@@ -1,16 +1,17 @@
 import React from 'react'
+import { usePlayer } from '../../../../../../hooks/usePlayer'
 
-import { Favor as FavorProps } from '../../../../../../types/types'
 import Favor from '../Favor'
 
 import './FavorArea.scss'
 
 type Props = {
-  favors: FavorProps[]
   onFavorSelect?: (favorIndex: number, tier: number) => void
 }
 
-export default function FavorArea({ favors, onFavorSelect = undefined }: Props) {
+export default function FavorArea({ onFavorSelect = undefined }: Props) {
+  const { favors } = usePlayer()
+
   return (
     <section className="favor-area">
       {favors.map(({ name, tiers }, index) => (
