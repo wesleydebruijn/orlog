@@ -7,7 +7,6 @@ import { GameLobby, GameState, NewGameState } from '../types/types'
 export const Context = React.createContext<GameState>({
   status: 'initial'
 })
-
 export type GameActions = {
   doContinue: () => void
   toggleDice: (diceIndex: string) => void

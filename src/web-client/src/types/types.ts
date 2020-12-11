@@ -56,6 +56,7 @@ export type Game = {
   round: number
   phase: number
   turn: number
+  start: number
   winner: number
   settings: Settings
   players: {

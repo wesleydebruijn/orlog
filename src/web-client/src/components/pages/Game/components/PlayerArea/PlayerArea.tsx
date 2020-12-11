@@ -1,9 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
-import { ActionTypes } from 'react-async'
-import { useAnimation } from '../../../../../hooks/useAnimation'
+import { usePlayer } from '../../../../../hooks/usePlayer'
 import { GameActions } from '../../../../../providers/GameLobbyProvider'
-import { getPlayerFavors } from '../../../../../selectors/selectors'
 
 import type { Favor, Player as PlayerType } from '../../../../../types/types'
 
@@ -14,20 +12,14 @@ import FavorArea from '../Favor/FavorArea/FavorArea'
 import './PlayerArea.scss'
 
 type Props = {
-  self?: boolean
   player: PlayerType
   onSelectFavor?: GameActions['selectFavor']
   onToggleDice?: GameActions['toggleDice']
   favors: Favor[]
 }
 
-export default function PlayerArea({
-  self = false,
-  player,
-  favors,
-  onSelectFavor,
-  onToggleDice
-}: Props) {
+export default function PlayerArea({ player, favors, onSelectFavor, onToggleDice }: Props) {
+  const { self } = usePlayer()
   const classes = classNames('player-area', {
     'player-area--self': self
   })

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { NewGameState } from '../../../../../types/types'
+import type { NewGameState, Player } from '../../../../../types/types'
 import type { GameActions } from '../../../../../providers/GameLobbyProvider'
 
 import ContinueButton from '../ContinueButton/ContinueButton'
@@ -10,8 +10,8 @@ import {
   getGamePhase,
   getCurrentPlayer,
   getOpponentPlayer,
-  getPlayer,
-  getPlayerFavors
+  getPlayerFavors,
+  getPlayer
 } from '../../../../../selectors/selectors'
 
 import './GameBoard.scss'
@@ -20,6 +20,11 @@ type Props = {
   game: NewGameState
   actions: GameActions
 }
+
+export const PlayerContext = React.createContext<{ player?: number; opponent?: number }>({
+  player: undefined,
+  opponent: undefined
+})
 
 export default function GameBoard({ game, actions }: Props) {
   return (
@@ -36,16 +41,21 @@ export default function GameBoard({ game, actions }: Props) {
         round={game.lobby.game.round}
       />
       <section className="game-board__field">
-        {[getOpponentPlayer(game), getPlayer(game)].map((player, index) => (
-          <PlayerArea
-            favors={getPlayerFavors(game)}
-            key={index}
-            player={player}
-            self={index === 1}
-            onSelectFavor={actions.selectFavor}
-            onToggleDice={actions.toggleDice}
-          ></PlayerArea>
-        ))}
+        {Object.entries(game.lobby.game.players)
+          .sort(([index, _player]) => (parseInt(index) === game.lobby.turn ? 1 : -1))
+          .map(([index, player]) => (
+            <PlayerContext.Provider
+              value={{ player: parseInt(index), opponent: (parseInt(index) % 2) + 1 }}
+            >
+              <PlayerArea
+                favors={getPlayerFavors(game)}
+                key={index}
+                player={player}
+                onSelectFavor={actions.selectFavor}
+                onToggleDice={actions.toggleDice}
+              />
+            </PlayerContext.Provider>
+          ))}
         {game.lobby.turn === game.lobby.game.turn && (
           <ContinueButton text="Continue" onClick={() => actions.doContinue()} />
         )}
