@@ -20,12 +20,21 @@ const faces: { [index: string]: any } = {
 }
 
 type Props = DiceProps & {
-  index: string
-  onClick?: (index: string) => void
+  index: number
+  onClick?: (index: number) => void
   rolled: boolean
 }
 
-export default function Dice({ index, face, tokens, keep, locked, rolled, onClick }: Props) {
+export default function Dice({
+  index,
+  face,
+  tokens,
+  keep,
+  locked,
+  rolled,
+  placeholder,
+  onClick
+}: Props) {
   const activeFace = `${face.type}-${face.stance}`
 
   const { active: isRolling, setActive: rollAnimation } = useAnimation(500)
@@ -34,6 +43,7 @@ export default function Dice({ index, face, tokens, keep, locked, rolled, onClic
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--kept': keep,
     'dice--locked': locked,
+    'dice--placeholder': placeholder,
     roll: isRolling
   })
 

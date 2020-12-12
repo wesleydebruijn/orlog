@@ -17,10 +17,11 @@ defmodule Game do
           winner: integer(),
           round: integer(),
           phase: integer(),
-          turn: integer()
+          turn: integer(),
+          start: integer()
         }
   @derive Jason.Encoder
-  defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0
+  defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0, start: 0
 
   @spec start([String.t()], Settings.t()) :: Game.t()
   def start(uuids, settings \\ %Settings{}) do

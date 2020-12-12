@@ -1,23 +1,66 @@
-import React from 'react'
-import { Dice as DiceProps } from '../../../../../../types/types'
+import React, { useEffect, useState } from 'react'
+import { useTransition, animated, interpolate } from 'react-spring'
+
+import { usePlayer } from '../../../../../../hooks/usePlayer'
+import { useGame } from '../../../../../../hooks/useGame'
+import { faceOffDices, initialDices } from './utils'
 import Dice from '../Dice'
 
 import './DiceGrid.scss'
 
 type Props = {
-  dices: {
-    [index: number]: DiceProps
-  }
-  rolled: boolean
-  onToggleDice?: (index: string) => void
+  onToggleDice?: (index: number) => void
 }
 
-export default function DiceGrid({ dices, rolled, onToggleDice }: Props) {
+const DICE_WIDTH = 85
+
+export default function DiceGrid({ onToggleDice }: Props) {
+  const { started, player, opponent } = usePlayer()
+  const { phase } = useGame()
+
+  const [dices, setDices] = useState(initialDices(player))
+
+  let width = 0
+  const transitions = useTransition(
+    dices.map(dice => ({ ...dice, x: (width += DICE_WIDTH) - DICE_WIDTH })),
+    dice => dice.index,
+    {
+      from: { width: 0, opacity: 0 },
+      leave: { width: 0, opacity: 0 },
+      enter: ({ x }) => ({ x, width: DICE_WIDTH, opacity: 1 }),
+      update: ({ x }) => ({ x, width: DICE_WIDTH })
+    }
+  )
+
+  useEffect(() => {
+    if (phase.id > 1) {
+      setDices(faceOffDices(player, opponent, started))
+    } else {
+      setDices(initialDices(player))
+    }
+  }, [player.dices, phase.id])
+
   return (
-    <div className="dice-grid">
-      {Object.entries(dices).map(([index, dice]) => (
-        <Dice key={index} {...dice} index={index} rolled={rolled} onClick={onToggleDice} />
-      ))}
-    </div>
+    <>
+      <div className="dice-grid">
+        <div className="dice-grid__container" style={{ width }}>
+          {
+            // @ts-ignore
+            transitions.map(({ item, props: { x, ...rest }, key }, index) => (
+              <animated.div
+                key={key}
+                style={{
+                  zIndex: dices.length - index,
+                  transform: interpolate([x], x => `translate3d(${x}px,0,0)`),
+                  ...rest
+                }}
+              >
+                <Dice key={item.index} {...item} rolled={player.rolled} onClick={onToggleDice} />
+              </animated.div>
+            ))
+          }
+        </div>
+      </div>
+    </>
   )
 }

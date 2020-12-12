@@ -56,6 +56,7 @@ export type Game = {
   round: number
   phase: number
   turn: number
+  start: number
   winner: number
   settings: Settings
   players: {
@@ -82,6 +83,7 @@ export type Dice = {
   tokens: number
   locked: boolean
   keep: boolean
+  placeholder: boolean
   face: DiceFace
 }
 

@@ -10,7 +10,7 @@ defmodule Game.Turn do
       |> Map.keys()
       |> Enum.random()
 
-    %{game | turn: turn}
+    %{game | turn: turn, start: turn}
   end
 
   @spec determine_next(Game.t()) :: integer()
