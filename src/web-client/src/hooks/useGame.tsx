@@ -12,10 +12,13 @@ export function useGame() {
 
   return {
     phase: {
-      id: lobby.game.phase,
-      ...lobby.game.settings.phases[lobby.game.phase]
+      ...lobby.game.settings.phases[lobby.game.phase],
+      id: lobby.game.phase
     },
     round: lobby.game.round,
-    turn: lobby.game.turn
+    turn: lobby.game.turn,
+    player: lobby.turn,
+    hasTurn: lobby.game.turn === lobby.turn,
+    opponent: (lobby.turn % 2) + 1
   }
 }
