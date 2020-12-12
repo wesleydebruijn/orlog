@@ -29,6 +29,7 @@ module.exports = {
         'f-145': '145px'
       },
       minWidth: {
+        'f-120': '120px',
         'f-300': '300px'
       }
     }

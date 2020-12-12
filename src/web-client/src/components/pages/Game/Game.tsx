@@ -37,7 +37,7 @@ export default function Game() {
   const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
 
   return (
-    <div className="bg-game-state-waiting min-h-screen flex flex-col">
+    <div className="bg-game-state-waiting bg-no-repeat bg-cover bg-fixed min-h-screen flex flex-col">
       <GameTopbar title="Waiting for player..." />
       <div className="container mx-auto flex justify-center items-center flex-grow -mt-64 mobile:px-12">
         <ContentBox

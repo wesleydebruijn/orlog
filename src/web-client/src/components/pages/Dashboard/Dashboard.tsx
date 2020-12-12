@@ -19,7 +19,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-dashboard flex flex-col">
+    <div className="w-full min-h-screen bg-dashboard bg-center bg-cover bg-no-repeat bg-fixed flex flex-col">
       <Topbar>
         <Player />
         <Navigation
