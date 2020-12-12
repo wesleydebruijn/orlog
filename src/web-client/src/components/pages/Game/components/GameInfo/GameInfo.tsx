@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { animated, useSpring } from 'react-spring'
+import { useBoolean } from '../../../../../hooks/useBoolean'
 import { useGame } from '../../../../../hooks/useGame'
 import { usePlayer } from '../../../../../hooks/usePlayer'
 
@@ -8,13 +9,12 @@ import './GameInfo.scss'
 export default function GameInfo() {
   const { phase, round } = useGame()
   const { current } = usePlayer()
-  const [transitionPhase, setTransitionPhase] = useState(false)
+  const [transitionPhase, setTransitionPhase] = useBoolean(1000)
 
   const props = useSpring({
     to: { opacity: transitionPhase ? 1 : 0 },
     from: { opacity: 0 },
-    config: { duration: 700 },
-    onRest: () => setTransitionPhase(false)
+    config: { duration: 700 }
   })
 
   useEffect(() => setTransitionPhase(true), [phase.id])
