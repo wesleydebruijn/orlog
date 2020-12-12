@@ -17,8 +17,8 @@ export function useGame() {
     },
     round: lobby.game.round,
     turn: lobby.game.turn,
-    player: lobby.turn,
     hasTurn: lobby.game.turn === lobby.turn,
+    player: lobby.turn,
     opponent: (lobby.turn % 2) + 1
   }
 }
