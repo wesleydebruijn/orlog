@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react'
 
-export function useAnimation(duration: number) {
+export function useBoolean(milliseconds: number): [boolean, (bool: boolean) => void] {
   const [active, setActive] = useState(false)
 
   useEffect(() => {
     if (active) {
-      const timeout = setTimeout(() => setActive(false), duration)
+      const timeout = setTimeout(() => setActive(false), milliseconds)
       return () => clearTimeout(timeout)
     }
   }, [active])
 
-  return {
-    setActive,
-    active
-  }
+  return [active, setActive]
 }
