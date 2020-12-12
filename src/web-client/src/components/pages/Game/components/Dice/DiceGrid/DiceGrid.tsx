@@ -13,16 +13,38 @@ type Props = {
 }
 
 const DICE_WIDTH = 85
+const DICE_SPACE = 15
+
+function calculateWidth(dices: any, index: number, faceOff: boolean) {
+  if (!faceOff) return DICE_WIDTH
+
+  const dice = dices[index]
+  const nextDice = dices[index + 1]
+
+  if (
+    !nextDice ||
+    (dice.face.stance === nextDice.face.stance && dice.face.type === nextDice.face.type)
+  ) {
+    return DICE_WIDTH - DICE_SPACE
+  } else {
+    return DICE_WIDTH
+  }
+}
 
 export default function DiceGrid({ onToggleDice }: Props) {
   const { started, player, opponent } = usePlayer()
   const { phase } = useGame()
 
   const [dices, setDices] = useState(initialDices(player))
+  const doFaceOffDices = phase.id > 1
 
   let width = 0
   const transitions = useTransition(
-    dices.map(dice => ({ ...dice, x: (width += DICE_WIDTH) - DICE_WIDTH })),
+    dices.map((dice, index) => {
+      const diceWidth = calculateWidth(dices, index, doFaceOffDices)
+
+      return { ...dice, x: (width += diceWidth) - diceWidth }
+    }),
     dice => dice.index,
     {
       from: { width: 0, opacity: 0 },
@@ -33,12 +55,12 @@ export default function DiceGrid({ onToggleDice }: Props) {
   )
 
   useEffect(() => {
-    if (phase.id > 1) {
+    if (doFaceOffDices) {
       setDices(faceOffDices(player, opponent, started))
     } else {
       setDices(initialDices(player))
     }
-  }, [player.dices, phase.id])
+  }, [player.dices, doFaceOffDices])
 
   return (
     <>
