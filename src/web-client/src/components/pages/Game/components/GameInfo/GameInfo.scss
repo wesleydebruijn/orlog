@@ -3,6 +3,19 @@ $phase__background: red;
 $info__height: 30px;
 $info__background: blue;
 
+.game-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 1);
+  font-family: 'Signika', sans-serif;
+  font-size: 3rem;
+  color: orange;
+  box-shadow: 0px 0px 55px 70px black;
+  z-index: 10;
+}
+
 .game-info {
   display: flex;
   flex-direction: column;
