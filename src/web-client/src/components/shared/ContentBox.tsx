@@ -15,7 +15,7 @@ export default function ContentBox({ title, children, className }: Props) {
       <div className="font-signika bg-primary rounded-t-md border-secondary border-b-2 px-6 py-4">
         <h1 className="text-orange text-base">{title}</h1>
       </div>
-      <div className="h-auto bg-primary bg-opacity-70 flex flex-col justify-between">
+      <div className="h-auto bg-primary bg-opacity-70 flex flex-col justify-between py-4 px-6 mb-2">
         {children}
       </div>
     </div>

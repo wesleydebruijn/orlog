@@ -1,14 +1,23 @@
 import React from 'react'
+import { useHistory } from 'react-router'
+import { v4 as uuidv4 } from 'uuid'
+
 import Player from '../../shared/Player'
 import Topbar from '../../shared/Topbar'
 import Navigation from './components/Navigation'
-
-import godFavorIcon from '../Dashboard/assets/icons/god_favors.svg'
-import userIcon from '../Dashboard/assets/icons/user.svg'
 import News from './components/News'
 import FancyButton from '../../shared/Button/FancyButton'
 
+import godFavorIcon from '../../../assets/icons/god_favors.svg'
+import userIcon from '../../../assets/icons/user.svg'
+
 export default function Dashboard() {
+  const history = useHistory()
+  function createGame() {
+    const gameId = uuidv4()
+    history.push(`/game/${gameId}`)
+  }
+
   return (
     <div className="w-full min-h-screen bg-dashboard flex flex-col">
       <Topbar>
@@ -26,12 +35,11 @@ export default function Dashboard() {
           <div className="flex-grow">
             <FancyButton
               className="mobile:order-1 mobile:mb-8 mobile:w-full tablet:ml-8"
-              onClick={() => console.log('hey')}
+              onClick={() => createGame()}
             >
               New game
             </FancyButton>
           </div>
-          <div className="w-1/3"></div>
         </div>
       </div>
     </div>
