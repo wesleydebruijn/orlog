@@ -16,7 +16,7 @@ export default function News({ className }: Props) {
       <AsyncContent state={state}>
         {articles =>
           articles.map(({ title, content, author, timestamp }) => (
-            <article className="flex flex-col justify-between py-4 px-6 mb-2">
+            <article className="mb-4">
               <b className="text-orange text-sm">{title}</b>
               <p className="text-text text-sm py-4">{content}</p>
               <div className="text-orange text-xs flex justify-between">

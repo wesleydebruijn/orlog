@@ -19,8 +19,12 @@ module.exports = {
         signika: 'Signika'
       },
       backgroundImage: theme => ({
-        dashboard: "url('/src/components/pages/Dashboard/assets/background.jpg')"
+        dashboard: "url('/src/assets/backgrounds/dashboard.jpg')",
+        'game-state-waiting': "url('/src/assets/backgrounds/game-state-waiting.jpg')"
       }),
+      width: {
+        'f-120': '120px'
+      },
       minHeight: {
         'f-145': '145px'
       },
