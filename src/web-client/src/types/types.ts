@@ -36,12 +36,17 @@ export type FavorTier = {
   value: number
 }
 
-export type Phases = {
-  [index: number]: {
-    name: string
-    turns: number
-    auto_turns: number
-  }
+export enum PhaseId {
+  Roll = 1,
+  GodFavor = 2,
+  Resolution = 3
+}
+
+export type Phase = {
+  id: PhaseId
+  name: string
+  turns: number
+  auto_turns: number
 }
 
 export type Settings = {
@@ -49,12 +54,14 @@ export type Settings = {
   favors: number
   health: number
   tokens: number
-  phases: Phases
+  phases: {
+    [index: number]: Phase
+  }
 }
 
 export type Game = {
   round: number
-  phase: number
+  phase: PhaseId
   turn: number
   start: number
   winner: number

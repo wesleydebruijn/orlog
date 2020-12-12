@@ -20,7 +20,7 @@ export default function Game() {
           case 'waiting':
             return <GameStateWaiting />
           case 'playing':
-            return <GameBoard game={game} actions={actions} />
+            return <GameBoard actions={actions} />
         }
       }}
     </GameLobbyProvider>

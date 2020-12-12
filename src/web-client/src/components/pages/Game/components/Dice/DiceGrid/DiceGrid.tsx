@@ -7,6 +7,7 @@ import { faceOffDices, initialDices } from './utils'
 import Dice from '../Dice'
 
 import './DiceGrid.scss'
+import { PhaseId } from '../../../../../../types/types'
 
 type Props = {
   onToggleDice?: (index: number) => void
@@ -36,12 +37,12 @@ export default function DiceGrid({ onToggleDice }: Props) {
   const { phase } = useGame()
 
   const [dices, setDices] = useState(initialDices(player))
-  const doFaceOffDices = phase.id > 1
+  const faceOff = phase.id > PhaseId.Roll
 
   let width = 0
   const transitions = useTransition(
     dices.map((dice, index) => {
-      const diceWidth = calculateWidth(dices, index, doFaceOffDices)
+      const diceWidth = calculateWidth(dices, index, faceOff)
 
       return { ...dice, x: (width += diceWidth) - diceWidth }
     }),
@@ -55,12 +56,12 @@ export default function DiceGrid({ onToggleDice }: Props) {
   )
 
   useEffect(() => {
-    if (doFaceOffDices) {
+    if (faceOff) {
       setDices(faceOffDices(player, opponent, started))
     } else {
       setDices(initialDices(player))
     }
-  }, [player.dices, doFaceOffDices])
+  }, [player.dices, faceOff])
 
   return (
     <>
