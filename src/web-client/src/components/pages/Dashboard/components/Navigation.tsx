@@ -23,7 +23,7 @@ export default function Navigation({ items }: Props) {
         <span className="bg-white w-5 h-0.5"></span>
       </div>
       {menu && (
-        <div className="hidden mobile:flex absolute top-28 right-0 mr-5 h-auto w-44 bg-primary rounded box-border py-1 px-2">
+        <div className="hidden mobile:flex absolute top-28 right-0 mr-5 h-auto w-44 bg-primary rounded box-border py-1 px-2 z-10">
           <ul className="w-full">
             {items.map(item => (
               <NavigationItem key={item.text} icon={item.icon} text={item.text} />

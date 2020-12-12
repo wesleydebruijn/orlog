@@ -12,14 +12,21 @@ module.exports = {
         primary: '#211c1c',
         secondary: '#403535',
         orange: 'orange',
-        gray: '#606060'
+        gray: '#606060',
+        text: '#e4bd8d'
       },
       fontFamily: {
         signika: 'Signika'
       },
       backgroundImage: theme => ({
         dashboard: "url('/src/components/pages/Dashboard/assets/background.jpg')"
-      })
+      }),
+      minHeight: {
+        'f-145': '145px'
+      },
+      minWidth: {
+        'f-300': '300px'
+      }
     }
   }
 }

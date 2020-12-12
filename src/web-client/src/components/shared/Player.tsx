@@ -1,6 +1,6 @@
 import React from 'react'
 import { PromiseFn, useAsync } from 'react-async'
-import AsyncContent from '../../shared/AsyncContent'
+import AsyncContent from './AsyncContent'
 
 export default function Player() {
   const state = useAsync<PlayerType>(fetchPlayer)
