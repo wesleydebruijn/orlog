@@ -31,11 +31,7 @@ export default function PlayerArea({ onSelectFavor, onToggleDice }: Props) {
         />
         <FavorArea onFavorSelect={self ? onSelectFavor : undefined} />
       </div>
-      <DiceGrid
-        dices={player.dices}
-        rolled={player.rolled}
-        onToggleDice={self && player.rolled ? onToggleDice : undefined}
-      />
+      <DiceGrid onToggleDice={self && player.rolled ? onToggleDice : undefined} />
     </div>
   )
 }

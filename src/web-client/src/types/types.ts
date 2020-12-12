@@ -83,6 +83,7 @@ export type Dice = {
   tokens: number
   locked: boolean
   keep: boolean
+  placeholder: boolean
   face: DiceFace
 }
 
@@ -92,5 +93,5 @@ export type DiceFace = {
   intersects: number
   disabled: boolean
   type: 'melee' | 'ranged' | 'token'
-  stance: 'attack' | 'block'
+  stance: 'attack' | 'block' | 'steal'
 }

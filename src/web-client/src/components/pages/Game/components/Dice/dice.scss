@@ -47,6 +47,10 @@
     margin-top: -20px;
   }
 
+  &--placeholder {
+    visibility: hidden;
+  }
+
   .front {
     transform: rotateY(0deg) translateZ(30px);
   }
