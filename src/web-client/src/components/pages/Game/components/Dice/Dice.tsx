@@ -1,5 +1,9 @@
+import { useEffect } from 'react'
 import classnames from 'classnames'
-import { Dice as DiceProps, DiceFace } from '../../../../../types/types'
+import { animated, useSpring } from 'react-spring'
+
+import { Dice as DiceProps } from '../../../../../types/types'
+import { useAnimation } from '../../../../../hooks/useAnimation'
 
 import './dice.scss'
 
@@ -8,8 +12,7 @@ import meleeBlock from './assets/melee-block.svg'
 import rangedAttack from './assets/ranged-attack.svg'
 import rangedBlock from './assets/ranged-block.svg'
 import tokenSteal from './assets/token-steal.svg'
-import { useAnimation } from '../../../../../hooks/useAnimation'
-import { useEffect } from 'react'
+import { usePlayer } from '../../../../../hooks/usePlayer'
 
 const faces: { [index: string]: any } = {
   'melee-attack': meleeAttack,
@@ -35,13 +38,13 @@ export default function Dice({
   placeholder,
   onClick
 }: Props) {
-  const activeFace = `${face.type}-${face.stance}`
+  const { self } = usePlayer()
+  const diceProps = useSpring({ marginTop: keep ? 0 : self ? 50 : -50 })
 
   const { active: isRolling, setActive: rollAnimation } = useAnimation(500)
 
-  const classes = classnames('dice', activeFace, {
+  const classes = classnames('dice', {
     'dice--toggleable': onClick !== undefined && !locked,
-    'dice--kept': keep,
     'dice--locked': locked,
     'dice--placeholder': placeholder,
     roll: isRolling
@@ -63,9 +66,13 @@ export default function Dice({
   const randomTokens = () => Math.round(Math.random())
 
   return (
-    <div className={classes} onClick={() => onClick && onClick(index)}>
+    <animated.div style={diceProps} className={classes} onClick={() => onClick && onClick(index)}>
       <div className="front active">
-        <img src={faces[activeFace]} className={faceClasses(tokens > 0)} alt="" />
+        <img
+          src={faces[`${face.type}-${face.stance}`]}
+          className={faceClasses(tokens > 0)}
+          alt=""
+        />
       </div>
       <div className="back">
         <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
@@ -82,6 +89,6 @@ export default function Dice({
       <div className="bottom">
         <img src={faces[randomFace()]} className={faceClasses(randomTokens() > 0)} alt="" />
       </div>
-    </div>
+    </animated.div>
   )
 }
