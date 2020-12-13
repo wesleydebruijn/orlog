@@ -15,9 +15,11 @@ export default function FavorArea({ onFavorSelect = undefined }: Props) {
 
   return (
     <section className="favor-area">
-      {favors.map(({ name, tiers }, index) => (
+      {favors.map(({ name, description, tier_description, tiers }, index) => (
         <Favor
           name={name}
+          description={description}
+          tierDescription={tier_description}
           open={index + 1 === openFavor}
           index={index + 1}
           key={name}
