@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { animated, useSpring } from 'react-spring'
 import classnames from 'classnames'
 
-import { Dice as DiceProps } from '../../../../../types/types'
+import { Dice as DiceProps, PhaseId } from '../../../../../types/types'
 import { useBoolean } from '../../../../../hooks/useBoolean'
 import { usePlayer } from '../../../../../hooks/usePlayer'
 
@@ -13,6 +13,7 @@ import meleeBlock from './assets/melee-block.svg'
 import rangedAttack from './assets/ranged-attack.svg'
 import rangedBlock from './assets/ranged-block.svg'
 import tokenSteal from './assets/token-steal.svg'
+import { useGame } from '../../../../../hooks/useGame'
 
 const FACES: { [index: string]: any } = {
   'melee-attack': meleeAttack,
@@ -42,24 +43,34 @@ export default function Dice({
   placeholder,
   onClick
 }: Props) {
+  const { phase } = useGame()
   const { self } = usePlayer()
   const [rolling, setRolling] = useBoolean(500)
+  const [collecting, setCollecting] = useBoolean(1000)
 
   const margin = locked ? 0 : keep ? 25 : 50
-  const diceProps = useSpring({
+  const keepAnimation = {
     marginTop: self ? margin : -margin,
-    config: { mass: 1, tension: 380, friction: 30 }
-  })
+    config: { mass: 1, tension: 880, friction: 30 }
+  }
+
+  const diceProps = useSpring(keepAnimation)
   const diceClasses = classnames('dice', {
     'dice--toggleable': onClick !== undefined && !locked,
     'dice--placeholder': placeholder,
     'dice--rolling': rolling && !keep && !locked
+  })
+
+  const faceProps = useSpring({
+    boxShadow: collecting && tokens > 0 ? '0px 0px 10px #f39c12' : '0px 0px 0px #fff',
+    config: { mass: 3, tension: 400, friction: 150 }
   })
   const faceClasses = classnames('face', {
     'face--tokens': tokens > 0
   })
 
   useEffect(() => setRolling(rolled), [rolled])
+  useEffect(() => setCollecting(phase.id === PhaseId.Resolution), [phase.id])
 
   return (
     <animated.div
@@ -68,7 +79,12 @@ export default function Dice({
       onClick={() => onClick && onClick(index)}
     >
       <div className="front">
-        <img src={FACES[`${face.type}-${face.stance}`]} className={faceClasses} alt="" />
+        <animated.img
+          style={faceProps}
+          src={FACES[`${face.type}-${face.stance}`]}
+          className={faceClasses}
+          alt=""
+        />
       </div>
       <div className="back">
         <img src={FACES[randomFace()]} className={randomFaceClasses()} alt="" />
