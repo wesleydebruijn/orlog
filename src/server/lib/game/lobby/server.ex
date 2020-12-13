@@ -25,14 +25,14 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, :state)
   end
 
-  @spec joinable?(pid(), String.t()) :: boolean()
-  def joinable?(pid, user_uuid) do
-    GenServer.call(pid, {:joinable?, user_uuid})
+  @spec joinable?(pid(), User.t()) :: boolean()
+  def joinable?(pid, user) do
+    GenServer.call(pid, {:joinable?, user})
   end
 
-  @spec join(pid(), String.t()) :: Lobby.t()
-  def join(pid, user_uuid) do
-    GenServer.call(pid, {:join, user_uuid, self()})
+  @spec join(pid(), User.t()) :: Lobby.t()
+  def join(pid, user) do
+    GenServer.call(pid, {:join, user, self()})
   end
 
   @spec leave(pid()) :: :ok
@@ -57,15 +57,15 @@ defmodule Game.Lobby.Server do
   end
 
   @impl true
-  def handle_call({:joinable?, user_uuid}, _from, state) do
-    {:reply, Game.Lobby.joinable?(state, user_uuid), state}
+  def handle_call({:joinable?, user}, _from, state) do
+    {:reply, Game.Lobby.joinable?(state, user), state}
   end
 
   @impl true
-  def handle_call({:join, user_uuid, pid}, _from, state) do
+  def handle_call({:join, user, pid}, _from, state) do
     notify_pids()
 
-    new_state = Game.Lobby.join(state, user_uuid, pid)
+    new_state = Game.Lobby.join(state, user, pid)
 
     if Game.Lobby.startable?(new_state) do
       new_state = Game.Lobby.start(new_state)

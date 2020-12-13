@@ -10,7 +10,7 @@ defmodule Game.Player do
   @favors Application.get_env(:orlog, :favors)
 
   @type t :: %Player{
-          uuid: String.t(),
+          user: User.t(),
           health: integer(),
           tokens: integer(),
           turns: integer(),
@@ -19,8 +19,8 @@ defmodule Game.Player do
           favor_tier: map(),
           dices: %{}
         }
-  @derive {Jason.Encoder, except: [:uuid, :favor_tier]}
-  defstruct uuid: nil,
+  @derive Jason.Encoder
+  defstruct user: nil,
             health: 0,
             tokens: 0,
             dices: %{},

@@ -25,7 +25,7 @@ export default function PlayerArea({ onSelectFavor, onToggleDice }: Props) {
       <div className="wrapper wrapper--flex">
         <Player
           tokens={player.tokens}
-          name="Wesley"
+          name={player.user.name}
           avatar="https://images.ctfassets.net/cnu0m8re1exe/621LK0hTGKrRBzXdnqiuuE/e82b6415d8dec51658f2acd6ea6b70b7/viking.jpg?w=650&h=433&fit=fill"
           health={player.health}
         />

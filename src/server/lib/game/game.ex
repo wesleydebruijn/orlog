@@ -23,11 +23,11 @@ defmodule Game do
   @derive Jason.Encoder
   defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0, start: 0
 
-  @spec start([String.t()], Settings.t()) :: Game.t()
-  def start(uuids, settings \\ %Settings{}) do
+  @spec start([User.t()], Settings.t()) :: Game.t()
+  def start(users, settings \\ %Settings{}) do
     %Game{
       settings: settings,
-      players: IndexMap.add(%{}, Enum.map(uuids, fn uuid -> %Player{uuid: uuid} end))
+      players: IndexMap.add(%{}, Enum.map(users, fn user -> %Player{user: user} end))
     }
     |> IndexMap.update_all(:players, fn player ->
       player

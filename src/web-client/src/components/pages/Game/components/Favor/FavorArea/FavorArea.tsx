@@ -6,7 +6,7 @@ import Favor from '../Favor'
 import './FavorArea.scss'
 
 type Props = {
-  onFavorSelect?: (favorIndex: number, tier: number) => void
+  onFavorSelect?: (favor: number, tier: number) => void
 }
 
 export default function FavorArea({ onFavorSelect = undefined }: Props) {
