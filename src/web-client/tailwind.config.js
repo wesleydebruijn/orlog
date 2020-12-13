@@ -13,7 +13,8 @@ module.exports = {
         secondary: '#403535',
         orange: 'orange',
         gray: '#606060',
-        text: '#e4bd8d'
+        text: '#e4bd8d',
+        lightGray: '#E8E8E8'
       },
       fontFamily: {
         signika: 'Signika'
@@ -29,6 +30,7 @@ module.exports = {
         'f-145': '145px'
       },
       minWidth: {
+        'f-50': '50px',
         'f-120': '120px',
         'f-300': '300px'
       }

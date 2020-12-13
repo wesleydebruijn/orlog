@@ -33,7 +33,7 @@ export function GameTopbar({ title }: { title: string }) {
             x="50%"
             y="60%"
             textAnchor="middle"
-            className="text-orange font-signika"
+            className="text-orange font-signika text-xl"
             style={{
               fontSize: '0.35rem'
             }}
