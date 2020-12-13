@@ -8,10 +8,17 @@ type Props = {
 }
 
 function buttonText(phase: Phase, player: Player) {
-  if (phase.id === PhaseId.Roll && !player.rolled) return 'Roll dices'
-  if (phase.id === PhaseId.Resolution) return 'Next round'
+  switch (phase.id) {
+    case PhaseId.Roll:
+      const rollable =
+        !player.rolled && Object.values(player.dices).filter(dice => !dice.locked).length > 0
 
-  return 'End turn'
+      return rollable ? 'Roll dices' : 'End turn'
+    case PhaseId.GodFavor:
+      return 'End turn'
+    case PhaseId.Resolution:
+      return 'Next round'
+  }
 }
 
 export default function ContinueButton({ onClick }: Props) {

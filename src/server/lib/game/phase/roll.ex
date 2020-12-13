@@ -39,14 +39,13 @@ defmodule Game.Phase.Roll do
   end
 
   def action(game, :continue) do
-    game
-    |> Turn.get_player()
-    |> case do
-      %{rolled: true} ->
-        Turn.next(game)
+    player = Turn.get_player(game)
 
-      %{rolled: false} ->
-        action(game, :roll)
+    if player.rolled ||
+         Enum.count(IndexMap.filter(player.dices, fn dice -> !dice.locked end)) == 0 do
+      Turn.next(game)
+    else
+      action(game, :roll)
     end
   end
 
