@@ -60,7 +60,13 @@ defmodule Api.Router do
   defp favors do
     Application.get_env(:orlog, :favors)
     |> Enum.into(%{}, fn {index, item} ->
-      {index, %{name: item.name, tiers: item.tiers}}
+      {index,
+       %{
+         name: item.name,
+         description: item.description,
+         tier_description: item.tier_description,
+         tiers: item.tiers
+       }}
     end)
     |> Jason.encode!()
   end

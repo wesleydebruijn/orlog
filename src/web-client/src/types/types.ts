@@ -26,6 +26,8 @@ export type GameLobby = {
 
 export type Favor = {
   name: string
+  description: string
+  tier_description: string
   tiers: {
     [index: number]: FavorTier
   }
