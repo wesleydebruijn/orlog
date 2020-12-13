@@ -110,7 +110,8 @@ defmodule Game.Phase.RollTest do
               2 => %Dice{face: Dice.Face.MeleeAttack}
             },
             rolled: true
-          }
+          },
+          2 => %Player{}
         },
         turn: 1
       }
@@ -126,9 +127,46 @@ defmodule Game.Phase.RollTest do
               2 => %Dice{face: Dice.Face.MeleeAttack}
             },
             rolled: true
-          }
+          },
+          2 => %Player{}
+        },
+        turn: 2
+      }
+
+      assert actual == expected
+    end
+
+    test "continue when no rollable dices" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            turns: 3,
+            dices: %{
+              1 => %Dice{face: Dice.Face.MeleeAttack, locked: true},
+              2 => %Dice{face: Dice.Face.MeleeAttack, locked: true}
+            },
+            rolled: false
+          },
+          2 => %Player{}
         },
         turn: 1
+      }
+
+      actual = Phase.Roll.action(game, :continue)
+
+      expected = %Game{
+        players: %{
+          1 => %Player{
+            turns: 3,
+            dices: %{
+              1 => %Dice{face: Dice.Face.MeleeAttack, locked: true},
+              2 => %Dice{face: Dice.Face.MeleeAttack, locked: true}
+            },
+            rolled: false
+          },
+          2 => %Player{}
+        },
+        turn: 2
       }
 
       assert actual == expected

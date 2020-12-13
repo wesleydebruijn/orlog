@@ -53,6 +53,10 @@ defmodule IndexMap do
     Enum.filter(items, fn {_index, item} -> fun.(item) end)
   end
 
+  def count(items, fun) do
+    Enum.count(items, fn {_index, item} -> fun.(item) end)
+  end
+
   @spec sum(any(), fun()) :: number
   def sum(items, fun) do
     items
