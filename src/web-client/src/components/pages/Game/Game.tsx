@@ -80,11 +80,11 @@ export function Player({ className }: { className?: string }) {
         <h2 className="text-orange">Wesleydegroteeindbaas</h2>
         <span className="text-gray text-sm">King's Advisor</span>
       </div>
-      <div className="absolute top-1/2 -left-7 z-20 bg-red-600 px-2 rounded flex justify-between text-white">
+      <div className="absolute top-1/2 -left-7 z-20 bg-red-600 px-2 rounded flex justify-between text-white h-6">
         <img src={heart} alt="" className="text-white fill-current mr-2" width="15" />
         <span>15</span>
       </div>
-      <div className="absolute top-2/3 mt-2 -left-3 z-20 bg-orange px-2 rounded flex justify-between text-white">
+      <div className="absolute top-2/3 mt-2 -left-3 z-20 bg-orange px-2 rounded flex justify-between text-white h-6">
         <GodFavorIcon className="text-white w-3 mr-2" />
         <span>10</span>
       </div>
