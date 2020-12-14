@@ -44,12 +44,12 @@ export default function Favor({
           {open ? 'Close' : 'Open'}
         </button>
       )}
-      {trail.map(({ ...props }, index) => (
-        <animated.div key={tiersArray[index][0]} style={{ ...props }}>
+      {trail.map(({ ...props }, favorIndex) => (
+        <animated.div key={tiersArray[favorIndex][0]} style={{ ...props }}>
           <FavorTier
             favorIndex={index}
-            tierIndex={parseInt(tiersArray[index][0])}
-            tier={tiersArray[index][1]}
+            tierIndex={favorIndex + 1}
+            tier={tiersArray[favorIndex][1]}
             description={tierDescription}
             onSelect={onSelect}
           />

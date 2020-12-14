@@ -73,8 +73,13 @@ export type Game = {
   }
 }
 
+export type User = {
+  name: string
+  title: string
+}
+
 export type Player = {
-  uuid: string
+  user: User
   health: number
   tokens: number
   turns: number

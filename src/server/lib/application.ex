@@ -9,6 +9,7 @@ defmodule Orlog do
         plug: Api.Router,
         options: [dispatch: dispatch()]
       ),
+      User.Store,
       Game.Lobby.Supervisor
     ]
 

@@ -5,21 +5,22 @@ defmodule Api.Websocket do
 
   def init(request, _state) do
     parts = String.split(request.path, "/")
-    uuid = Enum.at(parts, 2)
+    game_uuid = Enum.at(parts, 2)
     user_uuid = Enum.at(parts, 3)
 
-    {:cowboy_websocket, request, {%Game.Lobby{uuid: uuid}, user_uuid}}
+    {:cowboy_websocket, request, {game_uuid, user_uuid}}
   end
 
-  def websocket_init({state, user_uuid}) do
-    {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(state.uuid)
+  def websocket_init({game_uuid, user_uuid}) do
+    {:ok, user} = User.Store.find_or_initialize(user_uuid)
+    {:ok, pid} = Game.Lobby.Supervisor.find_or_initialize(game_uuid)
 
-    if Game.Lobby.Server.joinable?(pid, state.uuid) do
-      new_state = Game.Lobby.Server.join(pid, user_uuid)
+    if Game.Lobby.Server.joinable?(pid, user) do
+      new_state = Game.Lobby.Server.join(pid, user)
 
       {:ok, encode!(new_state)}
     else
-      {:reply, {:close, 1000, "Lobby is full"}, state}
+      {:reply, {:close, 1000, "Lobby is full"}, %Game{}}
     end
   end
 
@@ -34,14 +35,8 @@ defmodule Api.Websocket do
         %{"type" => "toggleDice", "value" => index} ->
           Game.Lobby.Server.action(pid, {:toggle, index})
 
-        %{"type" => "selectFavor", "value" => favor_tier} ->
-          case favor_tier do
-            %{"favor" => favor, "tier" => tier} ->
-              Game.Lobby.Server.action(pid, {:select, %{favor: favor, tier: tier}})
-
-            _other ->
-              state
-          end
+        %{"type" => "selectFavor", "value" => %{"favor" => favor, "tier" => tier}} ->
+          Game.Lobby.Server.action(pid, {:select, %{favor: favor, tier: tier}})
 
         _other ->
           state
@@ -50,6 +45,7 @@ defmodule Api.Websocket do
     {:reply, {:text, encode!(state)}, state}
   end
 
+  @spec websocket_info(any, any) :: {:reply, {:text, any}, any}
   def websocket_info(%Game.Lobby{} = new_state, _state) do
     {:reply, {:text, encode!(new_state)}, new_state}
   end

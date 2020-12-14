@@ -22,7 +22,9 @@ defmodule GameTest do
                  health: 15,
                  tokens: 0,
                  turns: 3,
-                 uuid: "Wesley"
+                 user: %User{
+                   name: "Wesley"
+                 }
                },
                2 => %Player{
                  dices: %{
@@ -36,7 +38,9 @@ defmodule GameTest do
                  health: 15,
                  tokens: 0,
                  turns: 3,
-                 uuid: "Jeffrey"
+                 user: %User{
+                   name: "Jeffrey"
+                 }
                }
              },
              settings: %Settings{
@@ -51,6 +55,6 @@ defmodule GameTest do
              },
              round: 1,
              phase: 1
-           } = Game.start(["Wesley", "Jeffrey"])
+           } = Game.start([%User{name: "Wesley"}, %User{name: "Jeffrey"}])
   end
 end
