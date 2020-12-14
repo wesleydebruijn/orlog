@@ -1,29 +1,43 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { FunctionComponent, useState } from 'react'
 import { GameTopbar } from '../../shared/Topbar'
 
-import heart from '../../../assets/icons/heart.svg'
-import GodFavorIcon from '../../shared/Icons/GodFavorIcon'
-import Diamond from '../../shared/Figures/Diamond'
+import {
+  GodFavorIcon,
+  HealthIcon,
+  MeleeAttackIcon,
+  MeleeBlockIcon,
+  RangedAttackIcon,
+  RangedBlockIcon,
+  TokenStealIcon
+} from '../../shared/Icons'
 
 export default function Game() {
   return (
     <div className="bg-lightGray min-h-screen flex flex-col">
       <GameTopbar title="Roll phase" />
-      <div className="flex p-28 flex-grow">
+      <div className="flex px-28 py-20 flex-grow">
         <div className="flex flex-col flex-grow w-full bg-gray">
-          <div className="flex w-full flex-grow relative justify-between">
-            <Player className="-top-16 -left-16" />
-            <Favors className="-top-14 left-16" />
+          {/* Player area */}
+          <div className="flex flex-col relative justify-between flex-initial h-1/2">
+            <div className="flex flex-grow justify-between">
+              <Player className="-top-16 -left-16" />
+              <Favors className="-top-14 left-16" />
+            </div>
+            <Dices />
           </div>
-          <div className="absolute top-1/2 right-28">
-            <Diamond className="w-60 text-lightGray absolute -right-10 -top-0.5" />
-            <Diamond className="w-56 text-red-600 absolute -right-8 top-0.5" />
+          {/* <div className="top-1/2 right-28">
+            <Diamond className="w-60 text-lightGray" />
+            <Diamond className="w-56 text-red-600" />
             <span className="text-white z-10 text-large">Supah</span>
-          </div>
-          <div className="flex w-full flex-grow relative justify-between">
-            <Player className="-bottom-16 -right-16 order-2 self-end" />
-            <Favors className="bottom-12 right-16 order-1 self-end" />
+          </div> */}
+          {/* Player area */}
+          <div className="flex flex-col relative justify-between flex-initial h-1/2">
+            <Dices />
+            <div className="flex flex-grow justify-between">
+              <Player className="-bottom-16 -right-16 order-2 self-end" />
+              <Favors className="bottom-12 right-16 order-1 self-end" />
+            </div>
           </div>
         </div>
       </div>
@@ -46,7 +60,7 @@ export function Player({ className }: { className?: string }) {
         <span className="text-gray text-sm">King's Advisor</span>
       </div>
       <div className="absolute top-1/2 -left-7 z-20 bg-red-600 px-2 rounded flex justify-between text-white h-6">
-        <img src={heart} alt="" className="text-white fill-current mr-2" width="15" />
+        <HealthIcon className="text-white w-3 mr-2" />
         <span>15</span>
       </div>
       <div className="absolute top-2/3 mt-2 -left-3 z-20 bg-orange px-2 rounded flex justify-between text-white h-6">
@@ -154,5 +168,45 @@ export function Favor({
         </div>
       )}
     </>
+  )
+}
+
+export function Dices({ className }: { className?: string }) {
+  const classes = classNames(
+    'flex flex-initial w-2/3 justify-center items-center self-center',
+    className
+  )
+
+  return (
+    <div className={classes}>
+      <Dice icon={<MeleeBlockIcon />} />
+      <Dice icon={<MeleeAttackIcon />} />
+      <Dice icon={<RangedAttackIcon />} />
+      <Dice icon={<RangedBlockIcon />} />
+      <Dice icon={<TokenStealIcon />} />
+      <Dice icon={<MeleeAttackIcon />} />
+    </div>
+  )
+}
+
+const randomFace = () => Object.values(FACES)[Math.floor(Math.random() * Object.keys(FACES).length)]
+const FACES: { [index: string]: ({ className }: { className: string }) => JSX.Element } = {
+  'melee-attack': ({ className }) => <MeleeAttackIcon className={className} />,
+  'melee-block': ({ className }) => <MeleeAttackIcon className={className} />,
+  'ranged-attack': ({ className }) => <MeleeAttackIcon className={className} />,
+  'ranged-block': ({ className }) => <MeleeAttackIcon className={className} />,
+  'token-steal': ({ className }) => <MeleeAttackIcon className={className} />
+}
+
+export function Dice({ icon: Icon }: { icon: any }) {
+  const classes = 'w-8 text-white'
+  const hasToken = () => (Math.round(Math.random()) ? '' : 'border-2 border-orange')
+
+  return (
+    <div className="dice m-4">
+      <div className="dice__front text-white">
+        {Icon({ className: classNames(classes, hasToken()) })}
+      </div>
+    </div>
   )
 }
