@@ -177,36 +177,81 @@ export function Dices({ className }: { className?: string }) {
     className
   )
 
+  console.log(randomFace())
+
   return (
     <div className={classes}>
-      <Dice icon={<MeleeBlockIcon />} />
-      <Dice icon={<MeleeAttackIcon />} />
-      <Dice icon={<RangedAttackIcon />} />
-      <Dice icon={<RangedBlockIcon />} />
-      <Dice icon={<TokenStealIcon />} />
-      <Dice icon={<MeleeAttackIcon />} />
+      <Dice value={randomFace()} />
+      <Dice value={randomFace()} />
+      <Dice value={randomFace()} />
+      <Dice value={randomFace()} />
+      <Dice value={randomFace()} />
+      <Dice value={randomFace()} />
     </div>
   )
 }
 
-const randomFace = () => Object.values(FACES)[Math.floor(Math.random() * Object.keys(FACES).length)]
-const FACES: { [index: string]: ({ className }: { className: string }) => JSX.Element } = {
-  'melee-attack': ({ className }) => <MeleeAttackIcon className={className} />,
-  'melee-block': ({ className }) => <MeleeAttackIcon className={className} />,
-  'ranged-attack': ({ className }) => <MeleeAttackIcon className={className} />,
-  'ranged-block': ({ className }) => <MeleeAttackIcon className={className} />,
-  'token-steal': ({ className }) => <MeleeAttackIcon className={className} />
+type FaceType = 'melee-attack' | 'melee-block' | 'ranged-attack' | 'ranged-block' | 'token-steal'
+const randomFace: () => FaceType = () => {
+  const faces: FaceType[] = [
+    'token-steal',
+    'ranged-attack',
+    'ranged-block',
+    'melee-attack',
+    'melee-block'
+  ]
+  return faces[Math.floor(Math.random() * faces.length)]
 }
 
-export function Dice({ icon: Icon }: { icon: any }) {
-  const classes = 'w-8 text-white'
+export function Dice({ value }: { value: FaceType }) {
+  const classes = 'w-8 text-white flex items-center justify-center'
   const hasToken = () => (Math.round(Math.random()) ? '' : 'border-2 border-orange')
 
   return (
     <div className="dice m-4">
-      <div className="dice__front text-white">
-        {Icon({ className: classNames(classes, hasToken()) })}
+      <div className={classNames('dice__front', classes, hasToken())}>
+        <Face face={value} />
+      </div>
+      <div className={classNames('dice__back', classes, hasToken())}>
+        <Face face={randomFace()} />
+      </div>
+      <div className={classNames('dice__right', classes, hasToken())}>
+        <Face face={randomFace()} />
+      </div>
+      <div className={classNames('dice__left', classes, hasToken())}>
+        <Face face={randomFace()} />
+      </div>
+      <div className={classNames('dice__top', classes, hasToken())}>
+        <Face face={randomFace()} />
+      </div>
+      <div className={classNames('dice__bottom', classes, hasToken())}>
+        <Face face={randomFace()} />
       </div>
     </div>
   )
+}
+
+export function Face({ face, className }: { face: FaceType; className?: string }) {
+  const classes = classNames('flex items-center justify-center', className)
+  let faceIcon
+
+  switch (face) {
+    case 'melee-attack':
+      faceIcon = <MeleeAttackIcon className="w-8" />
+      break
+    case 'melee-block':
+      faceIcon = <MeleeBlockIcon className="w-8" />
+      break
+    case 'ranged-attack':
+      faceIcon = <RangedAttackIcon className="w-8" />
+      break
+    case 'ranged-block':
+      faceIcon = <RangedBlockIcon className="w-8" />
+      break
+    case 'token-steal':
+      faceIcon = <TokenStealIcon className="w-8" />
+      break
+  }
+
+  return <div className={classes}>{faceIcon}</div>
 }
