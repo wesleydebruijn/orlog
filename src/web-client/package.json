@@ -11,11 +11,8 @@
     "@types/react-router-dom": "5.1.6",
     "autoprefixer": "^9",
     "classnames": "^2.2.6",
-<<<<<<< HEAD
     "lodash": "^4.17.20",
-=======
     "postcss": "^7",
->>>>>>> chore: try tailwind
     "react": "^17.0.1",
     "react-async": "10.0.1",
     "react-dom": "^17.0.1",
@@ -44,9 +41,6 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
-  },
-  "engines": {
-    "node": "14.15.1"
   },
   "eslintConfig": {
     "extends": [

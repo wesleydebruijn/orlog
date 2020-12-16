@@ -1,6 +1,10 @@
-import { useContext } from 'react'
-import { PlayerContext } from '../components/pages/Game/components/GameBoard/GameBoard'
+import React, { useContext } from 'react'
 import { Context } from '../providers/GameLobbyProvider'
+
+export const PlayerContext = React.createContext<{ player?: number; opponent?: number }>({
+  player: undefined,
+  opponent: undefined
+})
 
 export function usePlayer() {
   const { lobby, favors } = useContext(Context)

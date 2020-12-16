@@ -1,48 +1,5 @@
-<<<<<<< HEAD
-import React from 'react'
-<<<<<<< HEAD
-
-import { GameLobbyProvider } from '../../../providers/GameLobbyProvider'
-import { useParams } from 'react-router'
-import { useUser } from '../../../hooks/useAuth'
-import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
-import GameBoard from './components/GameBoard/GameBoard'
-import GameStateFinished from './components/GameState/GameStateFinished'
-
-export default function Game() {
-  const { gameId } = useParams<{ gameId: string }>()
-  const { id: userId } = useUser()
-
-  return (
-    <GameLobbyProvider gameId={gameId} userId={userId}>
-      {({ game, status, actions }) => {
-        switch (status) {
-          case 'finished':
-            return <GameStateFinished won={game.lobby.game.winner === game.lobby.turn} />
-          case 'waiting':
-            return <GameStateWaiting />
-          case 'playing':
-            return <GameBoard actions={actions} />
-        }
-      }}
-    </GameLobbyProvider>
-=======
-import { useParams } from 'react-router'
-import Button from '../../shared/Button/Button'
-import ContentBox from '../../shared/ContentBox'
-
-=======
 import classNames from 'classnames'
-<<<<<<< HEAD
-<<<<<<< HEAD
 import React, { useState } from 'react'
->>>>>>> feat: in-progress gameboard
-=======
-import React, { FunctionComponent, useState } from 'react'
->>>>>>> in-progress dice
-=======
-import React, { useState } from 'react'
->>>>>>> fix: too wide button
 import { GameTopbar } from '../../shared/Topbar'
 
 import {
@@ -112,7 +69,6 @@ export function Player({ className }: { className?: string }) {
         <span>10</span>
       </div>
     </div>
->>>>>>> feat: in-progress lobby screen
   )
 }
 
