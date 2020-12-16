@@ -1,9 +1,9 @@
 import { useContext } from 'react'
-import { Context } from '../providers/GameLobbyProvider'
+import { GameContext } from '../providers/GameProvider'
 import { PlayerContext } from '../providers/PlayerProvider'
 
 export function usePlayer() {
-  const { lobby, favors } = useContext(Context)
+  const { lobby } = useContext(GameContext)
   const playerContext = useContext(PlayerContext)
 
   if (!lobby) {
@@ -23,8 +23,9 @@ export function usePlayer() {
     player: lobby.game.players[player],
     opponent: lobby.game.players[opponent],
     current: lobby.game.players[lobby.game.turn],
-    favors: favors
-      ? Object.values(lobby.game.players[player].favors).map(index => favors[index])
-      : []
+    favors: []
+    // favors: favors
+    //   ? Object.values(lobby.game.players[player].favors).map(index => favors[index])
+    //   : []
   }
 }

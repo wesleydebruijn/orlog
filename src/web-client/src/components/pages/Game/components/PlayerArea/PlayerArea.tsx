@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 import { usePlayer } from '../../../../../hooks/usePlayer'
-import { GameActions } from '../../../../../providers/GameLobbyProvider'
+import { GameActions } from '../../../../../types/types'
 
 import DiceGrid from '../Dice/DiceGrid/DiceGrid'
 import FavorArea from '../Favor/FavorArea/FavorArea'

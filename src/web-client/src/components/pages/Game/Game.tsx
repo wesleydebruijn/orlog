@@ -1,7 +1,10 @@
 import classNames from 'classnames'
 import React, { useState } from 'react'
-import { GameTopbar } from '../../shared/Topbar'
+import { useParams } from 'react-router'
 
+import { useUser } from '../../../hooks/useAuth'
+
+import { GameTopbar } from '../../shared/Topbar'
 import {
   GodFavorIcon,
   HealthIcon,
@@ -12,37 +15,43 @@ import {
   TokenStealIcon
 } from '../../shared/Icons'
 import Diamond from '../../shared/Figures/Diamond'
+import { GameProvider } from '../../../providers/GameProvider'
 
 export default function Game() {
+  const { gameId } = useParams<{ gameId: string }>()
+  const { id: userId } = useUser()
+
   return (
-    <div className="bg-lightGray min-h-screen flex flex-col">
-      <GameTopbar title="Roll phase" />
-      <div className="flex px-28 py-20 flex-grow">
-        <div className="flex flex-col flex-grow w-full bg-gray">
-          {/* Player area */}
-          <div className="flex flex-col relative justify-between flex-initial h-1/2">
-            <div className="flex flex-grow justify-between">
-              <Player className="-top-16 -left-16" />
-              <Favors className="-top-14 left-16" />
+    <GameProvider gameId={gameId} userId={userId}>
+      <div className="bg-lightGray min-h-screen flex flex-col">
+        <GameTopbar title="Roll phase" />
+        <div className="flex px-28 py-20 flex-grow">
+          <div className="flex flex-col flex-grow w-full bg-gray">
+            {/* Player area */}
+            <div className="flex flex-col relative justify-between flex-initial h-1/2">
+              <div className="flex flex-grow justify-between">
+                <Player className="-top-16 -left-16" />
+                <Favors className="-top-14 left-16" />
+              </div>
+              <Dices />
             </div>
-            <Dices />
-          </div>
-          <div className="relative flex justify-end">
-            <Diamond className="w-64 text-red-600 z-10">
-              <span className="text-white z-10 text-large">Supah</span>
-            </Diamond>
-          </div>
-          {/* Player area */}
-          <div className="flex flex-col relative justify-between flex-initial h-1/2">
-            <Dices />
-            <div className="flex flex-grow justify-between">
-              <Player className="-bottom-16 -right-16 order-2 self-end" />
-              <Favors className="bottom-12 right-16 order-1 self-end" />
+            <div className="relative flex justify-end">
+              <Diamond className="w-64 text-red-600 z-10">
+                <span className="text-white z-10 text-large">Supah</span>
+              </Diamond>
+            </div>
+            {/* Player area */}
+            <div className="flex flex-col relative justify-between flex-initial h-1/2">
+              <Dices />
+              <div className="flex flex-grow justify-between">
+                <Player className="-bottom-16 -right-16 order-2 self-end" />
+                <Favors className="bottom-12 right-16 order-1 self-end" />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </GameProvider>
   )
 }
 

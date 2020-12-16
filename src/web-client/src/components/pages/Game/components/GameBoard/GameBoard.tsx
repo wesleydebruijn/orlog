@@ -1,6 +1,5 @@
 import React from 'react'
 
-import type { GameActions } from '../../../../../providers/GameLobbyProvider'
 import { useGame } from '../../../../../hooks/useGame'
 
 import ContinueButton from '../ContinueButton/ContinueButton'
@@ -9,6 +8,7 @@ import PlayerArea from '../PlayerArea/PlayerArea'
 
 import './GameBoard.scss'
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
+import { GameActions } from '../../../../../types/types'
 
 type Props = {
   actions: GameActions

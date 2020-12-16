@@ -1,8 +1,8 @@
 import { useContext } from 'react'
-import { Context } from '../providers/GameLobbyProvider'
+import { GameContext } from '../providers/GameProvider'
 
 export function useGame() {
-  const { lobby } = useContext(Context)
+  const { lobby } = useContext(GameContext)
 
   if (!lobby) {
     throw new Error(
