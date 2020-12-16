@@ -11,6 +11,7 @@ import {
   RangedBlockIcon,
   TokenStealIcon
 } from '../../shared/Icons'
+import Diamond from '../../shared/Figures/Diamond'
 
 export default function Game() {
   return (
@@ -26,11 +27,11 @@ export default function Game() {
             </div>
             <Dices />
           </div>
-          {/* <div className="top-1/2 right-28">
-            <Diamond className="w-60 text-lightGray" />
-            <Diamond className="w-56 text-red-600" />
-            <span className="text-white z-10 text-large">Supah</span>
-          </div> */}
+          <div className="relative flex justify-end">
+            <Diamond className="w-64 text-red-600 z-10 h-64">
+              <span className="text-white z-10 text-large">Supah</span>
+            </Diamond>
+          </div>
           {/* Player area */}
           <div className="flex flex-col relative justify-between flex-initial h-1/2">
             <Dices />
@@ -177,8 +178,6 @@ export function Dices({ className }: { className?: string }) {
     className
   )
 
-  console.log(randomFace())
-
   return (
     <div className={classes}>
       <Dice value={randomFace()} />
@@ -204,11 +203,11 @@ const randomFace: () => FaceType = () => {
 }
 
 export function Dice({ value }: { value: FaceType }) {
-  const classes = 'w-8 text-white flex items-center justify-center'
+  const classes = 'text-white flex items-center justify-center'
   const hasToken = () => (Math.round(Math.random()) ? '' : 'border-2 border-orange')
 
   return (
-    <div className="dice m-4">
+    <div className="dice m-4 w-16 h-16">
       <div className={classNames('dice__front', classes, hasToken())}>
         <Face face={value} />
       </div>
