@@ -8,15 +8,11 @@ import GameInfo from '../GameInfo/GameInfo'
 import PlayerArea from '../PlayerArea/PlayerArea'
 
 import './GameBoard.scss'
+import { PlayerProvider } from '../../../../../providers/PlayerProvider'
 
 type Props = {
   actions: GameActions
 }
-
-export const PlayerContext = React.createContext<{ player?: number; opponent?: number }>({
-  player: undefined,
-  opponent: undefined
-})
 
 export default function GameBoard({ actions }: Props) {
   const { toggleDice, selectFavor, doContinue } = actions
@@ -26,12 +22,12 @@ export default function GameBoard({ actions }: Props) {
     <section className="game-board">
       <GameInfo />
       <section className="game-board__field">
-        <PlayerContext.Provider value={{ player: opponent, opponent: player }}>
+        <PlayerProvider player={opponent} opponent={player}>
+          <PlayerArea />
+        </PlayerProvider>
+        <PlayerProvider player={player} opponent={opponent}>
           <PlayerArea onSelectFavor={selectFavor} onToggleDice={toggleDice} />
-        </PlayerContext.Provider>
-        <PlayerContext.Provider value={{ player, opponent }}>
-          <PlayerArea onSelectFavor={selectFavor} onToggleDice={toggleDice} />
-        </PlayerContext.Provider>
+        </PlayerProvider>
         <ContinueButton onClick={() => doContinue()} />
       </section>
     </section>
