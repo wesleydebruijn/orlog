@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useParams } from 'react-router'
 
 import { useUser } from '../../../hooks/useAuth'
@@ -15,19 +15,41 @@ import {
   TokenStealIcon
 } from '../../shared/Icons'
 import Diamond from '../../shared/Figures/Diamond'
-import { GameProvider } from '../../../providers/GameProvider'
+import { GameContext, GameProvider } from '../../../providers/GameProvider'
+import { useGame } from '../../../hooks/useGame'
+import { PlayerProvider } from '../../../providers/PlayerProvider'
+import { usePlayer } from '../../../hooks/usePlayer'
 
 export default function Game() {
-  const { gameId } = useParams<{ gameId: string }>()
+  const { id: gameId } = useParams<{ id: string }>()
   const { id: userId } = useUser()
 
   return (
     <GameProvider gameId={gameId} userId={userId}>
-      <div className="bg-lightGray min-h-screen flex flex-col">
-        <GameTopbar title="Roll phase" />
-        <div className="flex px-28 py-20 flex-grow">
-          <div className="flex flex-col flex-grow w-full bg-gray">
-            {/* Player area */}
+      <GameWindow />
+    </GameProvider>
+  )
+}
+
+export function GameWindow() {
+  const { status, lobby } = useContext(GameContext)
+
+  if (lobby && lobby.status === 'playing') {
+    return <GameBoard />
+  } else {
+    return <>{status}</>
+  }
+}
+
+export function GameBoard() {
+  const { player, opponent } = useGame()
+
+  return (
+    <div className="bg-lightGray min-h-screen flex flex-col">
+      <GameTopbar title="Roll phase" />
+      <div className="flex px-28 py-20 flex-grow">
+        <div className="flex flex-col flex-grow w-full bg-gray">
+          <PlayerProvider player={opponent} opponent={player}>
             <div className="flex flex-col relative justify-between flex-initial h-1/2">
               <div className="flex flex-grow justify-between">
                 <Player className="-top-16 -left-16" />
@@ -35,12 +57,13 @@ export default function Game() {
               </div>
               <Dices />
             </div>
-            <div className="relative flex justify-end">
-              <Diamond className="w-64 text-red-600 z-10">
-                <span className="text-white z-10 text-large">Supah</span>
-              </Diamond>
-            </div>
-            {/* Player area */}
+          </PlayerProvider>
+          <div className="relative flex justify-end">
+            <Diamond className="w-64 text-red-600 z-10">
+              <span className="text-white z-10 text-large">Supah</span>
+            </Diamond>
+          </div>
+          <PlayerProvider player={player} opponent={opponent}>
             <div className="flex flex-col relative justify-between flex-initial h-1/2">
               <Dices />
               <div className="flex flex-grow justify-between">
@@ -48,14 +71,40 @@ export default function Game() {
                 <Favors className="bottom-12 right-16 order-1 self-end" />
               </div>
             </div>
-          </div>
+          </PlayerProvider>
         </div>
       </div>
-    </GameProvider>
+    </div>
   )
 }
 
 export function Player({ className }: { className?: string }) {
+  const { player } = usePlayer()
+
+  return (
+    <PlayerCard
+      className={className}
+      name={player.user.name}
+      title={player.user.title}
+      health={player.health}
+      tokens={player.tokens}
+    />
+  )
+}
+
+export function PlayerCard({
+  className,
+  name,
+  title,
+  health,
+  tokens
+}: {
+  className?: string
+  name: string
+  title: string
+  health: number
+  tokens: number
+}) {
   const classes = classNames('flex items-center relative font-signika h-36', className)
   return (
     <div className={classes}>
@@ -66,16 +115,16 @@ export function Player({ className }: { className?: string }) {
         height="135"
       />
       <div className="border-secondary border-4 rounded bg-primary -ml-5 px-10 py-3">
-        <h2 className="text-orange">Wesleydegroteeindbaas</h2>
-        <span className="text-gray text-sm">King's Advisor</span>
+        <h2 className="text-orange">{name}</h2>
+        <span className="text-gray text-sm">{title}</span>
       </div>
       <div className="absolute top-1/2 -left-7 z-20 bg-red-600 px-2 rounded flex justify-between text-white h-6">
         <HealthIcon className="text-white w-3 mr-2" />
-        <span>15</span>
+        <span>{health}</span>
       </div>
       <div className="absolute top-2/3 mt-2 -left-3 z-20 bg-orange px-2 rounded flex justify-between text-white h-6">
         <GodFavorIcon className="text-white w-3 mr-2" />
-        <span>10</span>
+        <span>{tokens}</span>
       </div>
     </div>
   )
