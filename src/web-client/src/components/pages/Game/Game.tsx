@@ -34,11 +34,15 @@ import ContentBox from '../../shared/ContentBox'
 =======
 import classNames from 'classnames'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useState } from 'react'
 >>>>>>> feat: in-progress gameboard
 =======
 import React, { FunctionComponent, useState } from 'react'
 >>>>>>> in-progress dice
+=======
+import React, { useState } from 'react'
+>>>>>>> fix: too wide button
 import { GameTopbar } from '../../shared/Topbar'
 
 import {
@@ -67,7 +71,7 @@ export default function Game() {
             <Dices />
           </div>
           <div className="relative flex justify-end">
-            <Diamond className="w-64 text-red-600 z-10 h-64">
+            <Diamond className="w-64 text-red-600 z-10">
               <span className="text-white z-10 text-large">Supah</span>
             </Diamond>
           </div>
