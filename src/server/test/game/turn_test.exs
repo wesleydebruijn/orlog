@@ -15,7 +15,7 @@ defmodule Game.TurnTest do
       }
     }
 
-    actual = Turn.coinflip(game).turn
+    actual = Turn.coinflip(game)
 
     assert Enum.member?([1, 2], actual)
   end

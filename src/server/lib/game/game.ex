@@ -38,8 +38,7 @@ defmodule Game do
         favors: IndexMap.add(%{}, Enum.map(1..settings.favors, fn x -> x end))
       })
     end)
-    |> Turn.coinflip()
-    |> Round.next()
+    |> Round.next(&Turn.coinflip/1)
     |> Phase.next()
   end
 
