@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { PlayerContext } from '../components/pages/Game/components/GameBoard/GameBoard'
 import { Context } from '../providers/GameLobbyProvider'
+import { PlayerContext } from '../providers/PlayerProvider'
 
 export function usePlayer() {
   const { lobby, favors } = useContext(Context)
