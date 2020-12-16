@@ -3,14 +3,11 @@ defmodule Game.Turn do
   Turn is assigned and switched between players in the game
   """
 
-  @spec coinflip(Game.t()) :: Game.t()
+  @spec coinflip(Game.t()) :: integer()
   def coinflip(game) do
-    turn =
-      game.players
-      |> Map.keys()
-      |> Enum.random()
-
-    %{game | turn: turn}
+    game.players
+    |> Map.keys()
+    |> Enum.random()
   end
 
   @spec determine_next(Game.t()) :: integer()
@@ -24,8 +21,8 @@ defmodule Game.Turn do
 
     game
     |> Game.invoke(:end_turn)
-    |> Game.Phase.try_next()
     |> Map.put(:turn, turn)
+    |> Game.Phase.try_next()
     |> Game.invoke(:start_turn)
   end
 

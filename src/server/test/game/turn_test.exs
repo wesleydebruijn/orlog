@@ -10,12 +10,12 @@ defmodule Game.TurnTest do
   test "coinflip/1" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       }
     }
 
-    actual = Turn.coinflip(game).turn
+    actual = Turn.coinflip(game)
 
     assert Enum.member?([1, 2], actual)
   end
@@ -24,8 +24,8 @@ defmodule Game.TurnTest do
     test "when in bounds" do
       game = %Game{
         players: %{
-          1 => %Player{uuid: "Wesley"},
-          2 => %Player{uuid: "Jeffrey"}
+          1 => %Player{user: %User{name: "Wesley"}},
+          2 => %Player{user: %User{name: "Jeffrey"}}
         },
         turn: 1
       }
@@ -39,8 +39,8 @@ defmodule Game.TurnTest do
     test "when out of bounds" do
       game = %Game{
         players: %{
-          1 => %Player{uuid: "Wesley"},
-          2 => %Player{uuid: "Jeffrey"}
+          1 => %Player{user: %User{name: "Wesley"}},
+          2 => %Player{user: %User{name: "Jeffrey"}}
         },
         turn: 2
       }
@@ -55,8 +55,8 @@ defmodule Game.TurnTest do
   test "opponent/2" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
@@ -70,8 +70,8 @@ defmodule Game.TurnTest do
 
     expected = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey", tokens: 999}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}, tokens: 999}
       },
       turn: 1
     }
@@ -90,8 +90,8 @@ defmodule Game.TurnTest do
           }
         },
         players: %{
-          1 => %Player{uuid: "Wesley", turns: 3},
-          2 => %Player{uuid: "Jeffrey", turns: 3}
+          1 => %Player{user: %User{name: "Wesley"}, turns: 3},
+          2 => %Player{user: %User{name: "Jeffrey"}, turns: 3}
         },
         turn: 1,
         phase: 1
@@ -108,8 +108,8 @@ defmodule Game.TurnTest do
           }
         },
         players: %{
-          1 => %Player{uuid: "Wesley", turns: 2},
-          2 => %Player{uuid: "Jeffrey", turns: 3}
+          1 => %Player{user: %User{name: "Wesley"}, turns: 2},
+          2 => %Player{user: %User{name: "Jeffrey"}, turns: 3}
         },
         turn: 2,
         phase: 1
@@ -128,8 +128,8 @@ defmodule Game.TurnTest do
           }
         },
         players: %{
-          1 => %Player{uuid: "Wesley", turns: 1},
-          2 => %Player{uuid: "Jeffrey", turns: 0}
+          1 => %Player{user: %User{name: "Wesley"}, turns: 1},
+          2 => %Player{user: %User{name: "Jeffrey"}, turns: 0}
         },
         turn: 1,
         phase: 1
@@ -146,8 +146,8 @@ defmodule Game.TurnTest do
           }
         },
         players: %{
-          1 => %Player{uuid: "Wesley", turns: 1},
-          2 => %Player{uuid: "Jeffrey", turns: 1}
+          1 => %Player{user: %User{name: "Wesley"}, turns: 1},
+          2 => %Player{user: %User{name: "Jeffrey"}, turns: 1}
         },
         turn: 2,
         phase: 2
@@ -160,14 +160,14 @@ defmodule Game.TurnTest do
   test "get_player/1" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
 
     actual = Turn.get_player(game)
-    expected = %Player{uuid: "Wesley"}
+    expected = %Player{user: %User{name: "Wesley"}}
 
     assert actual == expected
   end
@@ -175,14 +175,14 @@ defmodule Game.TurnTest do
   test "get_opponent/1" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
 
     actual = Turn.get_opponent(game)
-    expected = %Player{uuid: "Jeffrey"}
+    expected = %Player{user: %User{name: "Jeffrey"}}
 
     assert actual == expected
   end
@@ -190,20 +190,20 @@ defmodule Game.TurnTest do
   test "update_player/2" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
 
-    fun = fn player -> %{player | uuid: "Wesley de Bruijn"} end
+    fun = fn player -> %{player | user: %User{name: "Wesley"}} end
 
     actual = Turn.update_player(game, fun)
 
     expected = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley de Bruijn"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
@@ -214,20 +214,20 @@ defmodule Game.TurnTest do
   test "update_opponent/2" do
     game = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }
 
-    fun = fn player -> %{player | uuid: "Jeffrey van Hoven"} end
+    fun = fn player -> %{player | user: %User{name: "Jeffrey"}} end
 
     actual = Turn.update_opponent(game, fun)
 
     expected = %Game{
       players: %{
-        1 => %Player{uuid: "Wesley"},
-        2 => %Player{uuid: "Jeffrey van Hoven"}
+        1 => %Player{user: %User{name: "Wesley"}},
+        2 => %Player{user: %User{name: "Jeffrey"}}
       },
       turn: 1
     }

@@ -26,6 +26,8 @@ export type GameLobby = {
 
 export type Favor = {
   name: string
+  description: string
+  tier_description: string
   tiers: {
     [index: number]: FavorTier
   }
@@ -36,12 +38,17 @@ export type FavorTier = {
   value: number
 }
 
-export type Phases = {
-  [index: number]: {
-    name: string
-    turns: number
-    auto_turns: number
-  }
+export enum PhaseId {
+  Roll = 1,
+  GodFavor = 2,
+  Resolution = 3
+}
+
+export type Phase = {
+  id: PhaseId
+  name: string
+  turns: number
+  auto_turns: number
 }
 
 export type Settings = {
@@ -49,13 +56,16 @@ export type Settings = {
   favors: number
   health: number
   tokens: number
-  phases: Phases
+  phases: {
+    [index: number]: Phase
+  }
 }
 
 export type Game = {
   round: number
-  phase: number
+  phase: PhaseId
   turn: number
+  start: number
   winner: number
   settings: Settings
   players: {
@@ -63,8 +73,13 @@ export type Game = {
   }
 }
 
+export type User = {
+  name: string
+  title: string
+}
+
 export type Player = {
-  uuid: string
+  user: User
   health: number
   tokens: number
   turns: number
@@ -82,6 +97,7 @@ export type Dice = {
   tokens: number
   locked: boolean
   keep: boolean
+  placeholder: boolean
   face: DiceFace
 }
 

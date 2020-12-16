@@ -1,0 +1,17 @@
+.dice-grid {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  display: flex;
+  justify-content: center;
+  align-self: flex-end;
+
+  &__container {
+    height: 60px;
+    position: relative;
+
+    > div {
+      position: absolute;
+    }
+  }
+}

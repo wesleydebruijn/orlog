@@ -7,10 +7,9 @@ import { GameLobby, GameState, NewGameState } from '../types/types'
 export const Context = React.createContext<GameState>({
   status: 'initial'
 })
-
 export type GameActions = {
   doContinue: () => void
-  toggleDice: (diceIndex: string) => void
+  toggleDice: (diceIndex: number) => void
   selectFavor: (favor: number, tier: number) => void
 }
 
@@ -69,10 +68,10 @@ export function GameLobbyProvider({ children, gameId, userId }: GameProviderProp
       sendJsonMessage({
         type: 'continue'
       }),
-    toggleDice: (index: string) =>
+    toggleDice: (index: number) =>
       sendJsonMessage({
         type: 'toggleDice',
-        value: parseInt(index)
+        value: index
       }),
     selectFavor: (favor: number, tier: number) =>
       sendJsonMessage({

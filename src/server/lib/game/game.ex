@@ -17,16 +17,17 @@ defmodule Game do
           winner: integer(),
           round: integer(),
           phase: integer(),
-          turn: integer()
+          turn: integer(),
+          start: integer()
         }
   @derive Jason.Encoder
-  defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0
+  defstruct settings: %Settings{}, players: %{}, winner: 0, round: 0, phase: 0, turn: 0, start: 0
 
-  @spec start([String.t()], Settings.t()) :: Game.t()
-  def start(uuids, settings \\ %Settings{}) do
+  @spec start([User.t()], Settings.t()) :: Game.t()
+  def start(users, settings \\ %Settings{}) do
     %Game{
       settings: settings,
-      players: IndexMap.add(%{}, Enum.map(uuids, fn uuid -> %Player{uuid: uuid} end))
+      players: IndexMap.add(%{}, Enum.map(users, fn user -> %Player{user: user} end))
     }
     |> IndexMap.update_all(:players, fn player ->
       player
@@ -37,8 +38,7 @@ defmodule Game do
         favors: IndexMap.add(%{}, Enum.map(1..settings.favors, fn x -> x end))
       })
     end)
-    |> Turn.coinflip()
-    |> Round.next()
+    |> Round.next(&Turn.coinflip/1)
     |> Phase.next()
   end
 
