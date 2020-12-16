@@ -174,8 +174,9 @@ defmodule Game.PhaseTest do
           1 => %Player{user: %User{name: "Wesley"}, turns: 3, health: 15},
           2 => %Player{user: %User{name: "Jeffrey"}, turns: 3, health: 15}
         },
-        turn: 1,
         phase: 1,
+        start: 2,
+        turn: 2,
         round: 2
       }
 

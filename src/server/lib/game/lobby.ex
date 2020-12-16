@@ -7,8 +7,6 @@ defmodule Game.Lobby do
     Settings
   }
 
-  require Logger
-
   @pids 2
   @type t :: %Lobby{
           uuid: String.t(),
