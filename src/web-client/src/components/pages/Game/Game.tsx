@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FunctionComponent, useState } from 'react'
+import React, { useState } from 'react'
 import { GameTopbar } from '../../shared/Topbar'
 
 import {
@@ -28,7 +28,7 @@ export default function Game() {
             <Dices />
           </div>
           <div className="relative flex justify-end">
-            <Diamond className="w-64 text-red-600 z-10 h-64">
+            <Diamond className="w-64 text-red-600 z-10">
               <span className="text-white z-10 text-large">Supah</span>
             </Diamond>
           </div>
