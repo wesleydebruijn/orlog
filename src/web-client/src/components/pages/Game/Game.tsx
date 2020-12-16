@@ -42,11 +42,11 @@ export function GameWindow() {
 }
 
 export function GameBoard() {
-  const { player, opponent } = useGame()
+  const { player, opponent, phase } = useGame()
 
   return (
     <div className="bg-lightGray min-h-screen flex flex-col">
-      <GameTopbar title="Roll phase" />
+      <GameTopbar title={`${phase.name} phase`} />
       <div className="flex px-28 py-20 flex-grow">
         <div className="flex flex-col flex-grow w-full bg-gray">
           <PlayerProvider player={opponent} opponent={player}>
