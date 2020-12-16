@@ -101,6 +101,13 @@ export type Dice = {
   face: DiceFace
 }
 
+export type FaceType =
+  | 'melee-attack'
+  | 'melee-block'
+  | 'ranged-attack'
+  | 'ranged-block'
+  | 'token-steal'
+
 export type DiceFace = {
   count: number
   amount: number
