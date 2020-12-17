@@ -32,7 +32,6 @@ export function GameProvider({ children, gameId, userId }: Props) {
 
       const data = await JSON.parse(event.data)
       if (!isEqual(lobby, data)) {
-        console.log('Rerendering', isEqual(lobby, data), lobby, data)
         setLobby(data)
       }
     }

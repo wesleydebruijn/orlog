@@ -23,6 +23,9 @@
     position: absolute;
     background-color: #211c1c;
     border: 4px solid #403535;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .dice__front {

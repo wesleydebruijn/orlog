@@ -10,7 +10,7 @@ import { FavorCard, Tier } from '../../../shared/FavorCard'
 import { PlayerCard } from '../../../shared/PlayerCard'
 import { GameTopbar } from '../../../shared/Topbar'
 import { ContinueButton } from './ContinueButton'
-import { Dice } from './Dice'
+import { AnimatedDice } from './Dice'
 
 export function GameBoard() {
   const {
@@ -112,6 +112,7 @@ export function Favors({ className }: { className?: string }) {
 
 export function Dices({ className }: { className?: string }) {
   const {
+    hasTurn,
     actions: { toggleDice }
   } = useGame()
 
@@ -123,7 +124,7 @@ export function Dices({ className }: { className?: string }) {
   const [rolling, setRolling] = useBoolean(500)
 
   const classes = classNames(
-    'flex flex-initial w-2/3 justify-center items-center self-center',
+    'flex flex-initial w-2/3 h-32 justify-center items-center self-center',
     className
   )
 
@@ -132,14 +133,15 @@ export function Dices({ className }: { className?: string }) {
   return (
     <div className={classes}>
       {Object.values(dices).map((dice, index) => (
-        <Dice
+        <AnimatedDice
           value={getFaceType(dice)}
           hasTokens={dice.tokens > 0}
-          onClick={self ? () => toggleDice(index + 1) : undefined}
+          onClick={self && hasTurn && rolled ? () => toggleDice(index + 1) : undefined}
           locked={dice.locked}
           hidden={dice.placeholder}
           selected={dice.keep}
           rolling={rolling}
+          self={self}
         />
       ))}
     </div>
