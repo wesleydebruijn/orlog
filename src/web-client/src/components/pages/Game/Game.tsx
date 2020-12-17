@@ -21,10 +21,11 @@ export default function Game() {
 
             case 'finished':
               return <span>Hooray it is over</span>
+
+            default:
+              return <Lobby />
           }
         }
-
-        return <Lobby />
       }}
     </GameProvider>
   )
