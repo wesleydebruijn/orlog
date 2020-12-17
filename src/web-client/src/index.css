@@ -1,0 +1,51 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer utilities {
+  .dice {
+    position: relative;
+    transform-style: preserve-3d;
+    user-select: none;
+    animation-iteration-count: 1;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  .dice > div {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: #211c1c;
+    border: 4px solid #403535;
+  }
+
+  .dice__front {
+    transform: rotateY(0deg) translateZ(30px);
+  }
+
+  .dice__back {
+    transform: rotateX(180deg) translateZ(30px);
+  }
+
+  .dice__right {
+    transform: rotateY(90deg) translateZ(30px);
+  }
+
+  .dice__left {
+    transform: rotateY(-90deg) translateZ(30px);
+  }
+
+  .dice__top {
+    transform: rotateX(90deg) translateZ(30px);
+  }
+
+  .dice__bottom {
+    transform: rotateX(-90deg) translateZ(30px);
+  }
+}
+
+svg {
+  fill: currentColor;
+}

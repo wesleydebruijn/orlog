@@ -1,6 +1,11 @@
 import React from 'react'
 
-export const PlayerContext = React.createContext<{ player?: number; opponent?: number }>({
+type State = {
+  player?: number
+  opponent?: number
+}
+
+export const PlayerContext = React.createContext<State>({
   player: undefined,
   opponent: undefined
 })

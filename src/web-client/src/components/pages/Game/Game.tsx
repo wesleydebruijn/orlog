@@ -1,28 +1,31 @@
 import React from 'react'
-
-import { GameLobbyProvider } from '../../../providers/GameLobbyProvider'
 import { useParams } from 'react-router'
+
 import { useUser } from '../../../hooks/useAuth'
-import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
-import GameBoard from './components/GameBoard/GameBoard'
-import GameStateFinished from './components/GameState/GameStateFinished'
+import { GameProvider } from '../../../providers/GameProvider'
+
+import { Lobby } from './components/Lobby'
+import { GameBoard } from './components/Gameboard'
 
 export default function Game() {
-  const { gameId } = useParams<{ gameId: string }>()
+  const { id: gameId } = useParams<{ id: string }>()
   const { id: userId } = useUser()
 
   return (
-    <GameLobbyProvider gameId={gameId} userId={userId}>
-      {({ game, status, actions }) => {
-        switch (status) {
-          case 'finished':
-            return <GameStateFinished won={game.lobby.game.winner === game.lobby.turn} />
-          case 'waiting':
-            return <GameStateWaiting />
-          case 'playing':
-            return <GameBoard actions={actions} />
+    <GameProvider gameId={gameId} userId={userId}>
+      {lobby => {
+        if (lobby) {
+          switch (lobby.status) {
+            case 'playing':
+              return <GameBoard />
+
+            case 'finished':
+              return <span>Hooray it is over</span>
+          }
         }
+
+        return <Lobby />
       }}
-    </GameLobbyProvider>
+    </GameProvider>
   )
 }

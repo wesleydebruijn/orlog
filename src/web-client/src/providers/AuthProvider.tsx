@@ -22,8 +22,6 @@ type AuthProviderProps = {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  // TODO: correctly type
-  // @ts-ignore
   const [state, dispatch] = useReducer<Reducer<AuthState, Action>>(reducer, initialState)
   const contextValue = { state, dispatch }
 

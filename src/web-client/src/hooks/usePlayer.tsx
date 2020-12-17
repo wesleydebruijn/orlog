@@ -1,9 +1,11 @@
 import { useContext } from 'react'
-import { Context } from '../providers/GameLobbyProvider'
+import { DataContext } from '../providers/DataProvider'
+import { GameContext } from '../providers/GameProvider'
 import { PlayerContext } from '../providers/PlayerProvider'
 
 export function usePlayer() {
-  const { lobby, favors } = useContext(Context)
+  const { lobby } = useContext(GameContext)
+  const { favors } = useContext(DataContext)
   const playerContext = useContext(PlayerContext)
 
   if (!lobby) {

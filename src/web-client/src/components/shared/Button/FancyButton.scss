@@ -1,0 +1,37 @@
+.button {
+  border-top-left-radius: 5px;
+  height: 52px;
+  min-width: 250px;
+  font-family: 'Signika', sans-serif;
+  font-size: 1rem;
+  text-transform: uppercase;
+  color: #794d1f;
+
+  &--fancy {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    text-shadow: 1px 1px #f39c12;
+    border-radius: 5px;
+    border: solid 1px #f39c12;
+    background: #e67e22;
+    text-align: center;
+    padding: 16px 18px 14px;
+
+    -webkit-transition: all 0.1s;
+    -moz-transition: all 0.1s;
+    transition: all 0.1s;
+
+    -webkit-box-shadow: 0px 6px 0px #d35400;
+    -moz-box-shadow: 0px 6px 0px #d35400;
+    box-shadow: 0px 6px 0px #d35400;
+
+    &:active {
+      -webkit-box-shadow: 0px 2px 0px #d35400;
+      -moz-box-shadow: 0px 2px 0px #d35400;
+      box-shadow: 0px 2px 0px #d35400;
+      position: relative;
+      top: 4px;
+    }
+  }
+}
