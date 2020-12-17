@@ -6,8 +6,8 @@ import ContentBox from '../../../shared/ContentBox'
 import { GameTopbar } from '../../../shared/Topbar'
 
 export function Lobby() {
-  const { gameId } = useParams<{ gameId: string }>()
-  const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
+  const { id } = useParams<{ id: string }>()
+  const link = `${process.env.REACT_APP_BASE_URL}/game/${id}`
 
   return (
     <div className="bg-game-state-waiting bg-no-repeat bg-cover bg-fixed min-h-screen flex flex-col">
