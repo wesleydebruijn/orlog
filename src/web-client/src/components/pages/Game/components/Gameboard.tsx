@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
-import { useBoolean } from '../../../../hooks/useBoolean'
+import React, { useState } from 'react'
 
 import { useGame } from '../../../../hooks/useGame'
 import { usePlayer } from '../../../../hooks/usePlayer'
@@ -121,14 +120,10 @@ export function Dices({ className }: { className?: string }) {
     player: { dices, rolled }
   } = usePlayer()
 
-  const [rolling, setRolling] = useBoolean(500)
-
   const classes = classNames(
     'flex flex-initial w-2/3 h-32 justify-center items-center self-center',
     className
   )
-
-  useEffect(() => setRolling(rolled), [rolled])
 
   return (
     <div className={classes}>
@@ -140,7 +135,7 @@ export function Dices({ className }: { className?: string }) {
           locked={dice.locked}
           hidden={dice.placeholder}
           selected={dice.keep}
-          rolling={rolling}
+          rolled={rolled}
           self={self}
         />
       ))}
