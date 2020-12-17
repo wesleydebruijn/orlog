@@ -10,7 +10,7 @@ export default function Diamond({
 }) {
   const classes = classNames('absolute', className)
   return (
-    <div className="relative w-58 h-full flex justify-center items-center cursor-pointer">
+    <div className="relative w-58 h-full flex justify-center items-center">
       <svg className={classes} viewBox="-10 0 195 68">
         <path
           d="M1740.937,532.544l-19.042,34.565,19.042,33.33h148.331l17.038-33.33-17.038-34.565Z"

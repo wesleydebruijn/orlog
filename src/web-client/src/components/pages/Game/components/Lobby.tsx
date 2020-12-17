@@ -1,11 +1,11 @@
 import React from 'react'
 import { useParams } from 'react-router'
-import Button from '../../shared/Button/Button'
-import ContentBox from '../../shared/ContentBox'
 
-import { GameTopbar } from '../../shared/Topbar'
+import Button from '../../../shared/Button/Button'
+import ContentBox from '../../../shared/ContentBox'
+import { GameTopbar } from '../../../shared/Topbar'
 
-export default function Lobby() {
+export function Lobby() {
   const { gameId } = useParams<{ gameId: string }>()
   const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
 

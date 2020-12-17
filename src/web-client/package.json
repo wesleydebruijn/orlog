@@ -42,7 +42,7 @@
     "eject": "react-scripts eject"
   },
   "engines": {
-    "node": "14.15.2"
+    "node": "^14.15.2"
   },
   "eslintConfig": {
     "extends": [

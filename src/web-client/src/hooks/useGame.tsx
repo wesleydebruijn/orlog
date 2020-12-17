@@ -2,9 +2,9 @@ import { useContext } from 'react'
 import { GameContext } from '../providers/GameProvider'
 
 export function useGame() {
-  const { lobby } = useContext(GameContext)
+  const { lobby, actions } = useContext(GameContext)
 
-  if (!lobby) {
+  if (!lobby || !actions) {
     throw new Error(
       'You are trying to access game outside a Game Context; this is most likely a programmer error.'
     )
@@ -19,6 +19,7 @@ export function useGame() {
     turn: lobby.game.turn,
     hasTurn: lobby.game.turn === lobby.turn,
     player: lobby.turn,
-    opponent: (lobby.turn % 2) + 1
+    opponent: (lobby.turn % 2) + 1,
+    actions
   }
 }

@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "ecmel.vscode-html-css",
-    "jakebecker.elixir-ls",
+    "elixir-lsp.elixir-ls",
     "eamodio.gitlens",
     "bradlc.vscode-tailwindcss"
   ]

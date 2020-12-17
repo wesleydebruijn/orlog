@@ -1,19 +1,19 @@
 import React from 'react'
 import { useState } from 'react'
-import useWebSocket, { ReadyState } from 'react-use-websocket'
+import useWebSocket from 'react-use-websocket'
+import { isEqual } from 'lodash'
 
 import { GameActions, GameLobby } from '../types/types'
 
 type State = {
-  status: ReadyState
   lobby?: GameLobby
   actions?: GameActions
 }
 
-export const GameContext = React.createContext<State>({ status: ReadyState.UNINSTANTIATED })
+export const GameContext = React.createContext<State>({ lobby: undefined, actions: undefined })
 
 type Props = {
-  children: React.ReactNode
+  children: (lobby?: GameLobby) => React.ReactNode
   gameId: string
   userId: string
 }
@@ -22,7 +22,7 @@ export function GameProvider({ children, gameId, userId }: Props) {
   const socketUrl = `${process.env.REACT_APP_WS_URL}/${gameId}/${userId}`
   const [lobby, setLobby] = useState<GameLobby>()
 
-  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
+  const { sendJsonMessage } = useWebSocket(socketUrl, {
     shouldReconnect: () => {
       // todo: dont reconnect on full lobby
       return true
@@ -31,7 +31,10 @@ export function GameProvider({ children, gameId, userId }: Props) {
       if (!event.data) return
 
       const data = await JSON.parse(event.data)
-      setLobby(data)
+      if (!isEqual(lobby, data)) {
+        console.log('Rerendering', isEqual(lobby, data), lobby, data)
+        setLobby(data)
+      }
     }
   })
 
@@ -52,9 +55,5 @@ export function GameProvider({ children, gameId, userId }: Props) {
       })
   }
 
-  return (
-    <GameContext.Provider value={{ status: readyState, lobby, actions }}>
-      {children}
-    </GameContext.Provider>
-  )
+  return <GameContext.Provider value={{ lobby, actions }}>{children(lobby)}</GameContext.Provider>
 }

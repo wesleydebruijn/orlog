@@ -97,3 +97,10 @@ export type DiceFace = {
   type: 'melee' | 'ranged' | 'token'
   stance: 'attack' | 'block' | 'steal'
 }
+
+export type FaceType =
+  | 'melee-attack'
+  | 'melee-block'
+  | 'ranged-attack'
+  | 'ranged-block'
+  | 'token-steal'
