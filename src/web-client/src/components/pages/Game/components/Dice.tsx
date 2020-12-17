@@ -30,7 +30,7 @@ export function Dice({
 }) {
   const faceClasses = 'text-white flex items-center justify-center'
   const classes = classNames('dice m-4 w-16 h-16', {
-    'cursor-pointer': onClick !== undefined && !locked,
+    'hover:shadow-dice-hover cursor-pointer': onClick !== undefined && !locked,
     invisible: hidden,
     'mt-2': selected,
     'dice--rolling': rolling && !locked

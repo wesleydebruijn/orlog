@@ -16,6 +16,9 @@ module.exports = {
         text: '#e4bd8d',
         lightGray: '#E8E8E8'
       },
+      boxShadow: {
+        'dice-hover': '0px 0px 20px 3px rgba(243, 156, 18, 1)'
+      },
       fontFamily: {
         signika: 'Signika'
       },
