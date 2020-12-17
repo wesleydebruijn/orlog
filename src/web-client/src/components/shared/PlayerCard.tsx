@@ -26,7 +26,7 @@ export function PlayerCard({
         width="135"
         height="135"
       />
-      <div className="border-secondary border-4 rounded bg-primary -ml-5 px-10 py-3">
+      <div className="border-secondary border-4 rounded bg-primary -ml-5 w-64 px-10 py-3">
         <h2 className="text-orange">{name}</h2>
         <span className="text-gray text-sm">{title}</span>
       </div>
