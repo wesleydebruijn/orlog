@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import React, { Children } from 'react'
-import { FavorTier } from '../../types/types'
+import React from 'react'
 
 import GodFavorIcon from './Icons/GodFavorIcon'
 
@@ -62,23 +61,10 @@ export function Tier({
       </span>
       <span
         onClick={() => onClick}
-        className="rounded border-2 bg-orange text-white px-2 py-1 text-sm"
+        className="rounded border-2 bg-orange text-white px-2 py-1 text-sm cursor-pointer"
       >
         Activate
       </span>
     </div>
   )
 }
-
-//
-//     <div className="flex justify-between items-center py-2 px-3 border-b-1 border-lightGray">
-//       <span className="text-gray">Deal 4 damage</span>
-//       <span className="min-w-f-50 rounded border-2 border-orange px-1 text-gray flex items-center">
-//         <GodFavorIcon className="text-orange w-3 mr-2" />5
-//       </span>
-//       <span className="rounded border-2 bg-orange text-white px-2 py-1 text-sm">
-//         Activate
-//       </span>
-//     </div>
-//   </div>
-// </div>
