@@ -17,7 +17,8 @@ export function Dice({
   onClick,
   locked,
   hidden,
-  selected
+  selected,
+  rolling
 }: {
   value?: FaceType
   hasTokens: boolean
@@ -25,12 +26,14 @@ export function Dice({
   locked: boolean
   hidden: boolean
   selected: boolean
+  rolling: boolean
 }) {
   const faceClasses = 'text-white flex items-center justify-center'
   const classes = classNames('dice m-4 w-16 h-16', {
     'cursor-pointer': onClick !== undefined && !locked,
     invisible: hidden,
-    'mt-2': selected
+    'mt-2': selected,
+    'dice--rolling': rolling && !locked
   })
 
   const tokenClass = 'border-2 border-orange'

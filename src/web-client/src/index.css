@@ -13,6 +13,10 @@
     animation-fill-mode: forwards;
   }
 
+  .dice--rolling {
+    animation-name: roll-animation;
+  }
+
   .dice > div {
     height: 100%;
     width: 100%;
@@ -43,6 +47,15 @@
 
   .dice__bottom {
     transform: rotateX(-90deg) translateZ(30px);
+  }
+}
+
+@keyframes roll-animation {
+  0% {
+    transform: rotateX(90deg) rotateY(360deg) rotateZ(0deg) translateX(0);
+  }
+  100% {
+    transform: rotateX(-180deg) rotateY(-180deg) rotateZ(-180deg) translateX(0);
   }
 }
 
