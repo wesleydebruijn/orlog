@@ -35,14 +35,14 @@ export function Dice({
   style = {}
 }: Props) {
   const tokenClasses = 'border-2 border-dashed p-1 border-orange'
-  const classes = classNames('dice m-4 w-16 h-16', className, {
+  const classes = classNames('dice w-16 h-16', className, {
     'hover:shadow-dice-hover cursor-pointer': onClick !== undefined && !locked,
     invisible: hidden,
     'mt-2': selected
   })
 
   return (
-    <animated.div style={style} onClick={onClick} className={classes}>
+    <div style={style} onClick={onClick} className={classes}>
       <div className={'dice__front'}>
         <Face face={value} className={classNames({ [`${tokenClasses}`]: hasTokens })} />
       </div>
@@ -76,16 +76,16 @@ export function Dice({
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
-    </animated.div>
+    </div>
   )
 }
 
 export function AnimatedDice(props: Props & { self: boolean; rolled: boolean }) {
-  const { locked, selected, self, rolled } = props
+  const { locked, selected, self, rolled, style, className } = props
 
   // roll animation
   const [rolling, setRolling] = useBoolean(500)
-  const classes = classNames({ 'dice--rolling': rolling && !locked })
+  const diceClasses = classNames(className, { 'dice--rolling': rolling && !locked })
 
   useEffect(() => setRolling(rolled), [rolled])
 
@@ -96,9 +96,13 @@ export function AnimatedDice(props: Props & { self: boolean; rolled: boolean }) 
     config: { mass: 1, tension: 880, friction: 30 }
   }
 
-  const style = useSpring(selectAnimation)
+  const selectStyle = useSpring(selectAnimation)
 
-  return <Dice {...props} style={style} className={classes} />
+  return (
+    <animated.div style={{ ...style, ...selectStyle }}>
+      <Dice {...props} className={diceClasses} />
+    </animated.div>
+  )
 }
 
 const randomFace: () => FaceType = () => {

@@ -8,6 +8,7 @@ import { getFaceType } from '../../../../utils/dice'
 import { FavorCard, Tier } from '../../../shared/FavorCard'
 import { PlayerCard } from '../../../shared/PlayerCard'
 import { GameTopbar } from '../../../shared/Topbar'
+import { useDiceTransitions } from '../hooks/useDiceTransitions'
 import { ContinueButton } from './ContinueButton'
 import { AnimatedDice } from './Dice'
 
@@ -110,15 +111,15 @@ export function Favors({ className }: { className?: string }) {
 }
 
 export function Dices({ className }: { className?: string }) {
-  const {
-    hasTurn,
-    actions: { toggleDice }
-  } = useGame()
+  const { hasTurn, phase, actions } = useGame()
+  const { self, started, player, opponent } = usePlayer()
 
-  const {
-    self,
-    player: { dices, rolled }
-  } = usePlayer()
+  const { transitions, containerStyle, diceStyle } = useDiceTransitions(
+    player,
+    opponent,
+    phase,
+    started
+  )
 
   const classes = classNames(
     'flex flex-initial w-2/3 h-32 justify-center items-center self-center',
@@ -127,18 +128,23 @@ export function Dices({ className }: { className?: string }) {
 
   return (
     <div className={classes}>
-      {Object.values(dices).map((dice, index) => (
-        <AnimatedDice
-          value={getFaceType(dice)}
-          hasTokens={dice.tokens > 0}
-          onClick={self && hasTurn && rolled ? () => toggleDice(index + 1) : undefined}
-          locked={dice.locked}
-          hidden={dice.placeholder}
-          selected={dice.keep}
-          rolled={rolled}
-          self={self}
-        />
-      ))}
+      <div style={containerStyle}>
+        {transitions.map(({ item, props }, index) => (
+          <AnimatedDice
+            style={diceStyle(props, index)}
+            value={getFaceType(item)}
+            hasTokens={item.tokens > 0}
+            onClick={
+              self && hasTurn && player.rolled ? () => actions.toggleDice(index + 1) : undefined
+            }
+            locked={item.locked}
+            hidden={item.placeholder}
+            selected={item.keep}
+            rolled={player.rolled}
+            self={self}
+          />
+        ))}
+      </div>
     </div>
   )
 }
