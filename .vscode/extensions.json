@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "ecmel.vscode-html-css",
+    "elixir-lsp.elixir-ls",
+    "eamodio.gitlens",
+    "bradlc.vscode-tailwindcss"
+  ]
+}

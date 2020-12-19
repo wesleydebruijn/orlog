@@ -12,6 +12,7 @@ export default function Login() {
     login,
     state: { user }
   } = useAuth()
+
   const history = useHistory<{ from: { pathname: string } }>()
 
   useEffect(() => {
