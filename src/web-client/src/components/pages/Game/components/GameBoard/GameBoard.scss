@@ -1,16 +1,22 @@
 .game-board {
+  background: #e8e8e8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
   &__field {
-    width: 95vw;
-    height: 90vh;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-grow: 1;
+    padding: 5rem 7rem;
+  }
 
-    transform: translate(-50%, -50%);
-    background-color: green;
+  &__field-bg {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    justify-content: space-between;
+    background: #606060;
   }
 }
