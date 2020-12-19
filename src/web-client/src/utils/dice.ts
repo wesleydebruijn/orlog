@@ -1,4 +1,14 @@
-import { Dice, FaceType } from '../types/types'
+import { range } from 'lodash'
+import { Dice, DiceType, FaceStance, FaceType } from '../types/types'
+
+const DICE_TYPE_SPLITTER = '-'
+const DICE_TYPES: DiceType[] = [
+  'token-steal',
+  'ranged-attack',
+  'ranged-block',
+  'melee-attack',
+  'melee-block'
+]
 
 const OFFENSE: { [index: string]: number } = {
   'melee-attack': 1,
@@ -18,18 +28,73 @@ const DEFENSE: { [index: string]: number } = {
   'token-steal': 6
 }
 
-export function getFaceType(dice: Dice): FaceType {
-  return `${dice.face.type}-${dice.face.stance}` as FaceType
+type DiceTypeCount = {
+  [type: string]: number
+}
+
+export function randomDiceType(): DiceType {
+  return DICE_TYPES[Math.floor(Math.random() * DICE_TYPES.length)]
+}
+
+export function getDiceType(dice: Dice): DiceType {
+  return [dice.face.type, dice.face.stance].join(DICE_TYPE_SPLITTER) as DiceType
+}
+
+export function getOpposingDiceType(dice: Dice): DiceType {
+  const oppositeStance = dice.face.stance === 'block' ? 'attack' : 'block'
+
+  return [dice.face.type, oppositeStance].join(DICE_TYPE_SPLITTER) as DiceType
 }
 
 export function sortByOffense(a: Dice, b: Dice) {
-  return OFFENSE[getFaceType(a)] - OFFENSE[getFaceType(b)]
+  return OFFENSE[getDiceType(a)] - OFFENSE[getDiceType(b)]
 }
 
 export function sortByDefence(a: Dice, b: Dice) {
-  return DEFENSE[getFaceType(a)] - DEFENSE[getFaceType(b)]
+  return DEFENSE[getDiceType(a)] - DEFENSE[getDiceType(b)]
 }
 
-export function sort(dices: any[], started: boolean) {
-  return dices.sort(started ? sortByOffense : sortByDefence)
+export function createDice(diceType: DiceType, props: any = {}): Dice {
+  const [type, stance] = diceType.split(DICE_TYPE_SPLITTER)
+  return {
+    tokens: 0,
+    locked: false,
+    keep: false,
+    placeholder: false,
+    face: {
+      stance: stance as FaceStance,
+      type: type as FaceType,
+      count: 0,
+      amount: 0,
+      intersects: 0,
+      disabled: false
+    },
+    ...props
+  }
+}
+
+export function faceOffDices(dices: Dice[], otherDices: Dice[]) {
+  return addRequiredDices(dices, requiredDiceTypes(otherDices))
+}
+
+export function requiredDiceTypes(dices: Dice[]): DiceTypeCount {
+  return dices.reduce((acc: DiceTypeCount, dice: Dice) => {
+    const diceType = getOpposingDiceType(dice)
+
+    return { ...acc, [diceType]: (acc[diceType] || 0) + 1 }
+  }, {})
+}
+
+export function addRequiredDices(dices: Dice[], requiredDiceTypes: DiceTypeCount): Dice[] {
+  return Object.entries(requiredDiceTypes).reduce((acc: Dice[], [key, count]) => {
+    const diceType = key as DiceType
+    const amount = count - dices.filter(dice => getDiceType(dice) === diceType).length
+
+    return [
+      ...acc,
+      ...range(Math.max(amount, 0)).map(_i =>
+        createDice(diceType, { locked: true, keep: true, placeholder: true })
+      )
+    ]
+  }, dices)
 }

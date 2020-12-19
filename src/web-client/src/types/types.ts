@@ -89,16 +89,19 @@ export type Dice = {
   face: DiceFace
 }
 
+export type FaceType = 'melee' | 'ranged' | 'token'
+export type FaceStance = 'attack' | 'block' | 'steal'
+
 export type DiceFace = {
   count: number
   amount: number
   intersects: number
   disabled: boolean
-  type: 'melee' | 'ranged' | 'token'
-  stance: 'attack' | 'block' | 'steal'
+  type: FaceType
+  stance: FaceStance
 }
 
-export type FaceType =
+export type DiceType =
   | 'melee-attack'
   | 'melee-block'
   | 'ranged-attack'

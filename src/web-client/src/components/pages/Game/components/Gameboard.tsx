@@ -1,10 +1,11 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useGame } from '../../../../hooks/useGame'
 import { usePlayer } from '../../../../hooks/usePlayer'
 import { PlayerProvider } from '../../../../providers/PlayerProvider'
-import { getFaceType } from '../../../../utils/dice'
+import { Dice, PhaseId } from '../../../../types/types'
+import { getDiceType, faceOffDices, sortByOffense, sortByDefence } from '../../../../utils/dice'
 import { FavorCard, Tier } from '../../../shared/FavorCard'
 import { PlayerCard } from '../../../shared/PlayerCard'
 import { GameTopbar } from '../../../shared/Topbar'
@@ -110,16 +111,30 @@ export function Favors({ className }: { className?: string }) {
   )
 }
 
+function addDiceIndex(dice: Dice, index: number) {
+  return { ...dice, index: index + 1 }
+}
+
 export function Dices({ className }: { className?: string }) {
   const { hasTurn, phase, actions } = useGame()
   const { self, started, player, opponent } = usePlayer()
 
-  const { transitions, containerStyle, diceStyle } = useDiceTransitions(
-    player,
-    opponent,
-    phase,
-    started
-  )
+  const [dices, setDices] = useState(Object.values(player.dices).map(addDiceIndex))
+  const faceOff = phase.id > PhaseId.Roll
+
+  useEffect(() => {
+    if (faceOff) {
+      setDices(
+        faceOffDices(Object.values(player.dices), Object.values(opponent.dices))
+          .map(addDiceIndex)
+          .sort(started ? sortByOffense : sortByDefence)
+      )
+    } else {
+      setDices(Object.values(player.dices).map(addDiceIndex))
+    }
+  }, [player.dices, faceOff])
+
+  const { transitions, containerStyle, diceStyle } = useDiceTransitions(dices, faceOff)
 
   const classes = classNames(
     'flex flex-initial w-2/3 h-32 justify-center items-center self-center',
@@ -132,7 +147,7 @@ export function Dices({ className }: { className?: string }) {
         {transitions.map(({ item, props }, index) => (
           <AnimatedDice
             style={diceStyle(props, index)}
-            value={getFaceType(item)}
+            value={getDiceType(item)}
             hasTokens={item.tokens > 0}
             onClick={
               self && hasTurn && player.rolled ? () => actions.toggleDice(index + 1) : undefined

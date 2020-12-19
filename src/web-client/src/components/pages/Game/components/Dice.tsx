@@ -3,7 +3,8 @@ import React, { useEffect } from 'react'
 import { animated, useSpring } from 'react-spring'
 import { useBoolean } from '../../../../hooks/useBoolean'
 
-import type { FaceType } from '../../../../types/types'
+import type { DiceType } from '../../../../types/types'
+import { randomDiceType } from '../../../../utils/dice'
 
 import {
   MeleeAttackIcon,
@@ -14,7 +15,7 @@ import {
 } from '../../../shared/Icons'
 
 type Props = {
-  value?: FaceType
+  value?: DiceType
   hasTokens: boolean
   onClick?: () => void
   locked: boolean
@@ -25,7 +26,7 @@ type Props = {
 }
 
 export function Dice({
-  value = randomFace(),
+  value = randomDiceType(),
   hasTokens,
   onClick,
   locked,
@@ -44,35 +45,35 @@ export function Dice({
   return (
     <div style={style} onClick={onClick} className={classes}>
       <div className={'dice__front'}>
-        <Face face={value} className={classNames({ [`${tokenClasses}`]: hasTokens })} />
+        <Face type={value} className={classNames({ [`${tokenClasses}`]: hasTokens })} />
       </div>
       <div className={'dice__back'}>
         <Face
-          face={randomFace()}
+          type={randomDiceType()}
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
       <div className={'dice__right'}>
         <Face
-          face={randomFace()}
+          type={randomDiceType()}
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
       <div className={'dice__left'}>
         <Face
-          face={randomFace()}
+          type={randomDiceType()}
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
       <div className={'dice__top'}>
         <Face
-          face={randomFace()}
+          type={randomDiceType()}
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
       <div className={'dice__bottom'}>
         <Face
-          face={randomFace()}
+          type={randomDiceType()}
           className={classNames({ [`${tokenClasses}`]: Math.round(Math.random()) })}
         />
       </div>
@@ -105,22 +106,11 @@ export function AnimatedDice(props: Props & { self: boolean; rolled: boolean }) 
   )
 }
 
-const randomFace: () => FaceType = () => {
-  const faces: FaceType[] = [
-    'token-steal',
-    'ranged-attack',
-    'ranged-block',
-    'melee-attack',
-    'melee-block'
-  ]
-  return faces[Math.floor(Math.random() * faces.length)]
-}
-
-export function Face({ face, className }: { face: FaceType; className?: string }) {
+export function Face({ type, className }: { type: DiceType; className?: string }) {
   const classes = classNames('flex text-white items-center justify-center', className)
   let faceIcon
 
-  switch (face) {
+  switch (type) {
     case 'melee-attack':
       faceIcon = <MeleeAttackIcon className="w-8" />
       break
