@@ -1,27 +1,15 @@
-export type InitialGameState = {
-  status: 'initial'
-  lobby?: GameLobby
-  favors?: {
-    [index: number]: Favor
-  }
-}
-
-export type NewGameState = {
-  status: 'new'
-  lobby: GameLobby
-  favors?: {
-    [index: number]: Favor
-  }
-}
-
-export type GameState = InitialGameState | NewGameState
-
 export type GameLobby = {
   uuid?: string
   status: 'connecting' | 'waiting' | 'playing' | 'finished'
   settings: Settings
   turn: number
   game: Game
+}
+
+export type GameActions = {
+  doContinue: () => void
+  toggleDice: (diceIndex: number) => void
+  selectFavor: (favor: number, tier: number) => void
 }
 
 export type Favor = {
@@ -101,11 +89,21 @@ export type Dice = {
   face: DiceFace
 }
 
+export type FaceType = 'melee' | 'ranged' | 'token'
+export type FaceStance = 'attack' | 'block' | 'steal'
+
 export type DiceFace = {
   count: number
   amount: number
   intersects: number
   disabled: boolean
-  type: 'melee' | 'ranged' | 'token'
-  stance: 'attack' | 'block' | 'steal'
+  type: FaceType
+  stance: FaceStance
 }
+
+export type DiceType =
+  | 'melee-attack'
+  | 'melee-block'
+  | 'ranged-attack'
+  | 'ranged-block'
+  | 'token-steal'

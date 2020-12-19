@@ -1,6 +1,5 @@
 import React from 'react'
 
-import type { GameActions } from '../../../../../providers/GameLobbyProvider'
 import { useGame } from '../../../../../hooks/useGame'
 
 import ContinueButton from '../ContinueButton/ContinueButton'
@@ -10,13 +9,9 @@ import PlayerArea from '../PlayerArea/PlayerArea'
 import './GameBoard.scss'
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
 
-type Props = {
-  actions: GameActions
-}
-
-export default function GameBoard({ actions }: Props) {
-  const { toggleDice, selectFavor, doContinue } = actions
-  const { player, opponent } = useGame()
+export default function GameBoard() {
+  const { player, opponent, actions } = useGame()
+  const { doContinue, selectFavor, toggleDice } = actions
 
   return (
     <section className="game-board">

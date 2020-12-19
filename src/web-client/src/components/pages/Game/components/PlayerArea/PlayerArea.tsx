@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
 import { usePlayer } from '../../../../../hooks/usePlayer'
-import { GameActions } from '../../../../../providers/GameLobbyProvider'
 
 import Player from '../../../../shared/Player/GamePlayer'
 import DiceGrid from '../Dice/DiceGrid/DiceGrid'
@@ -10,8 +9,8 @@ import FavorArea from '../Favor/FavorArea/FavorArea'
 import './PlayerArea.scss'
 
 type Props = {
-  onSelectFavor?: GameActions['selectFavor']
-  onToggleDice?: GameActions['toggleDice']
+  onSelectFavor?: any
+  onToggleDice?: any
 }
 
 export default function PlayerArea({ onSelectFavor, onToggleDice }: Props) {
