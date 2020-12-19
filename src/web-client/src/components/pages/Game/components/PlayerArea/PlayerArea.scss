@@ -7,18 +7,13 @@
   min-height: 335px;
 
   &--self {
-    .game-player {
+    .player-card {
       order: 3;
       align-self: flex-end;
       justify-content: flex-end;
     }
 
-    .dice-grid {
-      order: 2;
-      align-self: flex-start;
-    }
-
-    .favor-area {
+    .player-card {
       order: 1;
       align-self: flex-end;
       justify-content: unset;
@@ -26,6 +21,11 @@
       .favor {
         transform: none;
       }
+    }
+
+    .dice-grid {
+      order: 2;
+      align-self: flex-start;
     }
   }
 }

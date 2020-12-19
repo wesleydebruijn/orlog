@@ -3,11 +3,15 @@ import React from 'react'
 import { useGame } from '../../../../../hooks/useGame'
 
 import ContinueButton from '../ContinueButton/ContinueButton'
-import PlayerArea from '../PlayerArea/PlayerArea'
 
 import './GameBoard.scss'
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
 import Topbar from '../../../../shared/Topbar/Topbar'
+import { usePlayer } from '../../../../../hooks/usePlayer'
+import classNames from 'classnames'
+import { PlayerCard } from '../PlayerCard/PlayerCard'
+import DiceGrid from '../Dice/DiceGrid/DiceGrid'
+import FavorArea from '../Favor/FavorArea/FavorArea'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
@@ -22,11 +26,34 @@ export default function GameBoard() {
             <PlayerArea />
           </PlayerProvider>
           <PlayerProvider player={player} opponent={opponent}>
-            <PlayerArea onSelectFavor={selectFavor} onToggleDice={toggleDice} />
+            <PlayerArea />
           </PlayerProvider>
           <ContinueButton onClick={() => doContinue()} />
         </div>
       </section>
+    </section>
+  )
+}
+
+export function PlayerArea() {
+  const { player, self } = usePlayer()
+
+  const classes = classNames('player-area', {
+    'player-area--self': self
+  })
+
+  return (
+    <section className={classes}>
+      <div className="wrapper wrapper--flex">
+        <PlayerCard
+          name={player.user.name}
+          title={player.user.title}
+          health={player.health}
+          tokens={player.tokens}
+        />
+        <FavorArea />
+      </div>
+      <DiceGrid />
     </section>
   )
 }

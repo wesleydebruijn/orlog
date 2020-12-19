@@ -1,0 +1,65 @@
+.player-card {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 9rem;
+  font-family: 'Signika', sans-serif;
+
+  &__avatar {
+    border-radius: 9999px;
+    z-index: 10;
+    border: 4px solid #403535;
+    height: 135px;
+    width: 134px;
+  }
+
+  &__personal {
+    background: #211c1c;
+    border: 4px solid #403535;
+    border-radius: 0.25rem;
+    margin-left: -1.25rem;
+    padding: 0.75rem 2.5rem;
+
+    h2 {
+      color: orange;
+      margin: 0;
+      font-size: inherit;
+      font-weight: inherit;
+    }
+
+    span {
+      color: #606060;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  &__stat {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    z-index: 20;
+    border-radius: 0.25rem;
+    color: white;
+    padding: 0.1rem 0.5rem;
+
+    &--health {
+      top: 50%;
+      left: -1.75rem;
+      background-color: rgba(220, 38, 38, 1);
+    }
+
+    &--tokens {
+      top: 66.666667%;
+      left: -0.75rem;
+      background-color: orange;
+      margin-top: 0.5rem;
+    }
+
+    svg {
+      fill: white;
+      width: 0.75rem;
+      margin-right: 0.5rem;
+    }
+  }
+}
