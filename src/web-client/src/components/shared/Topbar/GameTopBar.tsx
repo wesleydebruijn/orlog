@@ -1,6 +1,6 @@
 import './Topbar.scss'
 
-export function GameTopbar({ title }: { title: string }) {
+export function GameTopbar({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="topbar topbar--game">
       <svg xmlns="http://www.w3.org/2000/svg" width="380" height="80" viewBox="-5 0 145 30">
@@ -13,6 +13,7 @@ export function GameTopbar({ title }: { title: string }) {
         />
       </svg>
       <span className="topbar--game__title">{title}</span>
+      {subtitle && <span className="topbar--game__subtitle">{subtitle}</span>}
     </div>
   )
 }
