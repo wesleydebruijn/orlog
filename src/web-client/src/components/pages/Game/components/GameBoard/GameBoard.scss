@@ -29,11 +29,24 @@
   height: 50%;
   min-height: 335px;
 
+  .player-card {
+    left: -4rem;
+    top: -4rem;
+  }
+
+  .favor-area {
+    position: relative;
+    top: -3.5rem;
+    left: 4rem;
+  }
+
   &--self {
     .player-card {
       order: 3;
       align-self: flex-end;
       justify-content: flex-end;
+      top: 4rem;
+      left: 4rem;
     }
 
     .favor-area {
@@ -43,17 +56,21 @@
       order: 1;
       align-self: flex-end;
       justify-content: unset;
+      top: 3.5rem;
+      left: -4rem;
     }
 
     .dice-area {
       order: 2;
       align-self: flex-start;
+      align-items: flex-end;
     }
   }
 }
 
 .dice-area {
   position: absolute;
+  height: 5rem;
   left: 50%;
   transform: translate(-50%, 0%);
   display: flex;
