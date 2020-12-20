@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
+import { animated } from 'react-spring'
 
 import { useGame } from '../../../../../hooks/useGame'
 import { usePlayer } from '../../../../../hooks/usePlayer'
@@ -12,7 +13,11 @@ import { FavorCard, Tier } from '../FavorCard/FavorCard'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
-import DiceGrid from '../Dice/DiceGrid/DiceGrid'
+import { faceOffDices, initialDices } from '../Dice/DiceGrid/utils'
+import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
+import { PhaseId } from '../../../../../types/types'
+
+import Dice from '../Dice/Dice'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
@@ -53,7 +58,7 @@ export function PlayerArea() {
         />
         <FavorArea />
       </div>
-      <DiceGrid />
+      <DiceArea />
     </section>
   )
 }
@@ -92,5 +97,37 @@ export function FavorArea() {
         </FavorCard>
       ))}
     </section>
+  )
+}
+
+export function DiceArea() {
+  const { started, player, opponent } = usePlayer()
+  const { phase } = useGame()
+
+  const [dices, setDices] = useState(initialDices(player))
+  const faceOff = phase.id > PhaseId.Roll
+
+  const { transitions, containerStyle, diceStyle } = useDiceTransitions(dices, faceOff)
+
+  useEffect(() => {
+    if (faceOff) {
+      setDices(faceOffDices(player, opponent, started))
+    } else {
+      setDices(initialDices(player))
+    }
+  }, [player.dices, faceOff])
+
+  return (
+    <>
+      <div className="dice-area">
+        <div className="dice-area__container" style={containerStyle}>
+          {transitions.map(({ item, props, key }, index) => (
+            <animated.div key={key} style={diceStyle(props, index)}>
+              <Dice key={item.index} {...item} rolled={player.rolled} />
+            </animated.div>
+          ))}
+        </div>
+      </div>
+    </>
   )
 }
