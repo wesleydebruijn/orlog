@@ -11,14 +11,14 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
-          status: :creating | :waiting | :playing | :finished,
+          status: :creating | :waiting | :setup | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{},
           users: %{}
         }
 
-  @derive {Jason.Encoder, except: [:pids, :users]}
+  @derive {Jason.Encoder, except: [:pids]}
   defstruct uuid: "",
             status: :creating,
             turn: 0,
@@ -37,8 +37,8 @@ defmodule Game.Lobby do
     Enum.empty?(state.pids)
   end
 
-  @spec startable?(Lobby.t()) :: boolean()
-  def startable?(state) do
+  @spec ready?(Lobby.t()) :: boolean()
+  def ready?(state) do
     state.status != :playing && Enum.count(state.pids) == @pids
   end
 
@@ -49,6 +49,15 @@ defmodule Game.Lobby do
     Map.get(state.pids, uuid) == pid
   end
 
+  @spec try_to_start(Lobby.t())
+  def try_to_start(state) do
+    if Game.Lobby.ready?(state) do
+      Game.Lobby.start(state)
+    else
+      state
+    end
+  end
+
   @spec update_status(Lobby.t()) :: Lobby.t()
   def update_status(state) do
     if state.game.winner > 0 do
@@ -56,6 +65,16 @@ defmodule Game.Lobby do
     else
       state
     end
+  end
+
+  @spec set_favors(Lobby.t(), list(), pid()) :: Lobby.t()
+  def set_favors(state, favors, pid) do
+    updated_player =
+      state.users
+      |> Enum.find({0, nil}, fn {_index, user} ->
+        Map.get(state.pids, player.user.uuid) == pid
+      end)
+      |> User.update(%{favors: favors})
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
@@ -98,6 +117,11 @@ defmodule Game.Lobby do
   @spec start(Lobby.t()) :: Lobby.t()
   def start(state) do
     %{state | status: :playing, game: Game.start(Map.values(state.users), state.settings)}
+  end
+
+  @spec setup(Lobby.t()) :: Lobby.t()
+  def setup(state) do
+    %{state | status: :setup, users: state.users}
   end
 
   @spec notify_pids(Lobby.t()) :: :ok

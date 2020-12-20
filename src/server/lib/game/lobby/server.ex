@@ -49,6 +49,10 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, {:change_settings, settings})
   end
 
+  def set_favors(pid, favors) do
+    GenServer.call(pid, {:set_favors, settings, pid})
+  end
+
   @impl true
   @spec init(any) :: {:ok, Lobby.t()}
   def init(state) do
@@ -92,6 +96,12 @@ defmodule Game.Lobby.Server do
 
   @impl true
   def handle_call({:set_favors, favors, pid}, _from, state) do
+    new_state =
+      state
+      |> Game.Lobby.set_favors(favors, pid)
+      |> Game.Lobby.try_to_start()
+
+    updated_state = {:reply, new_state, new_state}
   end
 
   @impl true

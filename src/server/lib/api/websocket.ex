@@ -41,6 +41,9 @@ defmodule Api.Websocket do
         %{"type" => "changeSettings", "value" => settings} ->
           Game.Lobby.Server.change_settings(pid, settings)
 
+        %{"type" => "setFavors", "value" => settings} ->
+          Game.Lobby.Server.set_favors(pid, settings)
+
         _other ->
           state
       end

@@ -1,6 +1,6 @@
 export type GameLobby = {
   uuid?: string
-  status: 'connecting' | 'waiting' | 'playing' | 'finished' | 'creating'
+  status: 'connecting' | 'waiting' | 'setup' | 'playing' | 'finished' | 'creating'
   settings: Settings
   turn: number
   game: Game
@@ -12,6 +12,7 @@ export type GameActions = {
   toggleDice: (diceIndex: number) => void
   selectFavor: (favor: number, tier: number) => void
   changeSettings: (settings: ChangeSettingsData) => void
+  setFavors: (favors: number[]) => void
 }
 
 export type Favor = {

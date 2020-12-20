@@ -10,7 +10,7 @@ type Props = {
   className?: string
   name: string
   description: string
-  children: React.ReactNode
+  children?: React.ReactNode
   active?: boolean
   onClick?: (index: number) => void
 }
@@ -43,7 +43,7 @@ export function FavorCard({
         <h2>{name}</h2>
         <span>{description}</span>
       </div>
-      <div className={tierClasses}>{children}</div>
+      {children && <div className={tierClasses}>{children}</div>}
     </div>
   )
 }

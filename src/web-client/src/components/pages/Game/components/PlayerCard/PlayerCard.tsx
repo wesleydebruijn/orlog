@@ -15,8 +15,8 @@ export function PlayerCard({
   className?: string
   name: string
   title: string
-  health: number
-  tokens: number
+  health?: number
+  tokens?: number
 }) {
   const classes = classNames('player-card', className)
 
@@ -31,14 +31,18 @@ export function PlayerCard({
         <h2>{name}</h2>
         <span>{title}</span>
       </div>
-      <div className="player-card__stat player-card__stat--health">
-        <HealthIcon />
-        <span>{health}</span>
-      </div>
-      <div className="player-card__stat player-card__stat--tokens">
-        <GodFavorIcon />
-        <span>{tokens}</span>
-      </div>
+      {health && (
+        <div className="player-card__stat player-card__stat--health">
+          <HealthIcon />
+          <span>{health}</span>
+        </div>
+      )}
+      {tokens && (
+        <div className="player-card__stat player-card__stat--tokens">
+          <GodFavorIcon />
+          <span>{tokens}</span>
+        </div>
+      )}
     </div>
   )
 }

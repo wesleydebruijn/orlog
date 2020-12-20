@@ -56,6 +56,11 @@ export function GameProvider({ children, gameId, userId }: Props) {
       sendJsonMessage({
         type: 'changeSettings',
         value: settings
+      }),
+    setFavors: (favors: number[]) =>
+      sendJsonMessage({
+        type: 'setFavors',
+        value: favors
       })
   }
 
