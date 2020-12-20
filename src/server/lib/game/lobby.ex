@@ -11,7 +11,7 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
-          status: :waiting | :playing | :finished,
+          status: :creating | :waiting | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{},
@@ -20,7 +20,7 @@ defmodule Game.Lobby do
 
   @derive {Jason.Encoder, except: [:pids, :users]}
   defstruct uuid: "",
-            status: :waiting,
+            status: :creating,
             turn: 0,
             settings: %Settings{},
             game: %Game{},
@@ -56,6 +56,18 @@ defmodule Game.Lobby do
     else
       state
     end
+  end
+
+  @spec update_settings(Lobby.t(), map) :: Lobby.t()
+  def update_settings(state, settings) do
+    new_settings =
+      state.settings
+      |> Map.put(:health, Map.get(settings, "health"))
+      |> Map.put(:dices, Map.get(settings, "dices"))
+      |> Map.put(:favors, Map.get(settings, "favors"))
+      |> Map.put(:tokens, Map.get(settings, "tokens"))
+
+    %{state | settings: new_settings}
   end
 
   @spec turn(Lobby.t(), pid()) :: integer()

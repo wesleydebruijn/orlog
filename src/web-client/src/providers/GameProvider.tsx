@@ -3,7 +3,7 @@ import { useState } from 'react'
 import useWebSocket from 'react-use-websocket'
 import { isEqual } from 'lodash'
 
-import { GameActions, GameLobby } from '../types/types'
+import { ChangeSettingsData, GameActions, GameLobby } from '../types/types'
 
 type State = {
   lobby?: GameLobby
@@ -13,7 +13,7 @@ type State = {
 export const GameContext = React.createContext<State>({ lobby: undefined, actions: undefined })
 
 type Props = {
-  children: (lobby?: GameLobby) => React.ReactNode
+  children: ({ lobby, actions }: { lobby: GameLobby; actions: GameActions }) => React.ReactNode
   gameId: string
   userId: string
 }
@@ -51,8 +51,21 @@ export function GameProvider({ children, gameId, userId }: Props) {
       sendJsonMessage({
         type: 'selectFavor',
         value: { favor, tier }
+      }),
+    changeSettings: (settings: ChangeSettingsData) =>
+      sendJsonMessage({
+        type: 'changeSettings',
+        value: settings
       })
   }
 
-  return <GameContext.Provider value={{ lobby, actions }}>{children(lobby)}</GameContext.Provider>
+  if (lobby !== undefined && actions !== undefined) {
+    return (
+      <GameContext.Provider value={{ lobby, actions }}>
+        {children({ lobby, actions })}
+      </GameContext.Provider>
+    )
+  }
+
+  return null
 }

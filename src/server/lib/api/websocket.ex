@@ -38,6 +38,9 @@ defmodule Api.Websocket do
         %{"type" => "selectFavor", "value" => %{"favor" => favor, "tier" => tier}} ->
           Game.Lobby.Server.action(pid, {:select, %{favor: favor, tier: tier}})
 
+        %{"type" => "changeSettings", "value" => settings} ->
+          Game.Lobby.Server.change_settings(pid, settings)
+
         _other ->
           state
       end

@@ -45,6 +45,10 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, {:action, action, self()})
   end
 
+  def change_settings(pid, settings) do
+    GenServer.call(pid, {:change_settings, settings})
+  end
+
   @impl true
   @spec init(any) :: {:ok, Lobby.t()}
   def init(state) do
@@ -74,6 +78,16 @@ defmodule Game.Lobby.Server do
     else
       {:reply, new_state, new_state}
     end
+  end
+
+  @impl true
+  def handle_call({:change_settings, settings}, _from, state) do
+    new_state =
+      state
+      |> Game.Lobby.update_settings(settings)
+      |> Map.put(:status, :waiting)
+
+    {:reply, new_state, new_state}
   end
 
   @impl true
