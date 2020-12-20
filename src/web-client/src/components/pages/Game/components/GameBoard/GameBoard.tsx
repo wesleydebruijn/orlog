@@ -1,17 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
+import classNames from 'classnames'
 
 import { useGame } from '../../../../../hooks/useGame'
+import { usePlayer } from '../../../../../hooks/usePlayer'
 
+import { PlayerProvider } from '../../../../../providers/PlayerProvider'
+
+import Topbar from '../../../../shared/Topbar/Topbar'
+import DiceGrid from '../Dice/DiceGrid/DiceGrid'
+import { PlayerCard } from '../PlayerCard/PlayerCard'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
-import { PlayerProvider } from '../../../../../providers/PlayerProvider'
-import Topbar from '../../../../shared/Topbar/Topbar'
-import { usePlayer } from '../../../../../hooks/usePlayer'
-import classNames from 'classnames'
-import { PlayerCard } from '../PlayerCard/PlayerCard'
-import DiceGrid from '../Dice/DiceGrid/DiceGrid'
-import FavorArea from '../Favor/FavorArea/FavorArea'
+import { FavorCard, Tier } from '../FavorCard/FavorCard'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
@@ -26,7 +27,7 @@ export default function GameBoard() {
             <PlayerArea />
           </PlayerProvider>
           <PlayerProvider player={player} opponent={opponent}>
-            <PlayerArea />
+            <PlayerArea onFavorSelect={selectFavor} />
           </PlayerProvider>
           <ContinueButton onClick={() => doContinue()} />
         </div>
@@ -35,7 +36,11 @@ export default function GameBoard() {
   )
 }
 
-export function PlayerArea() {
+export function PlayerArea({
+  onFavorSelect
+}: {
+  onFavorSelect?: (favor: number, tier: number) => void
+}) {
   const { player, self } = usePlayer()
 
   const classes = classNames('player-area', {
@@ -51,9 +56,50 @@ export function PlayerArea() {
           health={player.health}
           tokens={player.tokens}
         />
-        <FavorArea />
+        <FavorArea onFavorSelect={onFavorSelect} />
       </div>
       <DiceGrid />
+    </section>
+  )
+}
+
+export function FavorArea({
+  onFavorSelect
+}: {
+  onFavorSelect?: (favor: number, tier: number) => void
+}) {
+  const { favors } = usePlayer()
+  const [favor, setFavor] = useState(0)
+  const {
+    actions: { selectFavor }
+  } = useGame()
+
+  function toggleFavor(index: number) {
+    favor === index ? setFavor(0) : setFavor(index)
+  }
+
+  return (
+    <section className="favor-area">
+      {favors.map(({ name, description, tiers, tier_description }, index) => (
+        <FavorCard
+          key={name}
+          index={index + 1}
+          active={index + 1 === favor}
+          name={name}
+          description={description}
+          open={toggleFavor}
+        >
+          {Object.values(tiers).map((tier, tierIndex) => (
+            <Tier
+              key={tierIndex}
+              description={tier_description}
+              cost={tier.cost}
+              value={tier.value}
+              onClick={() => selectFavor(index + 1, tierIndex + 1)}
+            />
+          ))}
+        </FavorCard>
+      ))}
     </section>
   )
 }

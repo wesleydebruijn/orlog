@@ -36,7 +36,10 @@
       justify-content: flex-end;
     }
 
-    .favor-card {
+    .favor-area {
+      display: flex;
+      flex: 0.2;
+      flex-direction: column;
       order: 1;
       align-self: flex-end;
       justify-content: unset;
