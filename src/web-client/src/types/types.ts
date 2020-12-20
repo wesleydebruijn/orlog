@@ -1,15 +1,17 @@
 export type GameLobby = {
   uuid?: string
-  status: 'connecting' | 'waiting' | 'playing' | 'finished'
+  status: 'connecting' | 'waiting' | 'playing' | 'finished' | 'creating'
   settings: Settings
   turn: number
   game: Game
 }
 
+export type ChangeSettingsData = Partial<Omit<Settings, 'phases'>>
 export type GameActions = {
   doContinue: () => void
   toggleDice: (diceIndex: number) => void
   selectFavor: (favor: number, tier: number) => void
+  changeSettings: (settings: ChangeSettingsData) => void
 }
 
 export type Favor = {
