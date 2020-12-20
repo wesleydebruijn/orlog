@@ -16,8 +16,7 @@ import './GameBoard.scss'
 import { faceOffDices, initialDices } from '../Dice/DiceGrid/utils'
 import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
 import { PhaseId } from '../../../../../types/types'
-
-import Dice from '../Dice/Dice'
+import { Dice } from '../Dice/Dice'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
