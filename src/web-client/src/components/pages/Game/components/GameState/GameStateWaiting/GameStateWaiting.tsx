@@ -4,7 +4,6 @@ import { useParams } from 'react-router'
 import Button from '../../../../../shared/Button/Button'
 import CategoryBox from '../../../../../shared/ContentBox/ContentBox'
 import { GameTopbar } from '../../../../../shared/Topbar/GameTopBar'
-import Topbar from '../../../../../shared/Topbar/Topbar'
 
 import './GameStateWaiting.scss'
 
@@ -22,11 +21,6 @@ export default function GameStateWaiting() {
             likely defeat them because they probably don't know to play it yet anyway. Definitely
             your pet though.
           </p>
-          <input
-            type="text"
-            readOnly={true}
-            defaultValue={`${process.env.REACT_APP_BASE_URL}/game/${gameId}`}
-          />
           <section className="game-state-waiting__actions">
             {'clipboard' in navigator && (
               <Button onClick={async () => await navigator.clipboard.writeText(link)}>

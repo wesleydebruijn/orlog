@@ -1,7 +1,7 @@
 import { interpolate, useTransition } from 'react-spring'
 
 const DICE_WIDTH = 64
-const DICE_MARGIN = 20
+const DICE_MARGIN = 25
 const DICE_SPACE = 15
 
 function calculateWidth(dices: any, index: number, group: boolean) {
