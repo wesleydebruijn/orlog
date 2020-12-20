@@ -43,48 +43,15 @@ export default function Dice({
   placeholder,
   onClick
 }: Props) {
-  const { phase } = useGame()
-  const { self } = usePlayer()
-  const [rolling, setRolling] = useBoolean(500)
-  const [collecting, setCollecting] = useBoolean(1000)
-
-  const margin = locked ? 0 : keep ? 25 : 50
-  const keepAnimation = {
-    marginTop: self ? margin : -margin,
-    config: { mass: 1, tension: 880, friction: 30 }
-  }
-
-  const diceProps = useSpring(keepAnimation)
-  const diceClasses = classnames('dice', {
+  const classes = classnames('dice', {
     'dice--toggleable': onClick !== undefined && !locked,
-    'dice--placeholder': placeholder,
-    'dice--rolling': rolling && !keep && !locked
+    'dice--placeholder': placeholder
   })
-
-  const faceProps = useSpring({
-    boxShadow: collecting && tokens > 0 ? '0px 0px 10px #f39c12' : '0px 0px 0px #fff',
-    config: { mass: 3, tension: 400, friction: 150 }
-  })
-  const faceClasses = classnames('face', {
-    'face--tokens': tokens > 0
-  })
-
-  useEffect(() => setRolling(rolled), [rolled])
-  useEffect(() => setCollecting(phase.id === PhaseId.Resolution), [phase.id])
 
   return (
-    <animated.div
-      style={diceProps}
-      className={diceClasses}
-      onClick={() => onClick && onClick(index)}
-    >
+    <div className={classes} onClick={() => onClick && onClick(index)}>
       <div className="front">
-        <animated.img
-          style={faceProps}
-          src={FACES[`${face.type}-${face.stance}`]}
-          className={faceClasses}
-          alt=""
-        />
+        <img src={FACES[`${face.type}-${face.stance}`]} className="face" alt="" />
       </div>
       <div className="back">
         <img src={FACES[randomFace()]} className={randomFaceClasses()} alt="" />
@@ -101,6 +68,6 @@ export default function Dice({
       <div className="bottom">
         <img src={FACES[randomFace()]} className={randomFaceClasses()} alt="" />
       </div>
-    </animated.div>
+    </div>
   )
 }
