@@ -97,6 +97,7 @@ defmodule Game.Phase.Resolution do
       1 -> Map.put(game, :winner, players |> Enum.at(0) |> elem(0))
       2 -> game
     end
+    |> IndexMap.update_all(:players, &Player.update(&1, %{favor_tier: %{favor: 0, tier: 0}}))
   end
 
   def action(game, _other) do
