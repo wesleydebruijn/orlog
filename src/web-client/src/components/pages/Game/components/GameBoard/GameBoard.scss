@@ -48,8 +48,9 @@
   }
 
   .favor-area {
+    z-index: 10;
     position: relative;
-    top: -3.5rem;
+    top: -1.75rem;
     left: 4rem;
   }
 
@@ -69,7 +70,7 @@
       order: 1;
       align-self: flex-end;
       justify-content: unset;
-      top: 3.5rem;
+      top: 1.75rem;
       left: -4rem;
     }
 

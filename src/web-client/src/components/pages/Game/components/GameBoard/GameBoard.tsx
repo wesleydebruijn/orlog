@@ -75,15 +75,17 @@ export function PlayerArea() {
 }
 
 export function FavorArea() {
-  const { favors } = usePlayer()
-  const [favor, setFavor] = useState(0)
-  const {
-    actions: { selectFavor }
-  } = useGame()
+  const { hasTurn, phase, actions } = useGame()
+  const { self, favors, player } = usePlayer()
 
-  function toggleFavor(index: number) {
-    favor === index ? setFavor(0) : setFavor(index)
-  }
+  const [activeFavor, setActiveFavor] = useState(0)
+  const toggleFavor = (favor: number) =>
+    favor === activeFavor ? setActiveFavor(0) : setActiveFavor(favor)
+  const toggleable = self && hasTurn && phase.id === PhaseId.GodFavor
+
+  useEffect(() => {
+    toggleable ? toggleFavor(1) : toggleFavor(0)
+  }, [phase.id, hasTurn])
 
   return (
     <section className="favor-area">
@@ -91,10 +93,10 @@ export function FavorArea() {
         <FavorCard
           key={name}
           index={index + 1}
-          active={index + 1 === favor}
+          active={index + 1 === activeFavor}
           name={name}
           description={description}
-          open={toggleFavor}
+          onClick={toggleable ? toggleFavor : undefined}
         >
           {Object.values(tiers).map((tier, tierIndex) => (
             <Tier
@@ -102,7 +104,8 @@ export function FavorArea() {
               description={tier_description}
               cost={tier.cost}
               value={tier.value}
-              onClick={() => selectFavor(index + 1, tierIndex + 1)}
+              active={player.tokens >= tier.cost}
+              onClick={() => actions.selectFavor(index + 1, tierIndex + 1)}
             />
           ))}
         </FavorCard>
@@ -130,7 +133,7 @@ export function DiceArea() {
     } else {
       setDices(Object.values(player.dices).map(addDiceIndex))
     }
-  }, [player.dices, faceOff])
+  }, [player.dices, phase.id])
 
   return (
     <div className="dice-area">
