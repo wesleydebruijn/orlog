@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
-import { animated } from 'react-spring'
 
 import { useGame } from '../../../../../hooks/useGame'
 import { usePlayer } from '../../../../../hooks/usePlayer'
+import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
 
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
+
+import { PhaseId } from '../../../../../types/types'
+
+import {
+  addDiceIndex,
+  faceOffDices,
+  getDiceType,
+  sortByDefence,
+  sortByOffense
+} from '../../../../../utils/dice'
 
 import { GameTopbar } from '../../../../shared/Topbar/GameTopBar'
 import { PlayerCard } from '../PlayerCard/PlayerCard'
 import { FavorCard, Tier } from '../FavorCard/FavorCard'
+import { AnimatedDice } from '../Dice/Dice'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
-import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
-import { PhaseId } from '../../../../../types/types'
-import { AnimatedDice, Dice } from '../Dice/Dice'
-import { faceOffDices, getDiceType, sortByDefence, sortByOffense } from '../../../../../utils/dice'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
@@ -99,13 +106,9 @@ export function FavorArea() {
   )
 }
 
-function addDiceIndex(dice: any, index: number) {
-  return { ...dice, index: index + 1 }
-}
-
 export function DiceArea() {
+  const { hasTurn, phase, actions } = useGame()
   const { started, self, player, opponent } = usePlayer()
-  const { phase } = useGame()
 
   const [dices, setDices] = useState(Object.values(player.dices).map(addDiceIndex))
   const faceOff = phase.id > PhaseId.Roll
@@ -125,25 +128,25 @@ export function DiceArea() {
   }, [player.dices, faceOff])
 
   return (
-    <>
-      <div className="dice-area">
-        <div className="dice-area__container" style={containerStyle}>
-          {transitions.map(({ item, props, key }, index) => (
-            <AnimatedDice
-              key={key}
-              style={diceStyle(props, index)}
-              value={getDiceType(item)}
-              hasTokens={item.tokens > 0}
-              onClick={undefined}
-              locked={item.locked}
-              hidden={item.placeholder}
-              selected={item.keep}
-              self={self}
-              rolled={player.rolled}
-            />
-          ))}
-        </div>
+    <div className="dice-area">
+      <div className="dice-area__container" style={containerStyle}>
+        {transitions.map(({ item, props, key }, index) => (
+          <AnimatedDice
+            key={key}
+            style={diceStyle(props, index)}
+            value={getDiceType(item)}
+            hasTokens={item.tokens > 0}
+            onClick={
+              self && hasTurn && player.rolled ? () => actions.toggleDice(index + 1) : undefined
+            }
+            locked={item.locked}
+            hidden={item.placeholder}
+            selected={item.keep}
+            self={self}
+            rolled={player.rolled}
+          />
+        ))}
       </div>
-    </>
+    </div>
   )
 }

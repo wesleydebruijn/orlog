@@ -41,14 +41,14 @@
       cursor: pointer;
     }
 
-    .front {
+    .dice__front {
       &:hover {
         box-shadow: 0px 0px 20px 3px rgba(243, 156, 18, 1);
       }
     }
   }
 
-  &--placeholder {
+  &--hidden {
     visibility: hidden;
   }
 

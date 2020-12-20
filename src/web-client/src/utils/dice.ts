@@ -46,6 +46,10 @@ export function getOpposingDiceType(dice: Dice): DiceType {
   return [dice.face.type, oppositeStance].join(DICE_TYPE_SPLITTER) as DiceType
 }
 
+export function addDiceIndex(dice: any, index: number) {
+  return { ...dice, index: index + 1 }
+}
+
 export function sortByOffense(a: Dice, b: Dice) {
   return OFFENSE[getDiceType(a)] - OFFENSE[getDiceType(b)]
 }
