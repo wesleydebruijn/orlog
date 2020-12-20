@@ -13,10 +13,10 @@ import { FavorCard, Tier } from '../FavorCard/FavorCard'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
-import { faceOffDices, initialDices } from '../Dice/DiceGrid/utils'
 import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
 import { PhaseId } from '../../../../../types/types'
 import { Dice } from '../Dice/Dice'
+import { faceOffDices, getDiceType, sortByDefence, sortByOffense } from '../../../../../utils/dice'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
@@ -99,20 +99,28 @@ export function FavorArea() {
   )
 }
 
+function addDiceIndex(dice: any, index: number) {
+  return { ...dice, index: index + 1 }
+}
+
 export function DiceArea() {
   const { started, player, opponent } = usePlayer()
   const { phase } = useGame()
 
-  const [dices, setDices] = useState(initialDices(player))
+  const [dices, setDices] = useState(Object.values(player.dices).map(addDiceIndex))
   const faceOff = phase.id > PhaseId.Roll
 
   const { transitions, containerStyle, diceStyle } = useDiceTransitions(dices, faceOff)
 
   useEffect(() => {
     if (faceOff) {
-      setDices(faceOffDices(player, opponent, started))
+      setDices(
+        faceOffDices(Object.values(player.dices), Object.values(opponent.dices))
+          .map(addDiceIndex)
+          .sort(started ? sortByOffense : sortByDefence)
+      )
     } else {
-      setDices(initialDices(player))
+      setDices(Object.values(player.dices).map(addDiceIndex))
     }
   }, [player.dices, faceOff])
 
@@ -122,7 +130,15 @@ export function DiceArea() {
         <div className="dice-area__container" style={containerStyle}>
           {transitions.map(({ item, props, key }, index) => (
             <animated.div key={key} style={diceStyle(props, index)}>
-              <Dice key={item.index} {...item} rolled={player.rolled} />
+              <Dice
+                style={diceStyle(props, index)}
+                value={getDiceType(item)}
+                hasTokens={item.tokens > 0}
+                onClick={undefined}
+                locked={item.locked}
+                hidden={item.placeholder}
+                selected={item.keep}
+              />
             </animated.div>
           ))}
         </div>
