@@ -91,6 +91,10 @@ defmodule Game.Lobby.Server do
   end
 
   @impl true
+  def handle_call({:set_favors, favors, pid}, _from, state) do
+  end
+
+  @impl true
   def handle_call({:action, action, pid}, _from, state) do
     notify_pids()
 
