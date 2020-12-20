@@ -1,0 +1,18 @@
+.diamond {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+
+  &__shape {
+    position: absolute;
+    z-index: 1;
+  }
+
+  &__content {
+    z-index: 5;
+    color: #fff;
+  }
+}

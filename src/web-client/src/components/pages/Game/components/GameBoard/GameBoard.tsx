@@ -16,7 +16,6 @@ import { FavorCard, Tier } from '../FavorCard/FavorCard'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
-  const { doContinue, selectFavor, toggleDice } = actions
 
   return (
     <section className="game-board">
@@ -27,20 +26,16 @@ export default function GameBoard() {
             <PlayerArea />
           </PlayerProvider>
           <PlayerProvider player={player} opponent={opponent}>
-            <PlayerArea onFavorSelect={selectFavor} />
+            <PlayerArea />
           </PlayerProvider>
-          <ContinueButton onClick={() => doContinue()} />
+          <ContinueButton onClick={() => actions.doContinue()} />
         </div>
       </section>
     </section>
   )
 }
 
-export function PlayerArea({
-  onFavorSelect
-}: {
-  onFavorSelect?: (favor: number, tier: number) => void
-}) {
+export function PlayerArea() {
   const { player, self } = usePlayer()
 
   const classes = classNames('player-area', {
@@ -56,18 +51,14 @@ export function PlayerArea({
           health={player.health}
           tokens={player.tokens}
         />
-        <FavorArea onFavorSelect={onFavorSelect} />
+        <FavorArea />
       </div>
       <DiceGrid />
     </section>
   )
 }
 
-export function FavorArea({
-  onFavorSelect
-}: {
-  onFavorSelect?: (favor: number, tier: number) => void
-}) {
+export function FavorArea() {
   const { favors } = usePlayer()
   const [favor, setFavor] = useState(0)
   const {
