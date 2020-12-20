@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
+import { animated } from 'react-spring'
 
 import { useGame } from '../../../../../hooks/useGame'
 import { usePlayer } from '../../../../../hooks/usePlayer'
 import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
-
+import { usePhaseAnimation } from '../../../../../hooks/usePhaseAnimation'
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
-
 import { PhaseId } from '../../../../../types/types'
 
 import {
@@ -28,8 +28,13 @@ import './GameBoard.scss'
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
 
+  const overlayProps = usePhaseAnimation(phase)
+
   return (
     <section className="game-board">
+      <animated.div style={overlayProps} className="game-board__overlay">
+        {phase.name} phase
+      </animated.div>
       <GameTopbar title={`${phase.name} phase`} />
       <section className="game-board__field">
         <div className="game-board__field-bg">
