@@ -26,7 +26,7 @@ import ContinueButton from '../ContinueButton/ContinueButton'
 import './GameBoard.scss'
 
 export default function GameBoard() {
-  const { player, opponent, phase, actions } = useGame()
+  const { player, opponent, phase, round, actions } = useGame()
 
   const overlayProps = usePhaseAnimation(phase)
 
@@ -35,7 +35,7 @@ export default function GameBoard() {
       <animated.div style={overlayProps} className="game-board__overlay">
         {phase.name} phase
       </animated.div>
-      <GameTopbar title={`${phase.name} phase`} />
+      <GameTopbar title={`${phase.name} phase`} subtitle={`Round ${round}`} />
       <section className="game-board__field">
         <div className="game-board__field-bg">
           <PlayerProvider player={opponent} opponent={player}>

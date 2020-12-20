@@ -20,11 +20,13 @@
     display: flex;
     position: relative;
 
+    font-family: 'Signika', sans-serif;
     height: 3rem;
     border-top: 4px solid #403535;
     border-bottom: 4px solid #403535;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 
     svg {
       position: absolute;
@@ -33,9 +35,15 @@
 
     &__title {
       margin-top: 5px;
-      font-family: 'Signika', sans-serif;
       color: orange;
       z-index: 2;
+    }
+
+    &__subtitle {
+      color: #606060;
+      z-index: 2;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
     }
   }
 }
