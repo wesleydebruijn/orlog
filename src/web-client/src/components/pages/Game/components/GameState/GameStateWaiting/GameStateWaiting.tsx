@@ -3,6 +3,7 @@ import { useParams } from 'react-router'
 
 import Button from '../../../../../shared/Button/Button'
 import CategoryBox from '../../../../../shared/ContentBox/ContentBox'
+import { GameTopbar } from '../../../../../shared/Topbar/GameTopBar'
 import Topbar from '../../../../../shared/Topbar/Topbar'
 
 import './GameStateWaiting.scss'
@@ -13,7 +14,7 @@ export default function GameStateWaiting() {
 
   return (
     <div className="game-state-waiting">
-      <Topbar variant="game" title="Waiting for opponent..." />
+      <GameTopbar title="Waiting for opponent..." />
       <main>
         <CategoryBox title="Invite a friend">
           <p>

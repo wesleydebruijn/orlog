@@ -6,20 +6,20 @@ import { usePlayer } from '../../../../../hooks/usePlayer'
 
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
 
-import Topbar from '../../../../shared/Topbar/Topbar'
-import DiceGrid from '../Dice/DiceGrid/DiceGrid'
+import { GameTopbar } from '../../../../shared/Topbar/GameTopBar'
 import { PlayerCard } from '../PlayerCard/PlayerCard'
+import { FavorCard, Tier } from '../FavorCard/FavorCard'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
-import { FavorCard, Tier } from '../FavorCard/FavorCard'
+import DiceGrid from '../Dice/DiceGrid/DiceGrid'
 
 export default function GameBoard() {
   const { player, opponent, phase, actions } = useGame()
 
   return (
     <section className="game-board">
-      <Topbar variant="game" title={`${phase.name} phase`} />
+      <GameTopbar title={`${phase.name} phase`} />
       <section className="game-board__field">
         <div className="game-board__field-bg">
           <PlayerProvider player={opponent} opponent={player}>
