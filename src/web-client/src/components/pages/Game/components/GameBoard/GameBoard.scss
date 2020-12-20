@@ -1,16 +1,101 @@
 .game-board {
-  &__field {
-    width: 95vw;
-    height: 90vh;
+  background: #e8e8e8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__overlay {
     position: absolute;
     top: 50%;
     left: 50%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
     transform: translate(-50%, -50%);
-    background-color: green;
+    background-color: rgba(0, 0, 0, 1);
+    font-family: 'Signika', sans-serif;
+    font-size: 3rem;
+    color: orange;
+    box-shadow: 0px 0px 55px 70px black;
+    z-index: 10;
+  }
+
+  &__field {
+    display: flex;
+    flex-grow: 1;
+    padding: 5rem 7rem;
+  }
+
+  &__field-bg {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    justify-content: space-between;
+    background: #606060;
+  }
+}
+
+.player-area {
+  align-self: flex-start;
+  display: flex;
+
+  width: 100%;
+  height: 50%;
+  min-height: 335px;
+
+  .player-card {
+    left: -4rem;
+    top: -4rem;
+  }
+
+  .favor-area {
+    position: relative;
+    top: -3.5rem;
+    left: 4rem;
+  }
+
+  &--self {
+    .player-card {
+      order: 3;
+      align-self: flex-end;
+      justify-content: flex-end;
+      top: 4rem;
+      left: 4rem;
+    }
+
+    .favor-area {
+      display: flex;
+      flex: 0.2;
+      flex-direction: column;
+      order: 1;
+      align-self: flex-end;
+      justify-content: unset;
+      top: 3.5rem;
+      left: -4rem;
+    }
+
+    .dice-area {
+      order: 2;
+      align-self: flex-start;
+      align-items: flex-end;
+    }
+  }
+}
+
+.dice-area {
+  position: absolute;
+  height: 5rem;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  display: flex;
+  justify-content: center;
+  align-self: flex-end;
+
+  &__container {
+    height: 60px;
+    position: relative;
+
+    > div {
+      position: absolute;
+    }
   }
 }

@@ -1,0 +1,7 @@
+export { default as HealthIcon } from './HealthIcon'
+export { default as MeleeAttackIcon } from './MeleeAttackIcon'
+export { default as MeleeBlockIcon } from './MeleeBlockIcon'
+export { default as RangedAttackIcon } from './RangedAttackIcon'
+export { default as RangedBlockIcon } from './RangedBlockIcon'
+export { default as TokenStealIcon } from './TokenStealIcon'
+export { default as GodFavorIcon } from './GodFavorIcon'

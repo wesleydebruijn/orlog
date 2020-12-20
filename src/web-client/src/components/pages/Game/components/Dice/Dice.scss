@@ -17,22 +17,22 @@
     border: 4px solid #403535;
   }
 
-  .front {
+  &__front {
     transform: rotateY(0deg) translateZ(30px);
   }
-  .back {
+  &__back {
     transform: rotateX(180deg) translateZ(30px);
   }
-  .right {
+  &__right {
     transform: rotateY(90deg) translateZ(30px);
   }
-  .left {
+  &__left {
     transform: rotateY(-90deg) translateZ(30px);
   }
-  .top {
+  &__top {
     transform: rotateX(90deg) translateZ(30px);
   }
-  .bottom {
+  &__bottom {
     transform: rotateX(-90deg) translateZ(30px);
   }
 
@@ -41,14 +41,14 @@
       cursor: pointer;
     }
 
-    .front {
+    .dice__front {
       &:hover {
         box-shadow: 0px 0px 20px 3px rgba(243, 156, 18, 1);
       }
     }
   }
 
-  &--placeholder {
+  &--hidden {
     visibility: hidden;
   }
 

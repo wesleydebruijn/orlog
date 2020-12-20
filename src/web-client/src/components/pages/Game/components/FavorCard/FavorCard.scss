@@ -1,0 +1,79 @@
+.favor-card {
+  width: 20rem;
+  overflow: hidden;
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    background: #211c1c;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.25rem;
+    border: 4px solid #403535;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+
+    h2 {
+      color: orange;
+      font-weight: bold;
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    span {
+      color: #606060;
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+  }
+
+  &__tiers {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+    border: 2px 0px solid #e8e8e8;
+    margin: 0 0.25rem;
+    margin-top: -0.25rem;
+  }
+}
+
+.favor-tier {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+
+  &__description {
+    color: #606060;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  &__cost {
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    color: #606060;
+    border-radius: 0.25rem;
+    border: 2px solid orange;
+    padding: 0 0.25rem;
+
+    svg {
+      fill: orange;
+      width: 0.75rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__activate {
+    border-radius: 0.25rem;
+    color: white;
+    background: orange;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    cursor: pointer;
+  }
+}
