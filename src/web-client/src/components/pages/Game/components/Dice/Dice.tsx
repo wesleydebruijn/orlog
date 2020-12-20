@@ -1,6 +1,8 @@
-import './Dice.scss'
-
+import { useEffect } from 'react'
 import classNames from 'classnames'
+import { animated, useSpring } from 'react-spring'
+
+import { useBoolean } from '../../../../../hooks/useBoolean'
 import { randomDiceType } from '../../../../../utils/dice'
 import { DiceType } from '../../../../../types/types'
 import {
@@ -10,6 +12,8 @@ import {
   RangedBlockIcon,
   TokenStealIcon
 } from '../../../../shared/Icons'
+
+import './Dice.scss'
 
 type Props = {
   value?: DiceType
@@ -75,6 +79,31 @@ export function Dice({
         />
       </div>
     </div>
+  )
+}
+
+export function AnimatedDice(props: Props & { self: boolean; rolled: boolean }) {
+  const { locked, selected, self, rolled, style, className } = props
+
+  // roll animation
+  const [rolling, setRolling] = useBoolean(500)
+  const diceClasses = classNames(className, { 'dice--rolling': rolling && !locked })
+
+  useEffect(() => setRolling(rolled), [rolled])
+
+  // select animation
+  const margin = locked ? 0 : selected ? 25 : 50
+  const selectAnimation = {
+    marginTop: self ? margin : -margin,
+    config: { mass: 1, tension: 880, friction: 30 }
+  }
+
+  const selectStyle = useSpring(selectAnimation)
+
+  return (
+    <animated.div style={{ ...style, ...selectStyle }}>
+      <Dice {...props} className={diceClasses} />
+    </animated.div>
   )
 }
 

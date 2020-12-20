@@ -15,7 +15,7 @@ import ContinueButton from '../ContinueButton/ContinueButton'
 import './GameBoard.scss'
 import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
 import { PhaseId } from '../../../../../types/types'
-import { Dice } from '../Dice/Dice'
+import { AnimatedDice, Dice } from '../Dice/Dice'
 import { faceOffDices, getDiceType, sortByDefence, sortByOffense } from '../../../../../utils/dice'
 
 export default function GameBoard() {
@@ -104,7 +104,7 @@ function addDiceIndex(dice: any, index: number) {
 }
 
 export function DiceArea() {
-  const { started, player, opponent } = usePlayer()
+  const { started, self, player, opponent } = usePlayer()
   const { phase } = useGame()
 
   const [dices, setDices] = useState(Object.values(player.dices).map(addDiceIndex))
@@ -129,17 +129,18 @@ export function DiceArea() {
       <div className="dice-area">
         <div className="dice-area__container" style={containerStyle}>
           {transitions.map(({ item, props, key }, index) => (
-            <animated.div key={key} style={diceStyle(props, index)}>
-              <Dice
-                style={diceStyle(props, index)}
-                value={getDiceType(item)}
-                hasTokens={item.tokens > 0}
-                onClick={undefined}
-                locked={item.locked}
-                hidden={item.placeholder}
-                selected={item.keep}
-              />
-            </animated.div>
+            <AnimatedDice
+              key={key}
+              style={diceStyle(props, index)}
+              value={getDiceType(item)}
+              hasTokens={item.tokens > 0}
+              onClick={undefined}
+              locked={item.locked}
+              hidden={item.placeholder}
+              selected={item.keep}
+              self={self}
+              rolled={player.rolled}
+            />
           ))}
         </div>
       </div>
