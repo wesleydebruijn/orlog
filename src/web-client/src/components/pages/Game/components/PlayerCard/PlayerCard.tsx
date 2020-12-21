@@ -7,29 +7,38 @@ import './PlayerCard.scss'
 
 export function PlayerCard({
   className,
+  avatar = 'https://avatarfiles.alphacoders.com/252/thumb-1920-252736.jpg',
   name,
   title,
   health,
-  tokens
+  tokens,
+  placeholder = false
 }: {
   className?: string
+  avatar?: string | React.ReactNode
   name: string
-  title: string
+  title?: string
   health?: number
   tokens?: number
+  placeholder?: boolean
 }) {
-  const classes = classNames('player-card', className)
+  const classes = classNames('player-card', className, {
+    'player-card--placeholder': placeholder
+  })
+
+  const avatarElement =
+    typeof avatar === 'string' ? (
+      <img alt={name} className="player-card__avatar" src={avatar} />
+    ) : (
+      <div className="player-card__avatar">{avatar}</div>
+    )
 
   return (
     <div className={classes}>
-      <img
-        alt={name}
-        className="player-card__avatar"
-        src="https://avatarfiles.alphacoders.com/252/thumb-1920-252736.jpg"
-      />
+      {avatarElement}
       <div className="player-card__personal">
         <h2>{name}</h2>
-        <span>{title}</span>
+        {title && <span>{title}</span>}
       </div>
       {health && (
         <div className="player-card__stat player-card__stat--health">

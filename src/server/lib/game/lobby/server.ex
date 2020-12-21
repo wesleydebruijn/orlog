@@ -45,12 +45,14 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, {:action, action, self()})
   end
 
+  @spec change_settings(pid(), any()) :: Lobby.t()
   def change_settings(pid, settings) do
     GenServer.call(pid, {:change_settings, settings})
   end
 
+  @spec set_favors(pid(), list()) :: Lobby.t()
   def set_favors(pid, favors) do
-    GenServer.call(pid, {:set_favors, settings, pid})
+    GenServer.call(pid, {:set_favors, favors, self()})
   end
 
   @impl true
@@ -74,14 +76,7 @@ defmodule Game.Lobby.Server do
     notify_pids()
 
     new_state = Game.Lobby.join(state, user, pid)
-
-    if Game.Lobby.startable?(new_state) do
-      new_state = Game.Lobby.start(new_state)
-
-      {:reply, new_state, new_state}
-    else
-      {:reply, new_state, new_state}
-    end
+    {:reply, new_state, new_state}
   end
 
   @impl true
@@ -101,7 +96,8 @@ defmodule Game.Lobby.Server do
       |> Game.Lobby.set_favors(favors, pid)
       |> Game.Lobby.try_to_start()
 
-    updated_state = {:reply, new_state, new_state}
+    IO.inspect(new_state)
+    {:reply, new_state, new_state}
   end
 
   @impl true

@@ -17,7 +17,8 @@ defmodule Game.Player do
           rolled: boolean(),
           favors: map(),
           favor_tier: map(),
-          dices: %{}
+          dices: %{},
+          ready: boolean()
         }
   @derive Jason.Encoder
   defstruct user: nil,
@@ -27,7 +28,8 @@ defmodule Game.Player do
             turns: 0,
             rolled: false,
             favors: %{},
-            favor_tier: %{favor: 0, tier: 0}
+            favor_tier: %{favor: 0, tier: 0},
+            ready: false
 
   @spec update(Player.t(), map()) :: Player.t()
   def update(player, attrs), do: Map.merge(player, attrs)

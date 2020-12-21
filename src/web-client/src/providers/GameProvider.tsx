@@ -21,6 +21,7 @@ type Props = {
 export function GameProvider({ children, gameId, userId }: Props) {
   const socketUrl = `${process.env.REACT_APP_WS_URL}/${gameId}/${userId}`
   const [lobby, setLobby] = useState<GameLobby>()
+  console.log(lobby)
 
   const { sendJsonMessage } = useWebSocket(socketUrl, {
     shouldReconnect: () => {

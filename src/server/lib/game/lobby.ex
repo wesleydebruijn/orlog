@@ -11,14 +11,14 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
-          status: :creating | :waiting | :setup | :playing | :finished,
+          status: :creating | :waiting | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{},
           users: %{}
         }
 
-  @derive {Jason.Encoder, except: [:pids]}
+  @derive {Jason.Encoder, except: [:pids, :uuid]}
   defstruct uuid: "",
             status: :creating,
             turn: 0,
@@ -37,9 +37,10 @@ defmodule Game.Lobby do
     Enum.empty?(state.pids)
   end
 
-  @spec ready?(Lobby.t()) :: boolean()
-  def ready?(state) do
-    state.status != :playing && Enum.count(state.pids) == @pids
+  @spec startable?(Lobby.t()) :: boolean()
+  def startable?(state) do
+    # state.status != :playing && Enum.count(state.pids) == @pids
+    false
   end
 
   @spec turn?(Lobby.t(), pid()) :: boolean()
@@ -49,9 +50,9 @@ defmodule Game.Lobby do
     Map.get(state.pids, uuid) == pid
   end
 
-  @spec try_to_start(Lobby.t())
+  @spec try_to_start(Lobby.t()) :: Lobby.t()
   def try_to_start(state) do
-    if Game.Lobby.ready?(state) do
+    if Game.Lobby.startable?(state) do
       Game.Lobby.start(state)
     else
       state
@@ -69,26 +70,31 @@ defmodule Game.Lobby do
 
   @spec set_favors(Lobby.t(), list(), pid()) :: Lobby.t()
   def set_favors(state, favors, pid) do
-    updated_player =
+    {key, _user} =
       state.users
       |> Enum.find({0, nil}, fn {_index, user} ->
-        Map.get(state.pids, player.user.uuid) == pid
+        Map.get(state.pids, user.uuid) == pid
       end)
-      |> User.update(%{favors: favors})
+
+    IndexMap.update(state, :users, key, &User.update(&1, %{favors: favors}))
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
   def update_settings(state, %{}), do: state
 
   def update_settings(state, settings) do
-    new_settings =
-      state.settings
-      |> Map.put(:health, Map.get(settings, "health"))
-      |> Map.put(:dices, Map.get(settings, "dices"))
-      |> Map.put(:favors, Map.get(settings, "favors"))
-      |> Map.put(:tokens, Map.get(settings, "tokens"))
+    if settings == %{} do
+      state
+    else
+      new_settings =
+        state.settings
+        |> Map.put(:health, Map.get(settings, "health"))
+        |> Map.put(:dices, Map.get(settings, "dices"))
+        |> Map.put(:favors, Map.get(settings, "favors"))
+        |> Map.put(:tokens, Map.get(settings, "tokens"))
 
-    %{state | settings: new_settings}
+      %{state | settings: new_settings}
+    end
   end
 
   @spec turn(Lobby.t(), pid()) :: integer()
@@ -117,11 +123,6 @@ defmodule Game.Lobby do
   @spec start(Lobby.t()) :: Lobby.t()
   def start(state) do
     %{state | status: :playing, game: Game.start(Map.values(state.users), state.settings)}
-  end
-
-  @spec setup(Lobby.t()) :: Lobby.t()
-  def setup(state) do
-    %{state | status: :setup, users: state.users}
   end
 
   @spec notify_pids(Lobby.t()) :: :ok

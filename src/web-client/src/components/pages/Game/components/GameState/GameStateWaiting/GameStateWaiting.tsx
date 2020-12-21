@@ -1,47 +1,97 @@
-import React from 'react'
-import { useParams } from 'react-router'
-
+import React, { useState } from 'react'
+import { useData } from '../../../../../../hooks/useData'
+import type { User } from '../../../../../../types/types'
 import Button from '../../../../../shared/Button/Button'
-import CategoryBox from '../../../../../shared/ContentBox/ContentBox'
+import ContentBox from '../../../../../shared/ContentBox/ContentBox'
+import { LoaderIcon } from '../../../../../shared/Icons'
 import { GameTopbar } from '../../../../../shared/Topbar/GameTopBar'
+import { FavorCard } from '../../FavorCard/FavorCard'
+import { PlayerCard } from '../../PlayerCard/PlayerCard'
 
 import './GameStateWaiting.scss'
 
-export default function GameStateWaiting() {
-  const { gameId } = useParams<{ gameId: string }>()
-  const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
+type Props = {
+  onSetup: (favors: number[]) => void
+  maxFavors: number
+  player: User
+  opponent: User
+}
+
+export default function GameStateWaiting({ onSetup, maxFavors, player, opponent }: Props) {
+  const [selectedFavors, setSelectedFavors] = useState<number[]>([])
+  const { favors } = useData()
+  const opponentCard =
+    opponent !== undefined ? (
+      <PlayerCard name={opponent.name} title={opponent.title} />
+    ) : (
+      <PlayerCard name="Waiting for player..." title="" avatar={<LoaderIcon />} placeholder />
+    )
+
+  function selectFavor(index: number) {
+    if (selectedFavors.includes(index)) {
+      setSelectedFavors(selectedFavors.filter(favor => favor !== index))
+    } else if (selectedFavors.length >= maxFavors) {
+      const [_, ...rest] = selectedFavors
+      setSelectedFavors([...rest, index])
+    } else {
+      setSelectedFavors([...selectedFavors, index])
+    }
+  }
+
+  // @TODO: Probably more fancy method of alerts/confirms
+  function confirmSetup() {
+    if (selectedFavors.length === 0) {
+      alert('Please select a God Favor')
+    } else if (selectedFavors.length < maxFavors) {
+      const confirmation = window.confirm(
+        'You have not selected the maximum number of favors, are you sure you want to continue?'
+      )
+
+      if (confirmation) {
+        onSetup(selectedFavors)
+      }
+    } else {
+      onSetup(selectedFavors)
+    }
+  }
 
   return (
     <div className="game-state-waiting">
-      <GameTopbar title="Waiting for opponent..." />
+      <GameTopbar title="Setup" />
       <main>
-        <CategoryBox title="Invite a friend">
+        <div className="game-state-waiting__standoff">
+          <PlayerCard name={player.name} title={player.title} />
+          <h1>VS</h1>
+          {opponentCard}
+        </div>
+        <ContentBox title="Choose favors">
           <p>
-            Challenge a friend, cat or dog for a game of Orlog, you can play against them and most
-            likely defeat them because they probably don't know to play it yet anyway. Definitely
-            your pet though.
+            You may select up to{' '}
+            <b>
+              <u>{maxFavors}</u>
+            </b>{' '}
+            favors.
           </p>
-          <section className="game-state-waiting__actions">
-            {'clipboard' in navigator && (
-              <Button onClick={async () => await navigator.clipboard.writeText(link)}>
-                Copy invite link
-              </Button>
-            )}
-            {'share' in navigator && (
-              <Button
-                onClick={async () =>
-                  await navigator.share({
-                    url: link,
-                    title: "You've been challenged to a game of Orlog!",
-                    text: "The Viking dice game from Assassin's Creed Valhalla"
-                  })
-                }
-              >
-                Share
-              </Button>
-            )}
-          </section>
-        </CategoryBox>
+          {player.favors.length > 0 ? (
+            <h2>Waiting for opponent to finish setup</h2>
+          ) : (
+            <>
+              <div className="game-state-waiting__favors">
+                {Object.entries(favors).map(([index, favor]) => (
+                  <FavorCard
+                    name={favor.name}
+                    index={parseInt(index)}
+                    description={favor.description}
+                    className={selectedFavors.includes(parseInt(index)) ? 'favor--active' : ''}
+                    key={favor.name}
+                    onClick={index => selectFavor(index)}
+                  />
+                ))}
+              </div>
+              <Button onClick={() => confirmSetup()}>Confirm</Button>
+            </>
+          )}
+        </ContentBox>
       </main>
     </div>
   )

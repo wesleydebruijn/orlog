@@ -5,6 +5,21 @@
   height: 9rem;
   font-family: 'Signika', sans-serif;
 
+  &--placeholder {
+    .player-card__avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #211c1c;
+    }
+
+    .player-card__personal {
+      min-height: 40.5px;
+      display: flex;
+      align-items: center;
+    }
+  }
+
   &__avatar {
     border-radius: 9999px;
     z-index: 10;
