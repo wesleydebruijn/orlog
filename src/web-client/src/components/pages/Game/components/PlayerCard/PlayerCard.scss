@@ -5,6 +5,21 @@
   height: 9rem;
   font-family: 'Signika', sans-serif;
 
+  &--placeholder {
+    .player-card__avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #211c1c;
+    }
+
+    .player-card__personal {
+      min-height: 40.5px;
+      display: flex;
+      align-items: center;
+    }
+  }
+
   &__avatar {
     border-radius: 9999px;
     z-index: 10;
@@ -61,6 +76,30 @@
       fill: white;
       width: 0.75rem;
       margin-right: 0.5rem;
+    }
+  }
+
+  &__ready {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 70%;
+    z-index: 20;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #211c1c;
+    background-color: #403535;
+
+    .icon--check {
+      width: 20px;
+      fill: rgb(16, 185, 159);
+    }
+
+    .icon--cross {
+      width: 15px;
+      fill: rgb(220, 38, 38);
     }
   }
 }

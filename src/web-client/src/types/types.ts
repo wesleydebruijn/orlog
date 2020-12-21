@@ -2,6 +2,9 @@ export type GameLobby = {
   uuid?: string
   status: 'connecting' | 'waiting' | 'playing' | 'finished' | 'creating'
   settings: Settings
+  users: {
+    [key: string]: User
+  }
   turn: number
   game: Game
 }
@@ -12,6 +15,8 @@ export type GameActions = {
   toggleDice: (diceIndex: number) => void
   selectFavor: (favor: number, tier: number) => void
   changeSettings: (settings: ChangeSettingsData) => void
+  updateUser: (user: Partial<User>) => void
+  toggleReady: () => void
 }
 
 export type Favor = {
@@ -66,6 +71,8 @@ export type Game = {
 export type User = {
   name: string
   title: string
+  favors: number[]
+  ready: boolean
 }
 
 export type Player = {

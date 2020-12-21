@@ -2,11 +2,12 @@ import React from 'react'
 import { useParams } from 'react-router'
 
 import { useUser } from '../../../hooks/useAuth'
-import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
-import GameBoard from './components/GameBoard/GameBoard'
-import GameStateFinished from './components/GameState/GameStateFinished'
 import { GameProvider } from '../../../providers/GameProvider'
+
+import GameBoard from './components/GameBoard/GameBoard'
 import GameStateCreating from './components/GameState/GameStateCreating/GameStateCreating'
+import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
+import GameStateFinished from './components/GameState/GameStateFinished'
 
 export default function Game() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -16,14 +17,25 @@ export default function Game() {
     <GameProvider gameId={gameId} userId={userId}>
       {({ lobby, actions }) => {
         switch (lobby.status) {
-          case 'finished':
-            return <GameStateFinished won={lobby.game.winner === lobby.turn} />
-          case 'waiting':
-            return <GameStateWaiting />
-          case 'playing':
-            return <GameBoard />
           case 'creating':
             return <GameStateCreating onCreate={actions.changeSettings} settings={lobby.settings} />
+
+          case 'waiting':
+            return (
+              <GameStateWaiting
+                toggleReady={actions.toggleReady}
+                onSetup={actions.updateUser}
+                maxFavors={lobby.settings.favors}
+                player={Object.values(lobby.users)[0]}
+                opponent={Object.values(lobby.users)[1]}
+              />
+            )
+
+          case 'playing':
+            return <GameBoard />
+
+          case 'finished':
+            return <GameStateFinished won={lobby.game.winner === lobby.turn} />
         }
       }}
     </GameProvider>

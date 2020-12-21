@@ -32,6 +32,11 @@ defmodule User.Store do
     end
   end
 
+  def update(%{uuid: uuid} = user) do
+    :ets.insert(:users, {uuid, user})
+    user
+  end
+
   @spec init(any) :: {:ok, atom | :ets.tid()}
   def init(_args) do
     {:ok, :ets.new(:users, [:set, :public, :named_table])}

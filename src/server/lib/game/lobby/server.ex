@@ -45,8 +45,19 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, {:action, action, self()})
   end
 
+  @spec change_settings(pid(), any()) :: Lobby.t()
   def change_settings(pid, settings) do
     GenServer.call(pid, {:change_settings, settings})
+  end
+
+  @spec update_user(pid(), map()) :: Lobby.t()
+  def update_user(pid, attrs) do
+    GenServer.call(pid, {:update_user, attrs, self()})
+  end
+
+  @spec toggle_ready(pid()) :: Lobby.t()
+  def toggle_ready(pid) do
+    GenServer.call(pid, {:toggle_ready, self()})
   end
 
   @impl true
@@ -70,14 +81,7 @@ defmodule Game.Lobby.Server do
     notify_pids()
 
     new_state = Game.Lobby.join(state, user, pid)
-
-    if Game.Lobby.startable?(new_state) do
-      new_state = Game.Lobby.start(new_state)
-
-      {:reply, new_state, new_state}
-    else
-      {:reply, new_state, new_state}
-    end
+    {:reply, new_state, new_state}
   end
 
   @impl true
@@ -87,6 +91,30 @@ defmodule Game.Lobby.Server do
       |> Game.Lobby.update_settings(settings)
       |> Map.put(:status, :waiting)
 
+    {:reply, new_state, new_state}
+  end
+
+  @impl true
+  def handle_call({:update_user, attrs, pid}, _from, state) do
+    notify_pids()
+
+    new_state =
+      state
+      |> Game.Lobby.update_user(attrs, pid)
+
+    {:reply, new_state, new_state}
+  end
+
+  @impl true
+  def handle_call({:toggle_ready, pid}, _from, state) do
+    notify_pids()
+
+    new_state =
+      state
+      |> Game.Lobby.toggle_ready(pid)
+      |> Game.Lobby.try_to_start()
+
+    IO.inspect(new_state)
     {:reply, new_state, new_state}
   end
 

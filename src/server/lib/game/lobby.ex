@@ -18,7 +18,7 @@ defmodule Game.Lobby do
           users: %{}
         }
 
-  @derive {Jason.Encoder, except: [:pids, :users]}
+  @derive {Jason.Encoder, except: [:pids]}
   defstruct uuid: "",
             status: :creating,
             turn: 0,
@@ -39,7 +39,8 @@ defmodule Game.Lobby do
 
   @spec startable?(Lobby.t()) :: boolean()
   def startable?(state) do
-    state.status != :playing && Enum.count(state.pids) == @pids
+    state.status != :playing && Enum.count(state.pids) == @pids &&
+      Enum.all?(state.users, fn {_uuid, user} -> user.ready end)
   end
 
   @spec turn?(Lobby.t(), pid()) :: boolean()
@@ -49,13 +50,39 @@ defmodule Game.Lobby do
     Map.get(state.pids, uuid) == pid
   end
 
-  @spec update_status(Lobby.t()) :: Lobby.t()
-  def update_status(state) do
-    if state.game.winner > 0 do
-      %{state | status: :finished}
+  @spec try_to_start(Lobby.t()) :: Lobby.t()
+  def try_to_start(state) do
+    if Game.Lobby.startable?(state) do
+      Game.Lobby.start(state)
     else
       state
     end
+  end
+
+  @spec update_status(Lobby.t()) :: Lobby.t()
+  def update_status(%{game: %{winner: 0}} = state), do: state
+
+  def update_status(state) do
+    state.pids
+    |> Map.values()
+    |> Enum.reduce(state, &toggle_ready(&2, &1))
+    |> Map.put(:status, :finished)
+  end
+
+  @spec toggle_ready(Lobby.t(), pid()) :: Lobby.t()
+  def toggle_ready(state, pid) do
+    {_key, user} = get_user(state, pid)
+
+    update_user(state, %{"ready" => !user.ready}, pid)
+  end
+
+  @spec update_user(Lobby.t(), map(), pid()) :: Lobby.t()
+  def update_user(state, attrs, pid) do
+    {key, user} = get_user(state, pid)
+
+    updated_user = User.update(user, attrs)
+    User.Store.update(updated_user)
+    IndexMap.update(state, :users, key, fn _user -> updated_user end)
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
@@ -108,5 +135,13 @@ defmodule Game.Lobby do
     end)
 
     :ok
+  end
+
+  @spec get_user(Lobby.t(), pid()) :: {String.t(), User.t()}
+  defp get_user(state, pid) do
+    state.users
+    |> Enum.find({0, nil}, fn {_index, user} ->
+      Map.get(state.pids, user.uuid) == pid
+    end)
   end
 end
