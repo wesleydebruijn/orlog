@@ -2,9 +2,8 @@ export type GameLobby = {
   uuid?: string
   status: 'connecting' | 'waiting' | 'playing' | 'finished' | 'creating'
   settings: Settings
-  users: {
-    [key: string]: User
-  }
+  user: User
+  users: User[]
   turn: number
   game: Game
 }

@@ -71,6 +71,7 @@ defmodule Api.Websocket do
   defp encode!(state) do
     state
     |> Map.put(:turn, Game.Lobby.turn(state, self()))
+    |> Map.put(:user, Game.Lobby.get_user(state, self()))
     |> Jason.encode!()
   end
 end

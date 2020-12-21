@@ -15,31 +15,18 @@ type Props = {
   toggleReady: () => void
   onSetup: (user: Partial<User>) => void
   maxFavors: number
-  player: User
-  opponent: User
+  user: User
+  users: User[]
 }
 
-export default function GameStateWaiting({
-  onSetup,
-  toggleReady,
-  maxFavors,
-  player,
-  opponent
-}: Props) {
+export default function GameStateWaiting({ onSetup, toggleReady, maxFavors, user, users }: Props) {
   const { gameId } = useParams<{ gameId: string }>()
-  const [selectedFavors, setSelectedFavors] = useState<number[]>(player.favors)
+  const [selectedFavors, setSelectedFavors] = useState<number[]>(user.favors)
   const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
   const { favors } = useData()
 
-  const opponentCard =
-    opponent !== undefined ? (
-      <PlayerCard ready={opponent.ready} name={opponent.name} title={opponent.title} />
-    ) : (
-      <PlayerCard name="Waiting for player..." title="" avatar={<LoaderIcon />} placeholder />
-    )
-
   function selectFavor(index: number) {
-    if (player.ready) {
+    if (user.ready) {
       return
     }
 
@@ -77,9 +64,24 @@ export default function GameStateWaiting({
       <GameTopbar title="Setup" />
       <main>
         <div className="game-state-waiting__standoff">
-          <PlayerCard ready={player.ready} name={player.name} title={player.title} />
-          <h1>VS</h1>
-          {opponentCard}
+          {users.length === 1 ? (
+            <>
+              <PlayerCard ready={user.ready} name={user.name} title={user.title} />
+              <h1>VS</h1>
+              <PlayerCard
+                name="Waiting for player..."
+                title=""
+                avatar={<LoaderIcon />}
+                placeholder
+              />
+            </>
+          ) : (
+            <>
+              <PlayerCard ready={users[0].ready} name={users[0].name} title={users[0].title} />
+              <h1>VS</h1>
+              <PlayerCard ready={users[1].ready} name={users[1].name} title={users[1].title} />
+            </>
+          )}
         </div>
         <section className="game-state-waiting__center">
           <ContentBox title="Choose favors">
@@ -102,8 +104,8 @@ export default function GameStateWaiting({
                 />
               ))}
             </div>
-            {!player.ready && <Button onClick={() => confirmSetup()}>Confirm</Button>}
-            {player.ready && <Button onClick={() => toggleReady()}>Change setup</Button>}
+            {!user.ready && <Button onClick={() => confirmSetup()}>Confirm</Button>}
+            {user.ready && <Button onClick={() => toggleReady()}>Change setup</Button>}
           </ContentBox>
           <ContentBox title="Invite a friend">
             <p>

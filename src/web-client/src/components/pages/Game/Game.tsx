@@ -26,8 +26,8 @@ export default function Game() {
                 toggleReady={actions.toggleReady}
                 onSetup={actions.updateUser}
                 maxFavors={lobby.settings.favors}
-                player={Object.values(lobby.users)[0]}
-                opponent={Object.values(lobby.users)[1]}
+                user={lobby.user}
+                users={lobby.users}
               />
             )
 

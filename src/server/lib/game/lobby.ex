@@ -11,21 +11,23 @@ defmodule Game.Lobby do
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
+          user: User.t(),
           status: :creating | :waiting | :playing | :finished,
           settings: Settings.t(),
           game: Game.t(),
           pids: %{},
-          users: %{}
+          users: list()
         }
 
   @derive {Jason.Encoder, except: [:pids]}
   defstruct uuid: "",
             status: :creating,
             turn: 0,
+            user: nil,
             settings: %Settings{},
             game: %Game{},
             pids: %{},
-            users: %{}
+            users: []
 
   @spec joinable?(Lobby.t(), User.t()) :: boolean()
   def joinable?(state, user) do
@@ -40,7 +42,7 @@ defmodule Game.Lobby do
   @spec startable?(Lobby.t()) :: boolean()
   def startable?(state) do
     state.status != :playing && Enum.count(state.pids) == @pids &&
-      Enum.all?(state.users, fn {_uuid, user} -> user.ready end)
+      Enum.all?(state.users, & &1.ready)
   end
 
   @spec turn?(Lobby.t(), pid()) :: boolean()
@@ -71,18 +73,24 @@ defmodule Game.Lobby do
 
   @spec toggle_ready(Lobby.t(), pid()) :: Lobby.t()
   def toggle_ready(state, pid) do
-    {_key, user} = get_user(state, pid)
+    user = get_user(state, pid)
 
     update_user(state, %{"ready" => !user.ready}, pid)
   end
 
   @spec update_user(Lobby.t(), map(), pid()) :: Lobby.t()
   def update_user(state, attrs, pid) do
-    {key, user} = get_user(state, pid)
+    user = get_user(state, pid)
 
     updated_user = User.update(user, attrs)
     User.Store.update(updated_user)
-    IndexMap.update(state, :users, key, fn _user -> updated_user end)
+
+    Map.put(
+      state,
+      :users,
+      state.users
+      |> Enum.map(&update_user(&1, updated_user))
+    )
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
@@ -109,7 +117,7 @@ defmodule Game.Lobby do
     %{
       state
       | pids: Map.put(state.pids, user.uuid, pid),
-        users: Map.put(state.users, user.uuid, user)
+        users: state.users ++ [user]
     }
   end
 
@@ -117,12 +125,16 @@ defmodule Game.Lobby do
   def leave(state, leaving_pid) do
     {uuid, _pid} = Enum.find(state.pids, {"", nil}, fn {_uuid, pid} -> pid == leaving_pid end)
 
-    %{state | pids: Map.delete(state.pids, uuid), users: Map.delete(state.users, uuid)}
+    %{
+      state
+      | pids: Map.delete(state.pids, uuid),
+        users: Enum.reject(state.users, fn user -> user.uuid == uuid end)
+    }
   end
 
   @spec start(Lobby.t()) :: Lobby.t()
   def start(state) do
-    %{state | status: :playing, game: Game.start(Map.values(state.users), state.settings)}
+    %{state | status: :playing, game: Game.start(state.users, state.settings)}
   end
 
   @spec notify_pids(Lobby.t()) :: :ok
@@ -136,10 +148,16 @@ defmodule Game.Lobby do
   end
 
   @spec get_user(Lobby.t(), pid()) :: {String.t(), User.t()}
-  defp get_user(state, pid) do
+  def get_user(state, pid) do
     state.users
-    |> Enum.find({0, nil}, fn {_index, user} ->
+    |> Enum.find(fn user ->
       Map.get(state.pids, user.uuid) == pid
     end)
   end
+
+  defp update_user(%{uuid: uuid}, %{uuid: new_uuid} = new_user) when uuid == new_uuid do
+    new_user
+  end
+
+  defp update_user(user, _new_user), do: user
 end
