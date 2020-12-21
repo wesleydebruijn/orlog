@@ -86,15 +86,13 @@ defmodule Game.Lobby do
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
-  def update_settings(state, %{}), do: state
-
   def update_settings(state, settings) do
     new_settings =
       state.settings
-      |> Map.put(:health, Map.get(settings, "health"))
-      |> Map.put(:dices, Map.get(settings, "dices"))
-      |> Map.put(:favors, Map.get(settings, "favors"))
-      |> Map.put(:tokens, Map.get(settings, "tokens"))
+      |> Map.put(:health, Map.get(settings, "health", state.settings.health))
+      |> Map.put(:dices, Map.get(settings, "dices", state.settings.dices))
+      |> Map.put(:favors, Map.get(settings, "favors", state.settings.favors))
+      |> Map.put(:tokens, Map.get(settings, "tokens", state.settings.tokens))
 
     %{state | settings: new_settings}
   end
