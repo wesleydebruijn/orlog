@@ -60,12 +60,13 @@ defmodule Game.Lobby do
   end
 
   @spec update_status(Lobby.t()) :: Lobby.t()
+  def update_status(%{game: %{winner: 0}} = state), do: state
+
   def update_status(state) do
-    if state.game.winner > 0 do
-      %{state | status: :finished}
-    else
-      state
-    end
+    state.pids
+    |> Map.values()
+    |> Enum.reduce(state, &toggle_ready(&2, &1))
+    |> Map.put(:status, :finished)
   end
 
   @spec toggle_ready(Lobby.t(), pid()) :: Lobby.t()
