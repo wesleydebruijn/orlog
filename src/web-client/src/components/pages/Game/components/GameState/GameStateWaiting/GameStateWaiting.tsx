@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router'
 import { useData } from '../../../../../../hooks/useData'
 import type { User } from '../../../../../../types/types'
 import Button from '../../../../../shared/Button/Button'
@@ -25,8 +26,11 @@ export default function GameStateWaiting({
   player,
   opponent
 }: Props) {
+  const { gameId } = useParams<{ gameId: string }>()
   const [selectedFavors, setSelectedFavors] = useState<number[]>(player.favors)
+  const link = `${process.env.REACT_APP_BASE_URL}/game/${gameId}`
   const { favors } = useData()
+
   const opponentCard =
     opponent !== undefined ? (
       <PlayerCard ready={opponent.ready} name={opponent.name} title={opponent.title} />
@@ -77,29 +81,58 @@ export default function GameStateWaiting({
           <h1>VS</h1>
           {opponentCard}
         </div>
-        <ContentBox title="Choose favors">
-          <p>
-            You may select up to{' '}
-            <b>
-              <u>{maxFavors}</u>
-            </b>{' '}
-            favors.
-          </p>
-          <div className="game-state-waiting__favors">
-            {Object.entries(favors).map(([index, favor]) => (
-              <FavorCard
-                name={favor.name}
-                index={parseInt(index)}
-                description={favor.description}
-                className={selectedFavors.includes(parseInt(index)) ? 'favor--active' : ''}
-                key={favor.name}
-                onClick={index => selectFavor(index)}
-              />
-            ))}
-          </div>
-          {!player.ready && <Button onClick={() => confirmSetup()}>Confirm</Button>}
-          {player.ready && <Button onClick={() => toggleReady()}>Change setup</Button>}
-        </ContentBox>
+        <section className="game-state-waiting__center">
+          <ContentBox title="Choose favors">
+            <p>
+              You may select up to{' '}
+              <b>
+                <u>{maxFavors}</u>
+              </b>{' '}
+              favors.
+            </p>
+            <div className="game-state-waiting__favors">
+              {Object.entries(favors).map(([index, favor]) => (
+                <FavorCard
+                  name={favor.name}
+                  index={parseInt(index)}
+                  description={favor.description}
+                  className={selectedFavors.includes(parseInt(index)) ? 'favor--active' : ''}
+                  key={favor.name}
+                  onClick={index => selectFavor(index)}
+                />
+              ))}
+            </div>
+            {!player.ready && <Button onClick={() => confirmSetup()}>Confirm</Button>}
+            {player.ready && <Button onClick={() => toggleReady()}>Change setup</Button>}
+          </ContentBox>
+          <ContentBox title="Invite a friend">
+            <p>
+              Challenge a friend, cat or dog for a game of Orlog, you can play against them and most
+              likely defeat them because they probably don't know to play it yet anyway. Definitely
+              your pet though.
+            </p>
+            <section>
+              {'clipboard' in navigator && (
+                <Button onClick={async () => await navigator.clipboard.writeText(link)}>
+                  Copy invite link
+                </Button>
+              )}
+              {'share' in navigator && (
+                <Button
+                  onClick={async () =>
+                    await navigator.share({
+                      url: link,
+                      title: "You've been challenged to a game of Orlog!",
+                      text: "The Viking dice game from Assassin's Creed Valhalla"
+                    })
+                  }
+                >
+                  Share
+                </Button>
+              )}
+            </section>
+          </ContentBox>
+        </section>
       </main>
     </div>
   )

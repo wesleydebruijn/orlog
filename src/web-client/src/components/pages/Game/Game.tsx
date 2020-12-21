@@ -2,12 +2,12 @@ import React from 'react'
 import { useParams } from 'react-router'
 
 import { useUser } from '../../../hooks/useAuth'
-import GameBoard from './components/GameBoard/GameBoard'
-import GameStateFinished from './components/GameState/GameStateFinished'
 import { GameProvider } from '../../../providers/GameProvider'
+
+import GameBoard from './components/GameBoard/GameBoard'
 import GameStateCreating from './components/GameState/GameStateCreating/GameStateCreating'
 import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
-import { User } from '../../../types/types'
+import GameStateFinished from './components/GameState/GameStateFinished'
 
 export default function Game() {
   const { gameId } = useParams<{ gameId: string }>()

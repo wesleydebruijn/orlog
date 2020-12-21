@@ -36,6 +36,15 @@
     }
   }
 
+  &__center {
+    display: flex;
+    justify-content: space-between;
+
+    .content-box {
+      margin: 15px;
+    }
+  }
+
   main {
     display: flex;
     flex-direction: column;
