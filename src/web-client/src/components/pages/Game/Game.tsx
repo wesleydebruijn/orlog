@@ -16,12 +16,6 @@ export default function Game() {
   return (
     <GameProvider gameId={gameId} userId={userId}>
       {({ lobby, actions }) => {
-        function setReady(user: Partial<User>) {
-          actions.updateUser(user)
-          actions.toggleReady()
-        }
-
-        console.log(lobby)
         switch (lobby.status) {
           case 'creating':
             return <GameStateCreating onCreate={actions.changeSettings} settings={lobby.settings} />
@@ -29,7 +23,8 @@ export default function Game() {
           case 'waiting':
             return (
               <GameStateWaiting
-                onSetup={setReady}
+                toggleReady={actions.toggleReady}
+                onSetup={actions.updateUser}
                 maxFavors={lobby.settings.favors}
                 player={Object.values(lobby.users)[0]}
                 opponent={Object.values(lobby.users)[1]}

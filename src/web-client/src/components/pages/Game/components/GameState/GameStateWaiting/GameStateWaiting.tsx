@@ -11,23 +11,34 @@ import { PlayerCard } from '../../PlayerCard/PlayerCard'
 import './GameStateWaiting.scss'
 
 type Props = {
+  toggleReady: () => void
   onSetup: (user: Partial<User>) => void
   maxFavors: number
   player: User
   opponent: User
 }
 
-export default function GameStateWaiting({ onSetup, maxFavors, player, opponent }: Props) {
-  const [selectedFavors, setSelectedFavors] = useState<number[]>([])
+export default function GameStateWaiting({
+  onSetup,
+  toggleReady,
+  maxFavors,
+  player,
+  opponent
+}: Props) {
+  const [selectedFavors, setSelectedFavors] = useState<number[]>(player.favors)
   const { favors } = useData()
   const opponentCard =
     opponent !== undefined ? (
-      <PlayerCard name={opponent.name} title={opponent.title} />
+      <PlayerCard ready={opponent.ready} name={opponent.name} title={opponent.title} />
     ) : (
       <PlayerCard name="Waiting for player..." title="" avatar={<LoaderIcon />} placeholder />
     )
 
   function selectFavor(index: number) {
+    if (player.ready) {
+      return
+    }
+
     if (selectedFavors.includes(index)) {
       setSelectedFavors(selectedFavors.filter(favor => favor !== index))
     } else if (selectedFavors.length >= maxFavors) {
@@ -49,9 +60,11 @@ export default function GameStateWaiting({ onSetup, maxFavors, player, opponent 
 
       if (confirmation) {
         onSetup({ favors: selectedFavors })
+        toggleReady()
       }
     } else {
       onSetup({ favors: selectedFavors })
+      toggleReady()
     }
   }
 
@@ -60,7 +73,7 @@ export default function GameStateWaiting({ onSetup, maxFavors, player, opponent 
       <GameTopbar title="Setup" />
       <main>
         <div className="game-state-waiting__standoff">
-          <PlayerCard name={player.name} title={player.title} />
+          <PlayerCard ready={player.ready} name={player.name} title={player.title} />
           <h1>VS</h1>
           {opponentCard}
         </div>
@@ -72,25 +85,20 @@ export default function GameStateWaiting({ onSetup, maxFavors, player, opponent 
             </b>{' '}
             favors.
           </p>
-          {player.favors.length > 0 ? (
-            <h2>Waiting for opponent to finish setup</h2>
-          ) : (
-            <>
-              <div className="game-state-waiting__favors">
-                {Object.entries(favors).map(([index, favor]) => (
-                  <FavorCard
-                    name={favor.name}
-                    index={parseInt(index)}
-                    description={favor.description}
-                    className={selectedFavors.includes(parseInt(index)) ? 'favor--active' : ''}
-                    key={favor.name}
-                    onClick={index => selectFavor(index)}
-                  />
-                ))}
-              </div>
-              <Button onClick={() => confirmSetup()}>Confirm</Button>
-            </>
-          )}
+          <div className="game-state-waiting__favors">
+            {Object.entries(favors).map(([index, favor]) => (
+              <FavorCard
+                name={favor.name}
+                index={parseInt(index)}
+                description={favor.description}
+                className={selectedFavors.includes(parseInt(index)) ? 'favor--active' : ''}
+                key={favor.name}
+                onClick={index => selectFavor(index)}
+              />
+            ))}
+          </div>
+          {!player.ready && <Button onClick={() => confirmSetup()}>Confirm</Button>}
+          {player.ready && <Button onClick={() => toggleReady()}>Change setup</Button>}
         </ContentBox>
       </main>
     </div>

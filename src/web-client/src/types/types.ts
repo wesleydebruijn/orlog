@@ -72,6 +72,7 @@ export type User = {
   name: string
   title: string
   favors: number[]
+  ready: boolean
 }
 
 export type Player = {

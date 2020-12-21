@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import { HealthIcon, GodFavorIcon } from './../../../../shared/Icons'
+import { HealthIcon, GodFavorIcon, CrossIcon, CheckIcon } from './../../../../shared/Icons'
 
 import './PlayerCard.scss'
 
@@ -12,7 +12,8 @@ export function PlayerCard({
   title,
   health,
   tokens,
-  placeholder = false
+  placeholder = false,
+  ready
 }: {
   className?: string
   avatar?: string | React.ReactNode
@@ -21,6 +22,7 @@ export function PlayerCard({
   health?: number
   tokens?: number
   placeholder?: boolean
+  ready?: boolean
 }) {
   const classes = classNames('player-card', className, {
     'player-card--placeholder': placeholder
@@ -40,6 +42,9 @@ export function PlayerCard({
         <h2>{name}</h2>
         {title && <span>{title}</span>}
       </div>
+      {ready !== undefined && (
+        <div className="player-card__ready">{ready ? <CheckIcon /> : <CrossIcon />}</div>
+      )}
       {health !== undefined && (
         <div className="player-card__stat player-card__stat--health">
           <HealthIcon />
