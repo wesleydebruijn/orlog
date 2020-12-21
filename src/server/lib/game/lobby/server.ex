@@ -50,9 +50,14 @@ defmodule Game.Lobby.Server do
     GenServer.call(pid, {:change_settings, settings})
   end
 
-  @spec set_favors(pid(), list()) :: Lobby.t()
-  def set_favors(pid, favors) do
-    GenServer.call(pid, {:set_favors, favors, self()})
+  @spec update_user(pid(), map()) :: Lobby.t()
+  def update_user(pid, attrs) do
+    GenServer.call(pid, {:update_user, attrs, self()})
+  end
+
+  @spec toggle_ready(pid()) :: Lobby.t()
+  def toggle_ready(pid) do
+    GenServer.call(pid, {:toggle_ready, self()})
   end
 
   @impl true
@@ -90,10 +95,23 @@ defmodule Game.Lobby.Server do
   end
 
   @impl true
-  def handle_call({:set_favors, favors, pid}, _from, state) do
+  def handle_call({:update_user, attrs, pid}, _from, state) do
+    notify_pids()
+
     new_state =
       state
-      |> Game.Lobby.set_favors(favors, pid)
+      |> Game.Lobby.update_user(attrs, pid)
+
+    {:reply, new_state, new_state}
+  end
+
+  @impl true
+  def handle_call({:toggle_ready, pid}, _from, state) do
+    notify_pids()
+
+    new_state =
+      state
+      |> Game.Lobby.toggle_ready(pid)
       |> Game.Lobby.try_to_start()
 
     IO.inspect(new_state)

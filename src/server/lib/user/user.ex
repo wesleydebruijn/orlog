@@ -6,10 +6,11 @@ defmodule User do
           uuid: String.t(),
           name: String.t(),
           title: String.t(),
-          favors: list()
+          favors: list(),
+          ready: boolean()
         }
   @derive {Jason.Encoder, except: [:uuid]}
-  defstruct uuid: nil, name: nil, title: nil, favors: []
+  defstruct uuid: nil, name: nil, title: nil, favors: [], ready: false
 
   @spec new(String.t()) :: User.t()
   def new(uuid) do
@@ -20,5 +21,10 @@ defmodule User do
     }
   end
 
-  def update(user, attrs), do: Map.merge(user, attrs)
+  def update(user, attrs) do
+    user
+    |> Map.put(:favors, Map.get(attrs, "favors", user.favors))
+    |> Map.put(:name, Map.get(attrs, "name", user.name))
+    |> Map.put(:ready, Map.get(attrs, "ready", user.ready))
+  end
 end

@@ -11,7 +11,7 @@ defmodule Game.Settings do
           favors: integer(),
           phases: any()
         }
-  @derive {Jason.Encoder, except: [:phases]}
+  @derive Jason.Encoder
   defstruct health: 15,
             tokens: 0,
             dices: 6,

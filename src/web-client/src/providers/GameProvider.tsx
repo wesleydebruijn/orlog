@@ -3,7 +3,7 @@ import { useState } from 'react'
 import useWebSocket from 'react-use-websocket'
 import { isEqual } from 'lodash'
 
-import { ChangeSettingsData, GameActions, GameLobby } from '../types/types'
+import { ChangeSettingsData, GameActions, GameLobby, User } from '../types/types'
 
 type State = {
   lobby?: GameLobby
@@ -58,10 +58,14 @@ export function GameProvider({ children, gameId, userId }: Props) {
         type: 'changeSettings',
         value: settings
       }),
-    setFavors: (favors: number[]) =>
+    updateUser: (user: Partial<User>) =>
       sendJsonMessage({
-        type: 'setFavors',
-        value: favors
+        type: 'updateUser',
+        value: user
+      }),
+    toggleReady: () =>
+      sendJsonMessage({
+        type: 'toggleReady'
       })
   }
 

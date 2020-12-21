@@ -15,7 +15,8 @@ export type GameActions = {
   toggleDice: (diceIndex: number) => void
   selectFavor: (favor: number, tier: number) => void
   changeSettings: (settings: ChangeSettingsData) => void
-  setFavors: (favors: number[]) => void
+  updateUser: (user: Partial<User>) => void
+  toggleReady: () => void
 }
 
 export type Favor = {

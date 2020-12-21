@@ -11,7 +11,7 @@ import { PlayerCard } from '../../PlayerCard/PlayerCard'
 import './GameStateWaiting.scss'
 
 type Props = {
-  onSetup: (favors: number[]) => void
+  onSetup: (user: Partial<User>) => void
   maxFavors: number
   player: User
   opponent: User
@@ -48,10 +48,10 @@ export default function GameStateWaiting({ onSetup, maxFavors, player, opponent 
       )
 
       if (confirmation) {
-        onSetup(selectedFavors)
+        onSetup({ favors: selectedFavors })
       }
     } else {
-      onSetup(selectedFavors)
+      onSetup({ favors: selectedFavors })
     }
   }
 

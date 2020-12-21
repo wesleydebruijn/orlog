@@ -7,6 +7,7 @@ import GameStateFinished from './components/GameState/GameStateFinished'
 import { GameProvider } from '../../../providers/GameProvider'
 import GameStateCreating from './components/GameState/GameStateCreating/GameStateCreating'
 import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
+import { User } from '../../../types/types'
 
 export default function Game() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -15,6 +16,11 @@ export default function Game() {
   return (
     <GameProvider gameId={gameId} userId={userId}>
       {({ lobby, actions }) => {
+        function setReady(user: Partial<User>) {
+          actions.updateUser(user)
+          actions.toggleReady()
+        }
+
         console.log(lobby)
         switch (lobby.status) {
           case 'creating':
@@ -23,7 +29,7 @@ export default function Game() {
           case 'waiting':
             return (
               <GameStateWaiting
-                onSetup={actions.setFavors}
+                onSetup={setReady}
                 maxFavors={lobby.settings.favors}
                 player={Object.values(lobby.users)[0]}
                 opponent={Object.values(lobby.users)[1]}

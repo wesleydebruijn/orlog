@@ -40,13 +40,13 @@ export function PlayerCard({
         <h2>{name}</h2>
         {title && <span>{title}</span>}
       </div>
-      {health && (
+      {health !== undefined && (
         <div className="player-card__stat player-card__stat--health">
           <HealthIcon />
           <span>{health}</span>
         </div>
       )}
-      {tokens && (
+      {tokens !== undefined && (
         <div className="player-card__stat player-card__stat--tokens">
           <GodFavorIcon />
           <span>{tokens}</span>
