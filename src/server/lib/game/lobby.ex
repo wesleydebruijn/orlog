@@ -59,6 +59,8 @@ defmodule Game.Lobby do
   end
 
   @spec update_settings(Lobby.t(), map) :: Lobby.t()
+  def update_settings(state, %{}), do: state
+
   def update_settings(state, settings) do
     new_settings =
       state.settings
