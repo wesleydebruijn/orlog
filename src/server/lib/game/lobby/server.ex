@@ -114,7 +114,6 @@ defmodule Game.Lobby.Server do
       |> Game.Lobby.toggle_ready(pid)
       |> Game.Lobby.try_to_start()
 
-    IO.inspect(new_state)
     {:reply, new_state, new_state}
   end
 

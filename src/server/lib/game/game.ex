@@ -27,15 +27,24 @@ defmodule Game do
   def start(users, settings \\ %Settings{}) do
     %Game{
       settings: settings,
-      players: IndexMap.add(%{}, Enum.map(users, fn user -> %Player{user: user} end))
+      players:
+        IndexMap.add(
+          %{},
+          Enum.map(users, fn user ->
+            %Player{
+              user: user,
+              favors:
+                Enum.into(1..settings.favors, %{}, fn x -> {x, Enum.at(user.favors, x - 1)} end)
+            }
+          end)
+        )
     }
     |> IndexMap.update_all(:players, fn player ->
       player
       |> Player.update(%{
         health: settings.health,
         tokens: settings.tokens,
-        dices: IndexMap.add(%{}, Enum.map(1..settings.dices, fn _x -> %Dice{} end)),
-        favors: IndexMap.add(%{}, Enum.map(1..settings.favors, fn x -> x end))
+        dices: IndexMap.add(%{}, Enum.map(1..settings.dices, fn _x -> %Dice{} end))
       })
     end)
     |> Round.next(&Turn.coinflip/1)
