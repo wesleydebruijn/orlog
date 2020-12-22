@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
-import { animated } from 'react-spring'
 
 import { useGame } from '../../../../../hooks/useGame'
 import { usePlayer } from '../../../../../hooks/usePlayer'
 import { useDiceTransitions } from '../../../../../hooks/useDiceTransitions'
-import { usePhaseAnimation } from '../../../../../hooks/usePhaseAnimation'
+import { useBoolean } from '../../../../../hooks/useBoolean'
 import { PlayerProvider } from '../../../../../providers/PlayerProvider'
 import { PhaseId } from '../../../../../types/types'
 
@@ -20,21 +19,22 @@ import {
 import { GameTopbar } from '../../../../shared/Topbar/GameTopBar'
 import { PlayerCard } from '../PlayerCard/PlayerCard'
 import { FavorCard, Tier } from '../FavorCard/FavorCard'
+import { GameOverlay } from '../GameOverlay/GameOverlay'
 import { AnimatedDice } from '../Dice/Dice'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
 
 export default function GameBoard() {
-  const { player, opponent, phase, round, actions } = useGame()
+  const { player, opponent, phase, round, status, won, actions } = useGame()
+  const [phaseTransition, setPhaseTransition] = useBoolean(1000)
 
-  const overlayProps = usePhaseAnimation(phase)
+  useEffect(() => setPhaseTransition(true), [phase.id])
 
   return (
     <section className="game-board">
-      <animated.div style={overlayProps} className="game-board__overlay">
-        {phase.name} phase
-      </animated.div>
+      <GameOverlay active={status === 'playing' && phaseTransition}>{phase.name} phase</GameOverlay>
+      <GameOverlay active={status === 'finished'}>{won ? 'You won!' : 'You lost!'}</GameOverlay>
       <GameTopbar title={`${phase.name} phase`} subtitle={`Round ${round}`} />
       <section className="game-board__field">
         <div className="game-board__field-bg">
