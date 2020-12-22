@@ -11,12 +11,14 @@ export function useGame() {
   }
 
   return {
+    status: lobby.status,
     phase: {
       ...lobby.game.settings.phases[lobby.game.phase],
       id: lobby.game.phase
     },
     round: lobby.game.round,
     turn: lobby.game.turn,
+    won: lobby.game.winner === lobby.turn,
     hasTurn: lobby.game.turn === lobby.turn,
     player: lobby.turn,
     opponent: (lobby.turn % 2) + 1,

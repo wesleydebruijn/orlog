@@ -7,7 +7,6 @@ import { GameProvider } from '../../../providers/GameProvider'
 import GameBoard from './components/GameBoard/GameBoard'
 import GameStateCreating from './components/GameState/GameStateCreating/GameStateCreating'
 import GameStateWaiting from './components/GameState/GameStateWaiting/GameStateWaiting'
-import GameStateFinished from './components/GameState/GameStateFinished'
 
 export default function Game() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -32,10 +31,8 @@ export default function Game() {
             )
 
           case 'playing':
-            return <GameBoard />
-
           case 'finished':
-            return <GameStateFinished won={lobby.game.winner === lobby.turn} />
+            return <GameBoard />
         }
       }}
     </GameProvider>

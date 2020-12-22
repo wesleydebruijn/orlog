@@ -22,10 +22,10 @@ function buttonText(phase: Phase, player: Player) {
 }
 
 export default function ContinueButton({ onClick }: Props) {
-  const { phase, hasTurn } = useGame()
+  const { phase, hasTurn, status } = useGame()
   const { player } = usePlayer()
 
-  if (!hasTurn) return <></>
+  if (!hasTurn || status === 'finished') return <></>
 
   return (
     <button className="continue-button" onClick={() => onClick()}>
