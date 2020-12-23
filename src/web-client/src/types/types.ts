@@ -42,7 +42,7 @@ export type Phase = {
   id: PhaseId
   name: string
   turns: number
-  auto_turns: number
+  auto: boolean
 }
 
 export type Settings = {

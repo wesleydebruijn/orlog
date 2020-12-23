@@ -7,11 +7,11 @@ defmodule Game.Phase do
   @type t :: %Game.Phase{
           name: String.t(),
           turns: integer(),
-          auto_turns: integer(),
-          module: module()
+          module: module(),
+          auto: boolean()
         }
   @derive {Jason.Encoder, except: [:module]}
-  defstruct name: "", turns: 0, auto_turns: 0, module: nil
+  defstruct name: "", turns: 0, auto: false, module: nil
 
   @spec current(Game.t()) :: map()
   def current(game) do
