@@ -45,6 +45,16 @@ export type Phase = {
   auto: boolean
 }
 
+export enum ResolutionTurn {
+  PreResolutionOpponent = 7,
+  PreResolutionPlayer = 6,
+  ResolutionResolve = 5,
+  ResolutionAttack = 4,
+  ResolutionSteal = 3,
+  PostResolutionOpponent = 2,
+  PostResolutionPlayer = 1
+}
+
 export type Settings = {
   dices: number
   favors: number
@@ -86,6 +96,7 @@ export type Player = {
   favors: {
     [index: number]: number
   }
+  invoked_favor: number
   // todo: favor tier needs to be other datatype in Elixir
 }
 

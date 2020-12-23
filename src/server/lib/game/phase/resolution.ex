@@ -28,7 +28,7 @@ defmodule Game.Phase.Resolution do
 
   def action(game, :continue), do: Turn.next(game)
 
-  def action(game, :end_turn) do
+  def action(game, :start_turn) do
     game
     |> Turn.get_player()
     |> case do
@@ -41,6 +41,11 @@ defmodule Game.Phase.Resolution do
       %{turns: 1} -> action(game, {:post_resolution, :player})
       _other -> game
     end
+  end
+
+  def action(game, :end_turn) do
+    game
+    |> IndexMap.update_all(:players, &Player.update(&1, %{invoked_favor: 0}))
     |> Turn.update_player(&Player.increase(&1, :turns, -1))
   end
 

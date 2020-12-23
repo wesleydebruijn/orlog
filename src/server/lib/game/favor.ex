@@ -29,16 +29,16 @@ defmodule Game.Favor do
 
   @spec invoke(Game.t()) :: Game.t()
   def invoke(game) do
-    %{favor: favor, tier: tier} =
-      game
-      |> Turn.get_player()
-      |> Player.get_favor()
+    player = Turn.get_player(game)
+    %{favor: favor, tier: tier} = Player.get_favor(player)
 
     invoke = Map.get(favor, :invoke)
     value = Map.get(tier, :value)
 
     if invoke && value do
-      invoke.(game, value)
+      game
+      |> invoke.(value)
+      |> Turn.update_player(&Player.update(&1, %{invoked_favor: player.favor_tier.favor}))
     else
       game
     end
