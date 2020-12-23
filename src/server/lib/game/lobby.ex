@@ -52,6 +52,13 @@ defmodule Game.Lobby do
     Map.get(state.pids, uuid) == pid
   end
 
+  @spec auto_turn?(Lobby.t()) :: boolean()
+  def auto_turn?(state) do
+    state.game.settings.phases
+    |> Map.get(state.game.phase)
+    |> Map.get(:auto, false)
+  end
+
   @spec try_to_start(Lobby.t()) :: Lobby.t()
   def try_to_start(state) do
     if Game.Lobby.startable?(state) do

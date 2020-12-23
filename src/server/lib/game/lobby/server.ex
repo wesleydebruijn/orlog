@@ -122,10 +122,7 @@ defmodule Game.Lobby.Server do
     notify_pids()
 
     if Game.Lobby.turn?(state, pid) do
-      new_state =
-        state
-        |> Map.put(:game, Game.invoke(state.game, action))
-        |> Game.Lobby.update_status()
+      new_state = perform_action(state, action)
 
       {:reply, new_state, new_state}
     else
@@ -161,12 +158,41 @@ defmodule Game.Lobby.Server do
     end
   end
 
+  def handle_info(:auto_turn, state) do
+    notify_pids()
+
+    if Game.Lobby.auto_turn?(state) do
+      new_state = perform_action(state, :continue)
+
+      {:noreply, new_state}
+    else
+      {:noreply, state}
+    end
+  end
+
+  defp perform_action(state, action) do
+    new_state =
+      state
+      |> Map.put(:game, Game.invoke(state.game, action))
+      |> Game.Lobby.update_status()
+
+    if Game.Lobby.auto_turn?(new_state) do
+      schedule_turn()
+    end
+
+    new_state
+  end
+
   defp notify_pids do
     Process.send(self(), :notify_pids, [])
   end
 
   defp schedule_terminate do
     Process.send_after(self(), :terminate, 120_000)
+  end
+
+  defp schedule_turn do
+    Process.send_after(self(), :auto_turn, 1500)
   end
 
   defp to_name(uuid), do: String.to_atom(uuid)

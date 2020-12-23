@@ -25,7 +25,7 @@ export default function ContinueButton({ onClick }: Props) {
   const { phase, hasTurn, status } = useGame()
   const { player } = usePlayer()
 
-  if (!hasTurn || status === 'finished') return <></>
+  if (!hasTurn || phase.auto || status === 'finished') return <></>
 
   return (
     <button className="continue-button" onClick={() => onClick()}>

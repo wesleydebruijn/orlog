@@ -22,8 +22,8 @@ defmodule Game.Phase.GodFavorTest do
 
       expected = %Game{
         players: %{
-          1 => %Player{turns: 8},
-          2 => %Player{turns: 8}
+          1 => %Player{turns: 7},
+          2 => %Player{turns: 7}
         },
         round: 1,
         phase: 3,
