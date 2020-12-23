@@ -87,7 +87,12 @@ export default function GameStateCreating({ onCreate, settings }: Props) {
                   5: '5'
                 }}
               />
-              <Button onClick={() => createGame(currentSettings)}>Create game</Button>
+              <div className="game-state-creating__actions">
+                <Button variant="secondary" onClick={() => setCustom(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => createGame(currentSettings)}>Create game</Button>
+              </div>
             </ContentBox>
           </div>
         ) : (

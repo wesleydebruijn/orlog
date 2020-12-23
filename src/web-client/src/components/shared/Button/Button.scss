@@ -4,10 +4,23 @@
   padding: 10px 15px;
   background-color: orange;
   border-radius: 4px;
-  color: lighten(#000000, 10%);
+  cursor: pointer;
 
-  &:hover {
-    cursor: pointer;
-    background-color: lighten(orange, 15%);
+  &--primary {
+    background-color: orange;
+    color: lighten(#000000, 10%);
+
+    &:hover {
+      background-color: lighten(orange, 15%);
+    }
+  }
+
+  &--secondary {
+    background-color: gray;
+    color: #000;
+
+    &:hover {
+      background-color: lighten(gray, 15%);
+    }
   }
 }

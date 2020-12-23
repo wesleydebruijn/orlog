@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
 
   background: url('../../../assets/background.jpg') no-repeat center center fixed;
   background-size: cover;
@@ -14,6 +14,7 @@
     align-items: center;
     width: 100%;
     margin-bottom: 30px;
+    margin-top: 2rem;
 
     h1 {
       font-size: 50px;
@@ -51,8 +52,6 @@
     align-items: center;
     margin: auto;
     max-width: 1040px;
-    position: relative;
-    top: 10%;
     justify-content: space-between;
 
     .content-box {
@@ -76,7 +75,37 @@
     p {
       font-size: 1rem;
       margin-top: 20px;
-      width: 400px;
+      max-width: 400px;
+    }
+  }
+}
+
+@media (max-width: 575.98px) {
+  .game-state-waiting {
+    main {
+      top: 3% !important;
+    }
+
+    &__standoff {
+      flex-direction: column;
+
+      h1 {
+        line-height: 0;
+      }
+
+      .player-card {
+        height: 6.5rem;
+      }
+    }
+
+    &__center {
+      flex-direction: column;
+      align-items: center;
+      width: 85%;
+
+      .content-box {
+        width: 100%;
+      }
     }
   }
 }

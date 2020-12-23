@@ -103,3 +103,12 @@
     }
   }
 }
+
+@media (max-width: 575.98px) {
+  .player-card {
+    &__avatar {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
