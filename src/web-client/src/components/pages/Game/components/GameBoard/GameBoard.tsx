@@ -24,6 +24,7 @@ import { AnimatedDice } from '../Dice/Dice'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
+import { useStat } from '../../../../../hooks/useStat'
 
 export default function GameBoard() {
   const { player, opponent, phase, round, status, won, actions } = useGame()
@@ -58,27 +59,8 @@ export function PlayerArea() {
     'player-area--self': self
   })
 
-  const [health, setHealth] = useState(player.health)
-  const [tokens, setTokens] = useState(player.tokens)
-  const [healthChange, setHealthChange] = useBoolean(1000)
-  const [tokensChange, setTokensChange] = useBoolean(1000)
-
-  useEffect(() => {
-    const diff = player.health - health
-    if (diff === 0) return
-
-    console.log(diff, 'health')
-
-    setHealth(health)
-  }, [player.health])
-
-  useEffect(() => {
-    const diff = player.tokens - tokens
-    if (diff === 0) return
-
-    console.log(diff, 'tokens')
-    setTokens(player.tokens)
-  }, [player.tokens])
+  const { amount: health, diff: healthDiff, change: healthChange } = useStat(player.health, 1000)
+  const { amount: tokens, diff: tokensDiff, change: tokensChange } = useStat(player.tokens, 1000)
 
   return (
     <section className={classes}>
