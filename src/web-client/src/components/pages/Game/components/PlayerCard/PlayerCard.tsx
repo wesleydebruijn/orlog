@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useBoolean } from '../../../../../hooks/useBoolean'
 
 import { HealthIcon, GodFavorIcon, CrossIcon, CheckIcon } from './../../../../shared/Icons'
 

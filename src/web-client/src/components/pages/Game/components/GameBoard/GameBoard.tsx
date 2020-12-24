@@ -58,14 +58,36 @@ export function PlayerArea() {
     'player-area--self': self
   })
 
+  const [health, setHealth] = useState(player.health)
+  const [tokens, setTokens] = useState(player.tokens)
+  const [healthChange, setHealthChange] = useBoolean(1000)
+  const [tokensChange, setTokensChange] = useBoolean(1000)
+
+  useEffect(() => {
+    const diff = player.health - health
+    if (diff === 0) return
+
+    console.log(diff, 'health')
+
+    setHealth(health)
+  }, [player.health])
+
+  useEffect(() => {
+    const diff = player.tokens - tokens
+    if (diff === 0) return
+
+    console.log(diff, 'tokens')
+    setTokens(player.tokens)
+  }, [player.tokens])
+
   return (
     <section className={classes}>
       <div className="wrapper wrapper--flex">
         <PlayerCard
           name={player.user.name}
           title={player.user.title}
-          health={player.health}
-          tokens={player.tokens}
+          health={health}
+          tokens={tokens}
         />
         <FavorArea />
       </div>
