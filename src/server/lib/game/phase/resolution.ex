@@ -4,7 +4,6 @@ defmodule Game.Phase.Resolution do
   and previously selected God Favors are triggered before
   and/or after the standoff
   """
-  require Logger
   @behaviour Game.Phase
 
   alias Game.{
@@ -28,7 +27,7 @@ defmodule Game.Phase.Resolution do
 
   def action(game, :continue), do: Turn.next(game)
 
-  def action(game, :end_turn) do
+  def action(game, :start_turn) do
     game
     |> Turn.get_player()
     |> case do
@@ -41,17 +40,18 @@ defmodule Game.Phase.Resolution do
       %{turns: 1} -> action(game, {:post_resolution, :player})
       _other -> game
     end
-    |> Turn.update_player(&Player.increase(&1, :turns, -1))
   end
 
-  def action(game, {:pre_resolution, affects}) do
+  def action(game, :end_turn) do
     game
-    |> Favor.invoke(:pre_resolution, affects)
+    |> IndexMap.update_all(:players, &Player.update(&1, %{invoked_favor: 0}))
+    |> Turn.update_player(&Player.increase(&1, :turns, -1))
   end
 
   def action(game, {:resolution, :resolve}) do
     game
     |> Turn.update_player(&Player.resolve(&1, Turn.get_opponent(game)))
+    |> Turn.next()
   end
 
   def action(game, {:resolution, :attack}) do
@@ -64,18 +64,15 @@ defmodule Game.Phase.Resolution do
     |> Action.Token.steal_tokens()
   end
 
-  def action(game, {:post_resolution, :opponent}) do
-    game
-    |> Favor.invoke(:post_resolution, :opponent)
-  end
+  def action(game, {trigger, affects}) do
+    game = Favor.invoke(game, trigger, affects)
+    player = Turn.get_player(game)
 
-  def action(game, {:post_resolution, :player}) do
-    game
-    |> Turn.update_player(fn player ->
-      player
-      |> Player.update(%{dices: IndexMap.take(player.dices, game.settings.dices)})
-    end)
-    |> Favor.invoke(:post_resolution, :player)
+    if player.invoked_favor > 0 do
+      game
+    else
+      Turn.next(game)
+    end
   end
 
   def action(game, :end_phase) do

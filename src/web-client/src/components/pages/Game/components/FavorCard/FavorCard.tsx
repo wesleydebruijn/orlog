@@ -12,6 +12,7 @@ type Props = {
   description: string
   children?: React.ReactNode
   active?: boolean
+  highlight?: boolean
   onClick?: (index: number) => void
 }
 
@@ -30,12 +31,16 @@ export function FavorCard({
   onClick,
   index,
   active = false,
+  highlight = false,
   children
 }: Props) {
   const classes = classNames('favor-card', className, {
-    'favor-card--clickable': onClick !== undefined
+    'favor-card--clickable': onClick !== undefined,
+    'favor-card--highlight': highlight
   })
-  const tierClasses = classNames('favor-card__tiers', { 'favor-card__tiers--active': active })
+  const tierClasses = classNames('favor-card__tiers', {
+    'favor-card__tiers--active': active
+  })
 
   return (
     <div className={classes}>

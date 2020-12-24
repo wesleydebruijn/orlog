@@ -94,6 +94,7 @@ export function FavorArea() {
           key={name}
           index={index + 1}
           active={index + 1 === activeFavor}
+          highlight={index + 1 === player.invoked_favor}
           name={name}
           description={description}
           onClick={toggleable ? toggleFavor : undefined}

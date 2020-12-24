@@ -55,7 +55,8 @@ defmodule Game.FavorTest do
           1 => %Player{
             favors: %{1 => 1},
             favor_tier: %{favor: 1, tier: 1},
-            health: 1
+            health: 1,
+            invoked_favor: 1
           },
           2 => %Player{}
         },
@@ -114,7 +115,8 @@ defmodule Game.FavorTest do
             favors: %{1 => 1},
             favor_tier: %{favor: 1, tier: 2},
             tokens: 0,
-            health: 2
+            health: 2,
+            invoked_favor: 1
           },
           2 => %Player{}
         },
