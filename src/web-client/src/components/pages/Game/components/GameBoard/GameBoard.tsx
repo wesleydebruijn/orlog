@@ -24,6 +24,7 @@ import { AnimatedDice } from '../Dice/Dice'
 import ContinueButton from '../ContinueButton/ContinueButton'
 
 import './GameBoard.scss'
+import { useStat } from '../../../../../hooks/useStat'
 
 export default function GameBoard() {
   const { player, opponent, phase, round, status, won, actions } = useGame()
@@ -58,14 +59,17 @@ export function PlayerArea() {
     'player-area--self': self
   })
 
+  const { amount: health, diff: healthDiff, change: healthChange } = useStat(player.health, 1000)
+  const { amount: tokens, diff: tokensDiff, change: tokensChange } = useStat(player.tokens, 1000)
+
   return (
     <section className={classes}>
       <div className="wrapper wrapper--flex">
         <PlayerCard
           name={player.user.name}
           title={player.user.title}
-          health={player.health}
-          tokens={player.tokens}
+          health={health}
+          tokens={tokens}
         />
         <FavorArea />
       </div>
