@@ -5,7 +5,7 @@ defmodule Orlog.MixProject do
     [
       app: :orlog,
       version: "0.1.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       consolidate_protocols: Mix.env() != :test,
