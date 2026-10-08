@@ -1,7 +1,0 @@
-{
-  "typescript.tsdk": "./src/web-client/node_modules/typescript/lib",
-  "editor.formatOnSave": true,
-  "editor.quickSuggestions": {
-    "strings": true
-  }
-}
