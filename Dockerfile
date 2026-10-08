@@ -8,7 +8,7 @@ COPY src/web-client/. ./
 RUN yarn && yarn build
 
 # ---- Server - Build Stage ----
-FROM elixir:1.11.2-alpine as server-build
+FROM elixir:1.20.4-otp-28-alpine as server-build
 ENV MIX_ENV=prod
 COPY src/server/config ./config
 COPY src/server/lib ./lib
@@ -20,8 +20,8 @@ RUN mix local.rebar --force \
   && mix release
 
 # ---- Application Stage ----
-FROM alpine:3
-RUN apk add --no-cache --update bash openssl
+FROM alpine:3.24
+RUN apk add --no-cache --update bash openssl libstdc++ ncurses-libs
 EXPOSE 4000
 ENV PORT=4000 \
   MIX_ENV=prod
