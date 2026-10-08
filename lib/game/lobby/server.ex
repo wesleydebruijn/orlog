@@ -177,7 +177,7 @@ defmodule Game.Lobby.Server do
       |> Game.Lobby.update_status()
 
     if Game.Lobby.auto_turn?(new_state) do
-      schedule_turn()
+      schedule_turn(Game.Lobby.auto_turn_delay(new_state))
     end
 
     new_state
@@ -191,8 +191,12 @@ defmodule Game.Lobby.Server do
     Process.send_after(self(), :terminate, 120_000)
   end
 
-  defp schedule_turn do
-    Process.send_after(self(), :auto_turn, 1500)
+  # Only one automatic step may be pending: a player speeding up the resolution must not
+  # leave a stale timer behind that cuts the next step short.
+  defp schedule_turn(delay) do
+    if ref = Process.get(:turn_timer), do: Process.cancel_timer(ref)
+
+    Process.put(:turn_timer, Process.send_after(self(), :auto_turn, delay))
   end
 
   defp to_name(uuid), do: String.to_atom(uuid)

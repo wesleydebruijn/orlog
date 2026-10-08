@@ -2,9 +2,10 @@ import { ICONS } from "./icons"
 import { continueLabel, PHASE, STEP_LABEL } from "./state"
 
 export function iconSvg(name, className = "icon") {
-  const { size, paths } = ICONS[name]
+  const { size, paths, evenodd } = ICONS[name]
+  const rule = evenodd ? ' fill-rule="evenodd"' : ""
   return `<svg class="${className}" viewBox="0 0 ${size[0]} ${size[1]}" aria-hidden="true">${paths
-    .map(d => `<path d="${d}"/>`)
+    .map(d => `<path${rule} d="${d}"/>`)
     .join("")}</svg>`
 }
 

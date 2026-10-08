@@ -202,19 +202,29 @@ export function buildModel(lobby, preview = null) {
 }
 
 /**
- * Which dice go in the row between the bowls and which stay in the bowl.
- * During the roll phase kept and locked dice are set aside; afterwards every die
- * faces off against the opposing die.
+ * Which dice go in the row between the bowls, which wait in the staging spot beside the
+ * bowl and which stay in the bowl.
+ * During the roll phase only locked dice (committed at the end of a turn) are in the row;
+ * a die that is marked to keep moves out of the bowl to the stage until it is locked or
+ * unmarked. Afterwards every die faces off against the opposing die. `kind` tells the
+ * two layouts apart.
  */
 export function layoutDice(model, seat, other) {
   if (!model.active || model.phase === PHASE.ROLL) {
     return {
-      row: seat.dice.filter(dice => dice.keep || dice.locked),
-      bowl: seat.dice.filter(dice => !(dice.keep || dice.locked))
+      kind: "roll",
+      row: seat.dice.filter(dice => dice.locked),
+      stage: seat.dice.filter(dice => dice.keep && !dice.locked),
+      bowl: seat.dice.filter(dice => !dice.keep && !dice.locked)
     }
   }
 
-  return { row: faceOffRow(seat.dice, other.dice, seat.started), bowl: [] }
+  return {
+    kind: "faceoff",
+    row: faceOffRow(seat.dice, other.dice, seat.started),
+    stage: [],
+    bowl: []
+  }
 }
 
 export function continueLabel(model) {
