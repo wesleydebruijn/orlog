@@ -23,6 +23,14 @@ const BOWL_RADIUS = 9.2
 const TUMBLE_TIME = 1.0
 const SETTLE_TIME = 0.4
 
+// A die marked to keep moves out of the bowl into a column beside it (seat-local
+// coordinates, between the bowl and the favor plaques)
+const STAGE_X = 13.8
+const STAGE_Z = 10.5
+
+const COMMIT_STAGGER = 0.12
+const REORDER_STAGGER = 0.08
+
 const UP = new THREE.Vector3(0, 1, 0)
 
 const hash = id => {
@@ -31,18 +39,51 @@ const hash = id => {
   return h
 }
 const jitter = (id, salt, amount) => (((hash(id) * (salt + 3)) % 1000) / 1000 - 0.5) * 2 * amount
-const ease = t => 1 - Math.pow(1 - t, 3)
+
+export const easeOut = t => 1 - Math.pow(1 - t, 3)
+export const easeIn = t => t * t
+export const easeInOut = t => t * t * (3 - 2 * t)
+
+/**
+ * Keyframes for lifting a die, carrying it over to `to` and setting it down.
+ * Every keyframe is {pos?, quat?, scale?, duration, delay?, ease?}, see Die#animate.
+ */
+export function arc(from, to, quat, scale, { delay = 0, height = 4, travel = 0.4 } = {}) {
+  const lift = from.clone()
+  lift.y = Math.max(from.y, to.y) + height
+  const over = to.clone()
+  over.y += height
+  return [
+    { pos: lift, duration: 0.14, delay, ease: easeOut },
+    { pos: over, quat, scale, duration: travel, ease: easeInOut },
+    { pos: to.clone(), quat, scale, duration: 0.14, ease: easeIn }
+  ]
+}
+
+/** A small hop in place, for dice that keep their spot while their neighbours move. */
+export function hop(pos, quat, scale, { delay = 0, height = 0.9 } = {}) {
+  const top = pos.clone()
+  top.y += height
+  return [
+    { pos: top, duration: 0.1, delay, ease: easeOut },
+    { pos: pos.clone(), quat, scale, duration: 0.14, ease: easeIn }
+  ]
+}
 
 class Die {
   constructor(id, seat) {
     this.id = id
     this.seat = seat
-    this.mode = "rest"
+    this.mode = "rest" // rest | row | tumble | settle | script
+    this.place = null // where the die lives logically: "bowl" | "stage" | "row"
     this.look = ""
     this.hover = false
     this.dim = false
+    this.spent = false
+    this.keep = false
     this.clickable = false
     this.glow = null // { color, until }
+    this.script = null
 
     this.materials = Array.from(
       { length: 6 },
@@ -85,16 +126,17 @@ class Die {
     this.materials[TOP].needsUpdate = true
   }
 
-  /** Shade the die: dimmed when locked, amber when kept, bright on hover or effects. */
+  /** Shade the die: dimmed when locked or spent, amber pulse when kept, bright on hover or effects. */
   applyLook(now) {
     const glowing = this.glow && this.glow.until > now ? this.glow : null
-    const key = `${this.dim}-${this.hover}-${this.keep}-${glowing ? glowing.color : ""}`
-    if (key === this.look && !glowing) return
+    const pulsing = this.keep && !this.dim
+    const key = `${this.dim}-${this.spent}-${this.hover}-${this.keep}-${glowing ? glowing.color : ""}`
+    if (key === this.look && !glowing && !pulsing) return
     this.look = key
 
-    const shade = this.dim ? 0.74 : 1
+    const shade = this.dim || this.spent ? 0.74 : 1
     const emissive = new THREE.Color(0x000000)
-    if (this.keep && !this.dim) emissive.setHex(0x3a2408)
+    if (pulsing) emissive.setHex(0x3a2408).multiplyScalar(1.1 + 0.5 * Math.sin(now * 5))
     if (this.hover && this.clickable) emissive.setHex(0x5c4a22)
     if (glowing) {
       const pulse = 0.5 + 0.5 * Math.sin(now * 14)
@@ -111,6 +153,79 @@ class Die {
     this.target.quat.copy(quat)
     this.target.scale = scale
   }
+
+  /**
+   * Play keyframes starting from wherever the die is now. Afterwards the die hands back to
+   * following its target, so the last keyframe should be the target pose.
+   * Options: tag (see DiceSet#finishAll), onDone.
+   */
+  animate(steps, { tag = null, onDone = null } = {}) {
+    this.mode = "script"
+    this.script = {
+      steps,
+      i: 0,
+      t: 0,
+      tag,
+      onDone,
+      from: {
+        pos: this.mesh.position.clone(),
+        quat: this.mesh.quaternion.clone(),
+        scale: this.mesh.scale.x
+      }
+    }
+  }
+
+  advance(dt) {
+    const script = this.script
+    script.t += dt
+
+    while (script.i < script.steps.length) {
+      const step = script.steps[script.i]
+      const delay = step.delay ?? 0
+      const duration = Math.max(step.duration ?? 0.2, 0.0001)
+
+      if (script.t < delay + duration) {
+        const p = Math.max(0, (script.t - delay) / duration)
+        const eased = (step.ease ?? easeInOut)(p)
+        const { from } = script
+        this.mesh.position.lerpVectors(from.pos, step.pos ?? from.pos, eased)
+        this.mesh.quaternion.slerpQuaternions(from.quat, step.quat ?? from.quat, eased)
+        this.mesh.scale.setScalar(from.scale + ((step.scale ?? from.scale) - from.scale) * eased)
+        return
+      }
+
+      script.t -= delay + duration
+      script.from = {
+        pos: (step.pos ?? script.from.pos).clone(),
+        quat: (step.quat ?? script.from.quat).clone(),
+        scale: step.scale ?? script.from.scale
+      }
+      script.i++
+    }
+
+    const { from, onDone } = script
+    this.mesh.position.copy(from.pos)
+    this.mesh.quaternion.copy(from.quat)
+    this.mesh.scale.setScalar(from.scale)
+    this.script = null
+    this.mode = this.place === "bowl" ? "rest" : "row"
+    onDone?.()
+  }
+
+  /** Jump to the end of the running script. */
+  finish() {
+    if (!this.script) return
+    this.script.t = Infinity
+    this.advance(0)
+  }
+
+  /** Ease towards the target pose. */
+  follow(k) {
+    const { mesh, target } = this
+    mesh.position.lerp(target.pos, k)
+    mesh.quaternion.slerp(target.quat, k)
+    mesh.scale.setScalar(mesh.scale.x + (target.scale - mesh.scale.x) * k)
+  }
 }
 
 /**
@@ -123,6 +238,9 @@ export class DiceSet {
     this.seat = seat // { name, side, bowl: Vector3, rowZ }
     this.dice = new Map()
     this.prevRolled = null
+    this.rowKind = null // "roll" | "faceoff", the layout the row was last placed for
+    this.lockOrder = [] // ids in the order they were committed to the row
+    this.stageOrder = [] // ids in the order they were picked to keep
     this.time = 0
 
     this.world = new CANNON.World({ gravity: new CANNON.Vec3(0, GRAVITY, 0) })
@@ -181,15 +299,42 @@ export class DiceSet {
   }
 
   /**
-   * @param layout {row, bowl} entries from state.layoutDice
-   * @param ctx {rolled, fresh, dimLocked, clickable: id => boolean}
+   * Entries in the order they entered a zone (the row or the stage); new ones are appended
+   * and the ones that left are forgotten. `name` is the list that remembers the order.
+   */
+  keepOrder(name, entries) {
+    const ids = new Set(entries.map(entry => entry.id))
+    this[name] = this[name].filter(id => ids.has(id))
+    for (const entry of entries) if (!this[name].includes(entry.id)) this[name].push(entry.id)
+    return this[name].map(id => entries.find(entry => entry.id === id))
+  }
+
+  /** Spot `index` in the column beside the bowl where dice marked to keep wait. */
+  stageSlot(index, total) {
+    const spacing = Math.min(4.8, 24 / Math.max(total, 1))
+    const scale = Math.min(1, spacing / 4.9)
+    return {
+      scale,
+      pos: new THREE.Vector3(
+        STAGE_X,
+        (DICE_SIZE * scale) / 2 + 0.02,
+        STAGE_Z + index * spacing
+      )
+    }
+  }
+
+  /**
+   * @param layout {kind, row, stage, bowl} from state.layoutDice
+   * @param ctx {rolled, fresh, dimLocked, clickable: entry => boolean}
    */
   sync(layout, ctx) {
-    const { row, bowl } = layout
+    const { kind, bowl } = layout
+    const row = kind === "roll" ? this.keepOrder("lockOrder", layout.row) : layout.row
+    const stage = this.keepOrder("stageOrder", layout.stage)
     const justRolled = this.prevRolled === false && ctx.rolled === true
     this.prevRolled = ctx.rolled
 
-    const wanted = new Set([...row, ...bowl].filter(e => !e.placeholder).map(e => e.id))
+    const wanted = new Set([...row, ...stage, ...bowl].filter(e => !e.placeholder).map(e => e.id))
     for (const [id, die] of this.dice) {
       if (!wanted.has(id)) {
         this.release(die)
@@ -209,42 +354,103 @@ export class DiceSet {
       return die
     }
 
-    // The row, left to right on screen for both players
-    const count = row.length
-    const spacing = Math.min(5.3, 56 / Math.max(count, 1))
+    // --- the row: fixed slots, the same left to right on screen for both players. While
+    // rolling there is one slot per die, so dice never shift when another one joins.
+    const reorder = this.rowKind !== null && this.rowKind !== kind
+    this.rowKind = kind
+
+    const total = row.length + stage.length + bowl.length
+    const slots = kind === "roll" ? total : row.length
+    const spacing = Math.min(5.3, 56 / Math.max(slots, 1))
     const scale = Math.min(1, spacing / 4.9)
+    const arrivals = []
+
     row.forEach((entry, i) => {
       if (entry.placeholder) return
       const die = ensure(entry.id)
-      const worldX = (i - (count - 1) / 2) * spacing
       const pos = new THREE.Vector3(
-        this.seat.side * worldX,
+        this.seat.side * (i - (slots - 1) / 2) * spacing,
         (DICE_SIZE * scale) / 2 + 0.02,
         this.seat.rowZ
       )
-      this.release(die)
-      die.mode = "row"
-      die.moveTo(pos, this.upright(jitter(entry.id, 2, 0.06)), scale)
+      const quat = this.upright(jitter(entry.id, 2, 0.06))
       this.decorate(die, entry, false, ctx)
+
+      const arrived = die.place === "row" && die.target.pos.distanceTo(pos) < 0.01
+      if (die.snap || (arrived && !reorder)) {
+        // new, or already in its slot: nothing to animate
+        die.place = "row"
+        if (die.mode === "rest" || die.mode === "init") die.mode = "row"
+        die.moveTo(pos, quat, scale)
+      } else {
+        arrivals.push({ die, pos, quat, scale, moved: !arrived })
+      }
     })
 
+    this.place(arrivals, "row", reorder)
+
+    // --- the stage: dice marked to keep wait in a column beside the bowl, in the order
+    // they were picked; when one is put back the ones after it move up
+    const staged = []
+    stage.forEach((entry, i) => {
+      const die = ensure(entry.id)
+      const { pos, scale: stageScale } = this.stageSlot(i, total)
+      const quat = this.upright(die.restYaw)
+      this.decorate(die, entry, false, ctx)
+
+      if (die.snap || (die.place === "stage" && die.target.pos.distanceTo(pos) < 0.01)) {
+        die.place = "stage"
+        if (die.mode === "rest") die.mode = "row"
+        die.moveTo(pos, quat, stageScale)
+      } else {
+        staged.push({ die, pos, quat, scale: stageScale, moved: true })
+      }
+    })
+
+    this.place(staged, "stage")
+
+    // --- the bowl: dice stay where they landed until the next throw
+    const comeBack = []
     bowl.forEach((entry, i) => {
       const die = ensure(entry.id)
       const spot = this.restSpot(i, bowl.length)
-      const blank = ctx.fresh
-      this.decorate(die, entry, blank, ctx)
+      this.decorate(die, entry, ctx.fresh, ctx)
 
       if (justRolled) {
+        die.place = "bowl"
         this.throwDie(die, i, spot)
-      } else if (die.mode === "row") {
+      } else if (die.place !== "bowl" && !die.snap) {
+        comeBack.push({ die, spot })
+      } else if (die.snap || !die.restSpot) {
+        die.place = "bowl"
         die.mode = "rest"
+        die.restSpot = spot
         die.moveTo(spot, this.upright(die.restYaw), 1)
-      } else if (die.mode === "rest" || die.mode === "init") {
-        die.mode = "rest"
-        die.moveTo(spot, this.upright(die.restYaw), 1)
-      } else {
-        die.restSpot = spot // tumbling dice settle onto their (possibly new) spot
+      } else if (die.mode === "rest") {
+        die.moveTo(die.restSpot, this.upright(die.restYaw), 1)
       }
+    })
+
+    // A die put back from the stage returns to the spot where it landed. When the dice come
+    // back from the row (a new round) the bowl is laid out afresh, one after another.
+    let fromRow = 0
+    comeBack.forEach(({ die, spot }) => {
+      const fromStage = die.place === "stage" && die.restSpot
+      const target = fromStage ? die.restSpot : spot
+      const quat = this.upright(die.restYaw)
+      const delay = fromStage ? 0 : fromRow++ * COMMIT_STAGGER
+
+      die.place = "bowl"
+      die.restSpot = target
+      this.release(die)
+      die.moveTo(target, quat, 1)
+      die.animate(
+        arc(die.mesh.position, target, quat, 1, {
+          delay,
+          height: fromStage ? 3 : 5,
+          travel: fromStage ? 0.3 : 0.45
+        })
+      )
     })
 
     // Dice that just appeared don't fly in from the void
@@ -258,9 +464,44 @@ export class DiceSet {
     }
   }
 
+  /**
+   * Move dice into their slots in the row or on the stage. Dice committed to the row go
+   * one after another in commit order; when the row is rearranged for the face-off the
+   * dice with the furthest to go move first, and dice that stay put hop in place. Dice
+   * picked for the stage move at once, with a short arc.
+   */
+  place(arrivals, zone, reorder = false) {
+    if (reorder) {
+      arrivals.forEach(a => (a.dist = a.moved ? a.die.mesh.position.distanceTo(a.pos) : 0))
+      arrivals.sort((a, b) => b.dist - a.dist)
+    }
+
+    arrivals.forEach((a, k) => {
+      const { die, pos, quat, scale } = a
+      const delay = zone === "stage" ? 0 : k * (reorder ? REORDER_STAGGER : COMMIT_STAGGER)
+      const distance = die.mesh.position.distanceTo(pos)
+
+      die.place = zone
+      this.release(die)
+      die.moveTo(pos, quat, scale)
+
+      if (a.moved) {
+        die.animate(
+          arc(die.mesh.position, pos, quat, scale, {
+            delay,
+            height: zone === "stage" ? 3 : 4 + Math.min(distance * 0.05, 3),
+            travel: zone === "stage" ? 0.3 : 0.3 + Math.min(distance * 0.012, 0.35)
+          })
+        )
+      } else {
+        die.animate(hop(pos, quat, scale, { delay }))
+      }
+    })
+  }
+
   decorate(die, entry, blank, ctx) {
     die.setFace(entry.face, entry.tokens, blank)
-    die.keep = entry.keep
+    die.keep = Boolean(entry.keep && !entry.locked)
     die.dim = ctx.dimLocked && entry.locked
     die.clickable = ctx.clickable(entry)
   }
@@ -297,6 +538,7 @@ export class DiceSet {
     this.world.addBody(body)
 
     die.body = body
+    die.script = null
     die.mode = "tumble"
     die.tumbleTime = 0
     die.restSpot = spot
@@ -337,24 +579,27 @@ export class DiceSet {
         }
         case "settle": {
           die.settleTime += dt
-          const t = ease(Math.min(die.settleTime / SETTLE_TIME, 1))
+          const t = easeOut(Math.min(die.settleTime / SETTLE_TIME, 1))
           mesh.position.lerpVectors(die.from.pos, target.pos, t)
           mesh.quaternion.slerpQuaternions(die.from.quat, target.quat, t)
           if (die.settleTime >= SETTLE_TIME) die.mode = "rest"
           break
         }
-        default: {
-          const distance = mesh.position.distanceTo(target.pos)
-          mesh.position.lerp(target.pos, k)
-          mesh.quaternion.slerp(target.quat, k)
-          const s = mesh.scale.x + (target.scale - mesh.scale.x) * k
-          mesh.scale.setScalar(s)
-          // little hop while travelling between the bowl and the row
-          mesh.position.y += Math.min(distance * 0.06, 1.2) * Math.min(1, distance / 2)
-        }
+        case "script":
+          die.advance(dt)
+          break
+        default:
+          die.follow(k)
       }
 
       die.applyLook(now)
+    }
+  }
+
+  /** Jump running scripts to their end. With a tag, only the scripts started with it. */
+  finishAll(tag = null) {
+    for (const die of this.dice.values()) {
+      if (die.script && (tag === null || die.script.tag === tag)) die.finish()
     }
   }
 
@@ -365,5 +610,15 @@ export class DiceSet {
   glow(id, color, seconds, now) {
     const die = this.dice.get(id)
     if (die) die.glow = { color, until: now + seconds }
+  }
+
+  /** Dim a die for the rest of a resolution step, e.g. after its attack was blocked. */
+  markSpent(id) {
+    const die = this.dice.get(id)
+    if (die) die.spent = true
+  }
+
+  clearSpent() {
+    for (const die of this.dice.values()) die.spent = false
   }
 }

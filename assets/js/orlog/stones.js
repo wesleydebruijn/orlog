@@ -11,7 +11,9 @@ export class Stones {
   constructor(parent, { origin, seed }) {
     this.parent = parent
     this.origin = origin
-    this.count = null
+    this.count = null // stones on show
+    this.goal = null // stones once the queued losses have happened
+    this.queue = []
     this.flyers = []
 
     const random = rng(seed)
@@ -55,8 +57,37 @@ export class Stones {
     return new THREE.Vector3(stone.x, 0.55 * stone.size, stone.z)
   }
 
-  set(count) {
+  /**
+   * Set the health. With `delays` (seconds from now) the stones don't all leave at once:
+   * the pile shrinks one stone at a time, spread over those moments, so a stone can
+   * fly off exactly when the hit that took it lands. Without them it happens right away.
+   */
+  set(count, delays = []) {
     const next = Math.max(0, Math.min(count, CAPACITY))
+    if (next === this.goal) return
+
+    const first = this.goal === null
+    this.goal = next
+    this.queue = []
+    if (first || !delays.length || next >= this.count) return this.show(next)
+
+    const lost = this.count - next
+    const times = [...delays].sort((a, b) => a - b)
+    for (let i = 0; i < lost; i++) {
+      const at = times[Math.min(Math.floor((i * times.length) / lost), times.length - 1)]
+      this.queue.push({ t: at, value: this.count - 1 - i })
+    }
+  }
+
+  /** Apply whatever is still waiting for its moment. */
+  flush() {
+    if (!this.queue.length) return
+    const last = this.queue[this.queue.length - 1]
+    this.queue = []
+    this.show(last.value)
+  }
+
+  show(next) {
     if (this.count !== null && next < this.count) {
       for (let i = next; i < this.count; i++) this.fly(i)
       // the stone vanishes from the pile instantly, the flyer takes over
@@ -92,6 +123,9 @@ export class Stones {
   }
 
   update(dt) {
+    this.queue.forEach(item => (item.t -= dt))
+    while (this.queue.length && this.queue[0].t <= 0) this.show(this.queue.shift().value)
+
     for (let i = this.flyers.length - 1; i >= 0; i--) {
       const flyer = this.flyers[i]
       flyer.t += dt / 0.9

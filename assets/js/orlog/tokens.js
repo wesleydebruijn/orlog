@@ -15,7 +15,9 @@ export class Tokens {
   constructor(parent, { origin, tint }) {
     this.parent = parent
     this.origin = origin
-    this.count = null
+    this.count = null // tokens on show
+    this.goal = null // tokens once the queued changes have happened
+    this.queue = []
     this.scales = new Array(CAPACITY).fill(0)
     this.flyers = []
 
@@ -48,19 +50,50 @@ export class Tokens {
     )
   }
 
-  set(count) {
+  /**
+   * Set the token count. With `delays` (seconds from now) the pile changes one token at a
+   * time at those moments, e.g. when a stolen token leaves or lands; without them it
+   * happens right away. `quiet` skips the float-away effect for tokens that are leaving.
+   */
+  set(count, delays = [], quiet = false) {
     const next = Math.max(0, Math.min(count, CAPACITY))
+    if (next === this.goal) return
+
+    const first = this.goal === null
+    this.goal = next
+    this.queue = []
+    if (first || !delays.length) return this.show(next, quiet)
+
+    const from = this.count
+    const dir = next > from ? 1 : -1
+    const steps = Math.abs(next - from)
+    const times = [...delays].sort((a, b) => a - b)
+    for (let i = 0; i < steps; i++) {
+      const at = times[Math.min(Math.floor((i * times.length) / steps), times.length - 1)]
+      this.queue.push({ t: at, value: from + dir * (i + 1), quiet })
+    }
+  }
+
+  /** Apply whatever is still waiting for its moment. */
+  flush() {
+    if (!this.queue.length) return
+    const last = this.queue[this.queue.length - 1]
+    this.queue = []
+    this.show(last.value, last.quiet)
+  }
+
+  show(next, quiet = false) {
     if (this.count !== null && next < this.count) {
       for (let i = next; i < this.count; i++) {
         this.scales[i] = 0
-        this.fly(i)
+        if (!quiet) this.fly(i)
       }
     }
     if (this.count === null) this.scales = this.scales.map((_, i) => (i < next ? 1 : 0))
 
     if (this.count !== next) {
       this.label.material.map?.dispose()
-      this.label.material.map = labelTexture(String(count))
+      this.label.material.map = labelTexture(String(next))
       this.label.material.needsUpdate = true
     }
     this.count = next
@@ -77,6 +110,12 @@ export class Tokens {
   }
 
   update(dt) {
+    this.queue.forEach(item => (item.t -= dt))
+    while (this.queue.length && this.queue[0].t <= 0) {
+      const { value, quiet } = this.queue.shift()
+      this.show(value, quiet)
+    }
+
     for (let i = this.flyers.length - 1; i >= 0; i--) {
       const flyer = this.flyers[i]
       flyer.t += dt / 0.8

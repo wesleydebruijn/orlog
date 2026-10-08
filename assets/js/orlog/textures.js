@@ -43,7 +43,8 @@ export function drawIcon(ctx, name, cx, cy, size) {
   ctx.save()
   ctx.translate(cx - (w * scale) / 2, cy - (h * scale) / 2)
   ctx.scale(scale, scale)
-  icon.paths.forEach(d => ctx.fill(new Path2D(d)))
+  const rule = icon.evenodd ? "evenodd" : "nonzero"
+  icon.paths.forEach(d => ctx.fill(new Path2D(d), rule))
   ctx.restore()
 }
 
@@ -174,8 +175,6 @@ export function bowlBumpTexture() {
 // --- dice -------------------------------------------------------------------
 
 const FACE_SIZE = 256
-const GOLD = "#c98a14"
-
 /** Texture for one dice face. `blank` is an unrolled die, nothing carved yet. */
 export function faceTexture({ type, stance, tokens = false, disabled = false, blank = false }) {
   const key = `face-${blank ? "blank" : `${type}-${stance}-${tokens}-${disabled}`}`
@@ -194,16 +193,23 @@ export function faceTexture({ type, stance, tokens = false, disabled = false, bl
     if (!blank) {
       const name = `${type}_${stance}`
       ctx.fillStyle = "rgba(255,255,255,0.7)"
-      drawIcon(ctx, name, S / 2 + 2, S / 2 + 3, 150)
-      ctx.fillStyle = tokens ? GOLD : "#33241a"
-      drawIcon(ctx, name, S / 2, S / 2, 150)
+      drawIcon(ctx, name, S / 2 + 2, S / 2 + 3, 138)
+      ctx.fillStyle = "#33241a"
+      drawIcon(ctx, name, S / 2, S / 2, 138)
 
+      // A face that gives tokens is edged with a dashed black border. The rounded die maps
+      // only the middle ~77% of the texture onto the flat face (see RoundedBoxGeometry); the
+      // outer 11.5% bends around the edge. The border starts just inside that bend, so it
+      // hugs the edge without wrapping onto the sides.
       if (tokens) {
-        ctx.strokeStyle = GOLD
-        ctx.lineWidth = 7
-        ctx.beginPath()
-        ctx.arc(S / 2, S / 2, 112, 0, Math.PI * 2)
-        ctx.stroke()
+        const inset = 28
+        ctx.save()
+        ctx.strokeStyle = "#0a0a0a"
+        ctx.lineWidth = 16
+        ctx.lineCap = "butt"
+        ctx.setLineDash([44, 22.67]) // 3 dashes per side
+        ctx.strokeRect(inset, inset, S - inset * 2, S - inset * 2)
+        ctx.restore()
       }
 
       if (disabled) {
@@ -336,6 +342,27 @@ export function glyphTexture(name, color = "#ffffff") {
     ctx.shadowBlur = 14
     ctx.fillStyle = color
     drawIcon(ctx, name, 64, 64, 92)
+    return toTexture(canvas)
+  })
+}
+
+/** A soft white ring with a bright core, for clash and impact flashes. */
+export function ringTexture() {
+  return cached("ring", () => {
+    const [canvas, ctx] = makeCanvas(128, 128)
+    const glow = ctx.createRadialGradient(64, 64, 0, 64, 64, 64)
+    glow.addColorStop(0, "rgba(255,255,255,0.9)")
+    glow.addColorStop(0.25, "rgba(255,255,255,0.25)")
+    glow.addColorStop(0.62, "rgba(255,255,255,0)")
+    ctx.fillStyle = glow
+    ctx.fillRect(0, 0, 128, 128)
+    ctx.shadowColor = "#fff"
+    ctx.shadowBlur = 8
+    ctx.strokeStyle = "#fff"
+    ctx.lineWidth = 6
+    ctx.beginPath()
+    ctx.arc(64, 64, 46, 0, Math.PI * 2)
+    ctx.stroke()
     return toTexture(canvas)
   })
 }

@@ -8,6 +8,9 @@ defmodule Game.Lobby do
   }
 
   @pids 2
+  @default_delay 1500
+  @beat_lead 500
+  @beat 650
   @type t :: %Lobby{
           uuid: String.t(),
           turn: integer(),
@@ -57,6 +60,36 @@ defmodule Game.Lobby do
     state.game.settings.phases
     |> Map.get(state.game.phase)
     |> Map.get(:auto, false)
+  end
+
+  @doc """
+  Milliseconds to wait before the next automatic step. The attack and steal steps of the
+  resolution phase play out one die at a time on the client, so they get a beat for every
+  die that takes part (counting each of its hits); every other step takes the default.
+  """
+  @spec auto_turn_delay(Lobby.t()) :: integer()
+  def auto_turn_delay(%{game: %{phase: phase, settings: settings} = game}) do
+    with %{module: Game.Phase.Resolution} <- Map.get(settings.phases, phase),
+         %{turns: turns} = player <- Game.Turn.get_player(game) do
+      case turns do
+        4 -> beat_delay(player, :attack)
+        3 -> beat_delay(player, :steal)
+        _other -> @default_delay
+      end
+    else
+      _other -> @default_delay
+    end
+  end
+
+  defp beat_delay(player, stance) do
+    beats =
+      player.dices
+      |> Map.values()
+      |> Enum.filter(&(Game.Dice.stance?(&1, stance) && !&1.face.disabled))
+      |> Enum.map(&max(&1.face.count, 1))
+      |> Enum.sum()
+
+    max(@default_delay, @beat_lead + @beat * beats)
   end
 
   @spec try_to_start(Lobby.t()) :: Lobby.t()

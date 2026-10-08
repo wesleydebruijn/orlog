@@ -133,15 +133,24 @@ export class Table {
     this.model = model
     const interactive = model.hasTurn && model.phase === PHASE.ROLL
 
+    // The face-off goes first: on a new resolution step it plans the beats, and the
+    // impact times it works out decide when stones and tokens leave the piles.
+    const stepChanged = this.faceoff.update(model)
+
     for (const [key, other] of [
       ["me", "opp"],
       ["opp", "me"]
     ]) {
       const seat = this.seats[key]
       const player = model[key]
+      const plan = this.faceoff.plan[key]
 
-      seat.stones.set(player.health)
-      seat.tokens.set(player.tokens)
+      if (stepChanged) {
+        seat.stones.flush()
+        seat.tokens.flush()
+      }
+      seat.stones.set(player.health, plan.stones)
+      seat.tokens.set(player.tokens, plan.tokens, plan.quiet)
       seat.plaques.set(player.favors, model.settings.favors, player.invokedFavor, key)
 
       seat.dice.sync(layoutDice(model, player, model[other]), {
@@ -151,8 +160,6 @@ export class Table {
         clickable: entry => key === "me" && interactive && player.rolled && !entry.locked
       })
     }
-
-    this.faceoff.update(model)
   }
 
   frame(dt, now) {
