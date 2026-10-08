@@ -6,22 +6,48 @@ import { faceTexture } from "./textures"
 export const DICE_SIZE = 4
 const geometry = new RoundedBoxGeometry(DICE_SIZE, DICE_SIZE, DICE_SIZE, 3, 0.55)
 
-// Box groups are ordered +x, -x, +y, -y, +z, -z. The +y face carries the rolled result;
-// the other five are decoration, so a tumbling die shows a mix of symbols.
-const TOP = 2
-const DECOR_SLOTS = [0, 1, 3, 4, 5]
+// Box groups are ordered +x, -x, +y, -y, +z, -z. Whichever face lands on top carries the
+// rolled result; the other five are decoration, so a tumbling die shows a mix of symbols.
 const DECOR_FACES = [
   { type: "melee", stance: "attack", tokens: false },
   { type: "ranged", stance: "block", tokens: false },
   { type: "ranged", stance: "attack", tokens: true },
   { type: "melee", stance: "block", tokens: true },
-  { type: "token", stance: "steal", tokens: false }
+  { type: "token", stance: "steal", tokens: false },
+  { type: "melee", stance: "attack", tokens: true }
 ]
+
+// [normal, texture right, texture up] of each box group in the die's local frame
+const FACE_FRAMES = [
+  [[1, 0, 0], [0, 0, -1], [0, 1, 0]],
+  [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],
+  [[0, 1, 0], [1, 0, 0], [0, 0, -1]],
+  [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
+  [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
+  [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
+].map(frame => frame.map(v => new THREE.Vector3(...v)))
+const NORMALS = FACE_FRAMES.map(([normal]) => normal)
+
+// Rotation that turns a face up with its symbol facing the player, like the +y face unrotated
+const SLOT_UP = FACE_FRAMES.map(([normal, right, up]) => {
+  const basis = new THREE.Matrix4().makeBasis(right, normal, up.clone().negate())
+  return new THREE.Quaternion().setFromRotationMatrix(basis).invert()
+})
+const DEFAULT_TOP = 2
 
 const GRAVITY = -80
 const BOWL_RADIUS = 9.2
-const TUMBLE_TIME = 1.0
-const SETTLE_TIME = 0.4
+const STEP = 1 / 60
+const MAX_SIM_TIME = 4.5
+const MAX_NUDGES = 2
+const MIN_SIM_TIME = 0.6
+const LAND_BLEND = 0.3
+const PLAYBACK_SPEED = 1.4
+const THROW_ATTEMPTS = 4
+// a die leaning on a neighbour still counts as landed, it is laid flat at the end
+const FLAT_COS = Math.cos((25 * Math.PI) / 180)
+const FLOOR_SLACK = 1
+const DICE_GAP = DICE_SIZE * 1.15
 
 // A die marked to keep moves out of the bowl into a column beside it (seat-local
 // coordinates, between the bowl and the favor plaques)
@@ -34,9 +60,10 @@ const REORDER_STAGGER = 0.08
 const UP = new THREE.Vector3(0, 1, 0)
 
 const hash = id => {
-  let h = 0
-  for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0
-  return h
+  let h = 2166136261
+  for (const ch of String(id)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
+  h = Math.imul(h ^ (h >>> 16), 0x45d9f3b)
+  return (h ^ (h >>> 16)) >>> 0
 }
 const jitter = (id, salt, amount) => (((hash(id) * (salt + 3)) % 1000) / 1000 - 0.5) * 2 * amount
 
@@ -74,7 +101,7 @@ class Die {
   constructor(id, seat) {
     this.id = id
     this.seat = seat
-    this.mode = "rest" // rest | row | tumble | settle | script
+    this.mode = "rest" // rest | row | tumble | script
     this.place = null // where the die lives logically: "bowl" | "stage" | "row"
     this.look = ""
     this.hover = false
@@ -94,12 +121,10 @@ class Die {
           emissive: 0x000000
         })
     )
-    const order = DECOR_FACES.map((face, i) => [hash(`${id}-${i}`), face]).sort(
-      (a, b) => a[0] - b[0]
-    )
-    DECOR_SLOTS.forEach((slot, i) => {
-      this.materials[slot].map = faceTexture({ ...order[i][1], disabled: false })
-    })
+    this.decor = DECOR_FACES.map((face, i) => [hash(`${id}-${i}`), face])
+      .sort((a, b) => a[0] - b[0])
+      .map(([, face]) => faceTexture({ ...face, disabled: false }))
+    this.decor.forEach((texture, slot) => (this.materials[slot].map = texture))
 
     this.mesh = new THREE.Mesh(geometry, this.materials)
     this.mesh.castShadow = true
@@ -107,23 +132,36 @@ class Die {
     this.mesh.userData = { kind: "die", seat: seat.name, id }
 
     this.target = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), scale: 1 }
+    this.topSlot = DEFAULT_TOP
     this.restYaw = jitter(id, 1, 0.5)
+    this.restSpot = null
+    this.restQuat = null
+    this.track = null
     this.mesh.position.set(0, -10, 0)
     this.snap = true
   }
 
-  setFace(face, tokens, blank) {
-    const key = blank ? "blank" : `${face.type}-${face.stance}-${tokens > 0}-${face.disabled}`
+  /** Put the rolled face on `topSlot` and decoration everywhere else; no result shows decoration only. */
+  paint(face, tokens) {
+    const key = face ? `${this.topSlot}-${face.type}-${face.stance}-${tokens > 0}-${face.disabled}` : "decor"
     if (key === this.faceKey) return
     this.faceKey = key
-    this.materials[TOP].map = faceTexture({
-      type: face.type,
-      stance: face.stance,
-      tokens: tokens > 0,
-      disabled: face.disabled,
-      blank
+    this.materials.forEach((material, slot) => {
+      material.map =
+        face && slot === this.topSlot
+          ? faceTexture({
+              type: face.type,
+              stance: face.stance,
+              tokens: tokens > 0,
+              disabled: face.disabled
+            })
+          : this.decor[slot]
     })
-    this.materials[TOP].needsUpdate = true
+  }
+
+  /** Resting pose with the top face up, turned by `yaw` around the vertical. */
+  pose(yaw) {
+    return new THREE.Quaternion().setFromAxisAngle(UP, yaw).multiply(SLOT_UP[this.topSlot])
   }
 
   /** Shade the die: dimmed when locked or spent, amber pulse when kept, bright on hover or effects. */
@@ -242,35 +280,37 @@ export class DiceSet {
     this.lockOrder = [] // ids in the order they were committed to the row
     this.stageOrder = [] // ids in the order they were picked to keep
     this.time = 0
-
-    this.world = new CANNON.World({ gravity: new CANNON.Vec3(0, GRAVITY, 0) })
-    this.world.defaultContactMaterial.restitution = 0.35
-    this.world.defaultContactMaterial.friction = 0.35
-    this.buildBowlColliders()
   }
 
-  buildBowlColliders() {
+  /** A physics world holding just the bowl, for simulating one throw. */
+  bowlWorld() {
+    const world = new CANNON.World({ gravity: new CANNON.Vec3(0, GRAVITY, 0) })
+    world.allowSleep = true
+    world.defaultContactMaterial.restitution = 0.35
+    world.defaultContactMaterial.friction = 0.35
+
     const { bowl } = this.seat
     const floor = new CANNON.Body({ mass: 0, shape: new CANNON.Plane() })
     floor.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
     floor.position.set(0, bowl.y, 0)
-    this.world.addBody(floor)
+    world.addBody(floor)
 
     const walls = 20
     for (let i = 0; i < walls; i++) {
       const theta = (i / walls) * Math.PI * 2
       const wall = new CANNON.Body({
         mass: 0,
-        shape: new CANNON.Box(new CANNON.Vec3(2.4, 8, 0.6))
+        shape: new CANNON.Box(new CANNON.Vec3(2.4, 20, 0.6))
       })
       wall.position.set(
         bowl.x + Math.cos(theta) * (BOWL_RADIUS + 0.6),
-        bowl.y + 8,
+        bowl.y + 20,
         bowl.z + Math.sin(theta) * (BOWL_RADIUS + 0.6)
       )
       wall.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2 - theta)
-      this.world.addBody(wall)
+      world.addBody(wall)
     }
+    return world
   }
 
   meshes() {
@@ -337,7 +377,6 @@ export class DiceSet {
     const wanted = new Set([...row, ...stage, ...bowl].filter(e => !e.placeholder).map(e => e.id))
     for (const [id, die] of this.dice) {
       if (!wanted.has(id)) {
-        this.release(die)
         this.parent.remove(die.mesh)
         die.materials.forEach(m => m.dispose())
         this.dice.delete(id)
@@ -373,7 +412,7 @@ export class DiceSet {
         (DICE_SIZE * scale) / 2 + 0.02,
         this.seat.rowZ
       )
-      const quat = this.upright(jitter(entry.id, 2, 0.06))
+      const quat = die.pose(jitter(entry.id, 2, 0.06))
       this.decorate(die, entry, false, ctx)
 
       const arrived = die.place === "row" && die.target.pos.distanceTo(pos) < 0.01
@@ -395,7 +434,7 @@ export class DiceSet {
     stage.forEach((entry, i) => {
       const die = ensure(entry.id)
       const { pos, scale: stageScale } = this.stageSlot(i, total)
-      const quat = this.upright(die.restYaw)
+      const quat = die.pose(die.restYaw)
       this.decorate(die, entry, false, ctx)
 
       if (die.snap || (die.place === "stage" && die.target.pos.distanceTo(pos) < 0.01)) {
@@ -410,6 +449,8 @@ export class DiceSet {
     this.place(staged, "stage")
 
     // --- the bowl: dice stay where they landed until the next throw
+    if (justRolled) this.throwAll(bowl.map(entry => ensure(entry.id)))
+
     const comeBack = []
     bowl.forEach((entry, i) => {
       const die = ensure(entry.id)
@@ -418,16 +459,16 @@ export class DiceSet {
 
       if (justRolled) {
         die.place = "bowl"
-        this.throwDie(die, i, spot)
       } else if (die.place !== "bowl" && !die.snap) {
         comeBack.push({ die, spot })
       } else if (die.snap || !die.restSpot) {
         die.place = "bowl"
         die.mode = "rest"
         die.restSpot = spot
-        die.moveTo(spot, this.upright(die.restYaw), 1)
+        die.restQuat = die.pose(die.restYaw)
+        die.moveTo(spot, die.restQuat, 1)
       } else if (die.mode === "rest") {
-        die.moveTo(die.restSpot, this.upright(die.restYaw), 1)
+        die.moveTo(die.restSpot, die.restQuat, 1)
       }
     })
 
@@ -437,12 +478,12 @@ export class DiceSet {
     comeBack.forEach(({ die, spot }) => {
       const fromStage = die.place === "stage" && die.restSpot
       const target = fromStage ? die.restSpot : spot
-      const quat = this.upright(die.restYaw)
+      const quat = fromStage ? die.restQuat : die.pose(die.restYaw)
       const delay = fromStage ? 0 : fromRow++ * COMMIT_STAGGER
 
       die.place = "bowl"
       die.restSpot = target
-      this.release(die)
+      die.restQuat = quat
       die.moveTo(target, quat, 1)
       die.animate(
         arc(die.mesh.position, target, quat, 1, {
@@ -482,7 +523,6 @@ export class DiceSet {
       const distance = die.mesh.position.distanceTo(pos)
 
       die.place = zone
-      this.release(die)
       die.moveTo(pos, quat, scale)
 
       if (a.moved) {
@@ -499,92 +539,264 @@ export class DiceSet {
     })
   }
 
-  decorate(die, entry, blank, ctx) {
-    die.setFace(entry.face, entry.tokens, blank)
+  decorate(die, entry, fresh, ctx) {
+    die.paint(fresh ? null : entry.face, entry.tokens)
     die.keep = Boolean(entry.keep && !entry.locked)
     die.dim = ctx.dimLocked && entry.locked
     die.clickable = ctx.clickable(entry)
   }
 
-  upright(yaw) {
-    return new THREE.Quaternion().setFromAxisAngle(UP, yaw)
-  }
+  /**
+   * Throw dice into the bowl. The whole throw is simulated up front, so each die can carry
+   * its result on the face that ends up on top; then it is replayed frame by frame.
+   */
+  throwAll(dice) {
+    if (dice.length === 0) return
+    let best = null
+    for (let attempt = 0; attempt < THROW_ATTEMPTS && best?.misses !== 0; attempt++) {
+      const sim = this.simulate(dice.length)
+      if (!best || sim.misses < best.misses) best = sim
+    }
 
-  throwDie(die, index, spot) {
-    this.release(die)
-    const { bowl } = this.seat
-    const body = new CANNON.Body({
-      mass: 1,
-      shape: new CANNON.Box(new CANNON.Vec3(DICE_SIZE / 2, DICE_SIZE / 2, DICE_SIZE / 2)),
-      linearDamping: 0.08,
-      angularDamping: 0.12
+    const ends = this.landings(best, dice.length)
+    dice.forEach((die, i) => {
+      const end = ends[i]
+      die.script = null
+      die.mode = "tumble"
+      die.topSlot = end.slot
+      die.track = { sim: best, index: i, count: dice.length, t: 0, end }
+      die.restSpot = end.pos
+      die.restQuat = end.quat
+      die.moveTo(end.pos, end.quat, 1)
+      die.mesh.scale.setScalar(1)
     })
-    body.position.set(
-      bowl.x + (Math.random() - 0.5) * 8,
-      bowl.y + 9 + index * 4.3,
-      bowl.z + (Math.random() - 0.5) * 8 + 4
-    )
-    body.velocity.set((Math.random() - 0.5) * 16, -4, -10 - Math.random() * 8)
-    body.angularVelocity.set(
-      (Math.random() - 0.5) * 50,
-      (Math.random() - 0.5) * 50,
-      (Math.random() - 0.5) * 50
-    )
-    body.quaternion.setFromEuler(
-      Math.random() * 6.28,
-      Math.random() * 6.28,
-      Math.random() * 6.28
-    )
-    this.world.addBody(body)
-
-    die.body = body
-    die.script = null
-    die.mode = "tumble"
-    die.tumbleTime = 0
-    die.restSpot = spot
-    die.mesh.scale.setScalar(1)
-    die.target.scale = 1
   }
 
-  release(die) {
-    if (die.body) {
-      this.world.removeBody(die.body)
-      die.body = null
+  /** Run one random throw of `count` dice until they come to rest, recording every step. */
+  simulate(count) {
+    const world = this.bowlWorld()
+    const { bowl } = this.seat
+    const bodies = Array.from({ length: count }, (_, i) => {
+      const body = new CANNON.Body({
+        mass: 1,
+        shape: new CANNON.Box(new CANNON.Vec3(DICE_SIZE / 2, DICE_SIZE / 2, DICE_SIZE / 2)),
+        linearDamping: 0.08,
+        angularDamping: 0.12,
+        sleepSpeedLimit: 1.5,
+        sleepTimeLimit: 0.1
+      })
+      // spread out in a loose ring so the dice don't fall onto each other
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.6
+      body.position.set(
+        bowl.x + Math.cos(angle) * 4.5,
+        bowl.y + 9 + (i % 2) * 5 + Math.random() * 2,
+        bowl.z + Math.sin(angle) * 4.5 + 2
+      )
+      body.velocity.set((Math.random() - 0.5) * 16, -4, -8 - Math.random() * 8)
+      body.angularVelocity.set(
+        (Math.random() - 0.5) * 50,
+        (Math.random() - 0.5) * 50,
+        (Math.random() - 0.5) * 50
+      )
+      body.quaternion.setFromEuler(
+        Math.random() * 6.28,
+        Math.random() * 6.28,
+        Math.random() * 6.28
+      )
+      world.addBody(body)
+      return body
+    })
+
+    const frames = []
+    const record = () => {
+      for (const { position: p, quaternion: q } of bodies) frames.push(p.x, p.y, p.z, q.x, q.y, q.z, q.w)
+    }
+    record()
+    let steps = 1
+    const nudges = new Map()
+    for (let t = 0; t < MAX_SIM_TIME; t += STEP) {
+      world.step(STEP)
+      record()
+      steps++
+
+      // A die that comes to rest on top of another or leaning on the wall is shoved towards free space
+      for (const body of bodies) {
+        if (body.sleepState !== CANNON.Body.SLEEPING || this.flat(body.position, body.quaternion)) continue
+        if ((nudges.get(body) ?? 0) >= MAX_NUDGES) continue
+        nudges.set(body, (nudges.get(body) ?? 0) + 1)
+        const free = this.freeSpot(bodies.filter(other => other !== body).map(other => other.position))
+        const dx = free.x - body.position.x
+        const dz = free.z - body.position.z
+        body.wakeUp()
+        body.velocity.set(dx * 2.5, 8, dz * 2.5)
+        body.angularVelocity.set(dz * 1.5, (Math.random() - 0.5) * 4, -dx * 1.5)
+      }
+
+      if (t >= MIN_SIM_TIME && bodies.every(body => body.sleepState === CANNON.Body.SLEEPING)) break
+    }
+
+    // drop the tail where nothing visibly moves any more
+    const stride = count * 7
+    const last = (steps - 1) * stride
+    const still = step => {
+      for (let o = 0; o < stride; o++) {
+        if (Math.abs(frames[step * stride + o] - frames[last + o]) > 0.01) return false
+      }
+      return true
+    }
+    while (steps > MIN_SIM_TIME / STEP && still(steps - 2)) steps--
+    for (let o = 0; o < stride; o++) frames[(steps - 1) * stride + o] = frames[last + o]
+    frames.length = steps * stride
+
+    const sim = { frames: new Float32Array(frames), steps, misses: 0 }
+    for (let i = 0; i < count; i++) if (!this.landing(sim, i, count).ok) sim.misses++
+    return sim
+  }
+
+  /** The point on the bowl floor furthest from all `others` (positions). */
+  freeSpot(others) {
+    const { bowl } = this.seat
+    const limit = BOWL_RADIUS - DICE_SIZE * 0.7
+    let best = null
+    let room = -Infinity
+    for (let ring = 0; ring <= 3; ring++) {
+      const r = (ring / 3) * limit
+      const around = ring === 0 ? 1 : ring * 8
+      for (let k = 0; k < around; k++) {
+        const angle = (k / around) * Math.PI * 2
+        const spot = new THREE.Vector3(bowl.x + Math.cos(angle) * r, 0, bowl.z + Math.sin(angle) * r)
+        const d = Math.min(...others.map(p => Math.hypot(p.x - spot.x, p.z - spot.z)), Infinity)
+        if (d > room) [best, room] = [spot, d]
+      }
+    }
+    return best
+  }
+
+  /** Pose of die `index` at recorded `step`. */
+  frame(sim, step, index, count, pos, quat) {
+    const o = (step * count + index) * 7
+    const f = sim.frames
+    pos.set(f[o], f[o + 1], f[o + 2])
+    quat.set(f[o + 3], f[o + 4], f[o + 5], f[o + 6])
+  }
+
+  /** The face pointing most upwards for orientation `quat`, and how far up it points (cosine). */
+  topFace({ x, y, z, w }) {
+    const quat = new THREE.Quaternion(x, y, z, w)
+    let slot = 0
+    let up = -Infinity
+    NORMALS.forEach((normal, i) => {
+      const height = normal.clone().applyQuaternion(quat).y
+      if (height > up) [slot, up] = [i, height]
+    })
+    return { slot, up }
+  }
+
+  /** Whether a die at rest in this pose lies (nearly) flat on the bowl floor. */
+  flat(pos, quat) {
+    return (
+      this.topFace(quat).up >= FLAT_COS && pos.y <= this.seat.bowl.y + DICE_SIZE / 2 + FLOOR_SLACK
+    )
+  }
+
+  /** Where die `index` came to rest: the face on top, and that pose laid exactly flat. */
+  landing(sim, index, count) {
+    const pos = new THREE.Vector3()
+    const quat = new THREE.Quaternion()
+    this.frame(sim, sim.steps - 1, index, count, pos, quat)
+
+    const { slot } = this.topFace(quat)
+    const tilt = new THREE.Quaternion().setFromUnitVectors(
+      NORMALS[slot].clone().applyQuaternion(quat),
+      UP
+    )
+    const ok = this.flat(pos, quat)
+    pos.y = this.seat.bowl.y + DICE_SIZE / 2 + 0.02
+    return { slot, ok, pos, quat: tilt.multiply(quat).normalize() }
+  }
+
+  /**
+   * Final poses for a throw. Dice that ended up on top of others go to a free rest spot, and
+   * dice laid flat are nudged apart so they don't sink into a neighbour they leaned on.
+   */
+  landings(sim, count) {
+    const ends = Array.from({ length: count }, (_, i) => this.landing(sim, i, count))
+    const taken = ends.filter(end => end.ok).map(end => end.pos)
+    for (const end of ends) {
+      if (end.ok) continue
+      const { x, z } = this.freeSpot(taken)
+      end.pos.set(x, end.pos.y, z)
+      taken.push(end.pos)
+    }
+
+    const { bowl } = this.seat
+    const limit = BOWL_RADIUS - DICE_SIZE * 0.7
+    for (let pass = 0; pass < 10; pass++) {
+      for (let a = 0; a < count; a++) {
+        for (let b = a + 1; b < count; b++) {
+          const pa = ends[a].pos
+          const pb = ends[b].pos
+          const dx = pb.x - pa.x
+          const dz = pb.z - pa.z
+          const d = Math.hypot(dx, dz) || 0.001
+          if (d >= DICE_GAP) continue
+          const push = (DICE_GAP - d) / 2
+          pa.x -= (dx / d) * push
+          pa.z -= (dz / d) * push
+          pb.x += (dx / d) * push
+          pb.z += (dz / d) * push
+        }
+      }
+      for (const { pos } of ends) {
+        const dx = pos.x - bowl.x
+        const dz = pos.z - bowl.z
+        const r = Math.hypot(dx, dz)
+        if (r > limit) {
+          pos.x = bowl.x + (dx / r) * limit
+          pos.z = bowl.z + (dz / r) * limit
+        }
+      }
+    }
+    return ends
+  }
+
+  /** Replay a die's part of the simulated throw, easing into its flat landing pose at the end. */
+  playback(die, dt) {
+    const { mesh, track } = die
+    const { sim, index, count, end } = track
+    track.t += dt * PLAYBACK_SPEED
+
+    const f = Math.min(track.t / STEP, sim.steps - 1)
+    const a = Math.floor(f)
+    const b = Math.min(a + 1, sim.steps - 1)
+    const posB = new THREE.Vector3()
+    const quatB = new THREE.Quaternion()
+    this.frame(sim, a, index, count, mesh.position, mesh.quaternion)
+    this.frame(sim, b, index, count, posB, quatB)
+    mesh.position.lerp(posB, f - a)
+    mesh.quaternion.slerp(quatB, f - a)
+
+    const left = (sim.steps - 1) * STEP - track.t
+    if (left < LAND_BLEND) {
+      const w = easeInOut(1 - Math.max(left, 0) / LAND_BLEND)
+      mesh.position.lerp(end.pos, w)
+      mesh.quaternion.slerp(end.quat, w)
+    }
+    if (left <= 0) {
+      die.track = null
+      die.mode = "rest"
     }
   }
 
   update(dt, now) {
     this.time += dt
-    const tumbling = [...this.dice.values()].some(die => die.mode === "tumble")
-    if (tumbling) this.world.step(1 / 60, dt, 4)
-
     const k = 1 - Math.exp(-dt * 11)
 
     for (const die of this.dice.values()) {
-      const { mesh, target } = die
-
       switch (die.mode) {
-        case "tumble": {
-          die.tumbleTime += dt
-          mesh.position.copy(die.body.position)
-          mesh.quaternion.copy(die.body.quaternion)
-          if (die.tumbleTime >= TUMBLE_TIME) {
-            die.mode = "settle"
-            die.settleTime = 0
-            die.from = { pos: mesh.position.clone(), quat: mesh.quaternion.clone() }
-            this.release(die)
-            die.moveTo(die.restSpot, this.upright(die.restYaw), 1)
-          }
+        case "tumble":
+          this.playback(die, dt)
           break
-        }
-        case "settle": {
-          die.settleTime += dt
-          const t = easeOut(Math.min(die.settleTime / SETTLE_TIME, 1))
-          mesh.position.lerpVectors(die.from.pos, target.pos, t)
-          mesh.quaternion.slerpQuaternions(die.from.quat, target.quat, t)
-          if (die.settleTime >= SETTLE_TIME) die.mode = "rest"
-          break
-        }
         case "script":
           die.advance(dt)
           break

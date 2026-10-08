@@ -16,6 +16,13 @@ live in memory. See `README.md` for the rules and how to run it.
   do not edit it.
 - `test/`: ExUnit tests mirroring `lib/`. `test/support/fake_action.ex` is a test helper.
 
+## Architecture
+
+See [`docs/architecture.md`](docs/architecture.md) for the process tree, the websocket
+protocol, how phases and turns advance, and the client modules. When you change a game
+action or the shape of the lobby JSON, update `GameSocket`, `connection.js` and
+`state.js` together.
+
 ## Commands
 
 ```sh
