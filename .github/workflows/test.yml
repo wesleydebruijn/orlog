@@ -14,21 +14,23 @@ jobs:
       MIX_ENV: test
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
           elixir-version: "1.20.4"
           otp-version: "28.5.0.7"
       - name: Restore dependencies cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
-          path: src/server/deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
       - name: Install dependencies
-        working-directory: ./src/server
         run: mix deps.get
+      - name: Build assets
+        run: mix assets.build
       - name: Run tests
-        working-directory: ./src/server
         run: mix test

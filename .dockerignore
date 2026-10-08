@@ -1,0 +1,6 @@
+_build
+deps
+.git
+.github
+node_modules
+priv/static/assets
