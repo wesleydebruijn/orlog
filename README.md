@@ -28,7 +28,7 @@ Each player starts with 15 health and 6 dice. A round has three phases:
 3. **Resolution**: dice are compared in turn. Attacks are blocked by matching
    blocks (melee vs. melee, ranged vs. ranged), and unblocked attacks deal damage.
 
-Rounds repeat until one player runs out of health. The 17 god favors are defined
+Rounds repeat until one player runs out of health. The 19 god favors are defined
 in `config/config.exs`.
 
 ## Requirements

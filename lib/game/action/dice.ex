@@ -7,17 +7,14 @@ defmodule Game.Action.Dice do
     Turn
   }
 
+  @doc """
+  Queues extra dice for the next Roll phase, `Game.Phase.Roll` adds them to the
+  player's dice and `Game.Phase.Resolution` removes them again at the end of that round.
+  """
   @spec add_extra_dices(Game.t(), integer()) :: Game.t()
   def add_extra_dices(game, amount) do
     game
-    |> Turn.update_player(fn player ->
-      dices =
-        player.dices
-        |> IndexMap.add(Enum.map(1..amount, fn _x -> %Game.Dice{} end))
-
-      player
-      |> Player.update(%{dices: dices})
-    end)
+    |> Turn.update_player(&Player.increase(&1, :extra_dices, amount))
   end
 
   @spec reroll_dices(Game.t(), integer()) :: Game.t()
@@ -45,8 +42,14 @@ defmodule Game.Action.Dice do
     game
     |> Turn.update_player(fn player ->
       player.dices
-      |> IndexMap.majority(fn %{face: face} -> %{stance: face.stance, type: face.type} end)
-      |> IndexMap.update_in(player, :dices, &Game.Dice.Face.increase(&1, :amount, amount))
+      |> IndexMap.filter(fn dice -> !dice.face.disabled end)
+      |> Enum.sort_by(&elem(&1, 0))
+      |> Enum.group_by(fn {_index, %{face: face}} -> {face.stance, face.type} end)
+      |> Map.values()
+      # biggest group wins, on a tie the group with the lowest dice index
+      |> Enum.max_by(fn [{first, _dice} | _] = group -> {length(group), -first} end, fn -> [] end)
+      |> Enum.take(1)
+      |> IndexMap.update_in(player, :dices, &Game.Dice.Face.increase(&1, :count, amount))
     end)
   end
 end

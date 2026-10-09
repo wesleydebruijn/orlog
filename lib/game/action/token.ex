@@ -54,6 +54,7 @@ defmodule Game.Action.Token do
       |> Map.get(:dices)
       |> IndexMap.filter(&Dice.stance?(&1, :attack))
       |> IndexMap.sum(&Dice.Face.hit_amount/1)
+      |> ceil()
 
     game
     |> Turn.update_player(&Player.increase(&1, :tokens, damage * amount))
@@ -65,11 +66,28 @@ defmodule Game.Action.Token do
       game
       |> Turn.get_player()
       |> Map.get(:dices)
-      |> IndexMap.filter(fn dice -> Dice.stance?(dice, :attack) && Dice.type?(dice, :ranged) end)
+      |> IndexMap.filter(fn dice ->
+        !dice.face.disabled && Dice.stance?(dice, :attack) && Dice.type?(dice, :ranged)
+      end)
       |> Enum.count()
 
     game
     |> Turn.update_opponent(&Player.increase(&1, :tokens, -(dices * amount)))
+  end
+
+  @spec tokens_on_steal_dice(Game.t(), integer()) :: Game.t()
+  def tokens_on_steal_dice(game, amount) do
+    dices =
+      game
+      |> Turn.get_player()
+      |> Map.get(:dices)
+      |> IndexMap.filter(fn dice ->
+        !dice.face.disabled && Dice.stance?(dice, :steal) && Dice.type?(dice, :token)
+      end)
+      |> Enum.count()
+
+    game
+    |> Turn.update_player(&Player.increase(&1, :tokens, dices * amount))
   end
 
   @spec decrease_favor_tier(Game.t(), integer()) :: Game.t()

@@ -2,6 +2,7 @@ defmodule Game.Phase.ResolutionTest do
   use ExUnit.Case
 
   alias Game.{
+    Dice,
     Player,
     Phase
   }
@@ -103,6 +104,25 @@ defmodule Game.Phase.ResolutionTest do
       }
 
       assert actual == expected
+    end
+
+    test "end phase removes the extra dices" do
+      game = %Game{
+        players: %{
+          1 => %Player{
+            health: 13,
+            dices: %{1 => %Dice{}, 2 => %Dice{extra: true}, 3 => %Dice{extra: true}}
+          },
+          2 => %Player{health: 5, dices: %{1 => %Dice{}}}
+        },
+        phase: 1,
+        turn: 1
+      }
+
+      actual = Phase.Resolution.action(game, :end_phase)
+
+      assert actual.players[1].dices == %{1 => %Dice{}}
+      assert actual.players[2].dices == %{1 => %Dice{}}
     end
 
     test "unknown action" do

@@ -18,10 +18,11 @@ defmodule Game.Dice do
           face: Dice.Face.t(),
           tokens: integer(),
           locked: boolean(),
-          keep: boolean()
+          keep: boolean(),
+          extra: boolean()
         }
   @derive Jason.Encoder
-  defstruct face: %Dice.Face{}, tokens: 0, locked: false, keep: false
+  defstruct face: %Dice.Face{}, tokens: 0, locked: false, keep: false, extra: false
 
   @spec roll!(Dice.t()) :: Dice.t()
   def roll!(dice), do: random_roll(dice)

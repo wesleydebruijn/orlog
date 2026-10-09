@@ -21,7 +21,7 @@ defmodule Game.Action.Block do
       |> IndexMap.filter(fn dice ->
         Dice.stance?(dice, :block) && (!type || Dice.type?(dice, type))
       end)
-      |> IndexMap.update_in(player, :dices, &Dice.Face.increase(&1, :amount, amount))
+      |> IndexMap.update_in(player, :dices, &Dice.Face.increase(&1, :count, amount))
     end)
   end
 
