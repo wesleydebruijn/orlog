@@ -250,7 +250,7 @@ export class Faceoff {
       this.queue(die, at, this.pushSteps(this.slot(die)))
       this.at(at + PUSH, () => this.table.seats[acting].dice.glow(die.id, STEAL_COLOR, 0.45, this.now))
 
-      const count = Math.min(remaining, hits(entry) * (face.amount || 1))
+      const count = Math.min(remaining, Math.ceil(hits(entry) * (face.amount || 1)))
       for (let j = 0; j < count; j++, moved++) {
         const launch = at + PUSH + j * 0.12
         const from = this.table.seats[defending].world(victim.slot(victimStart - 1 - moved))

@@ -11,7 +11,7 @@ live in memory. See `README.md` for the rules and how to run it.
 - `lib/orlog_web/`: Phoenix endpoint, router, pages and the JSON websocket
   (`game_socket.ex`) at `/ws/:game_id/:user_id`.
 - `lib/user/`: user store and name generator.
-- `config/config.exs`: the 17 god favors and their tiers. Change favor balance here.
+- `config/config.exs`: the 19 god favors and their tiers. Change favor balance here.
 - `assets/js/orlog/`: client modules. `assets/vendor/` is vendored third-party code;
   do not edit it.
 - `test/`: ExUnit tests mirroring `lib/`. `test/support/fake_action.ex` is a test helper.

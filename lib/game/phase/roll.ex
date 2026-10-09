@@ -21,6 +21,7 @@ defmodule Game.Phase.Roll do
     game
     |> IndexMap.update_all(:players, fn player ->
       player
+      |> add_extra_dices()
       |> Player.update(%{turns: turns})
       |> IndexMap.update_all(:dices, &Dice.unlock/1)
     end)
@@ -84,4 +85,12 @@ defmodule Game.Phase.Roll do
     # unknown action
     game
   end
+
+  defp add_extra_dices(%{extra_dices: extra} = player) when extra > 0 do
+    dices = Enum.map(1..extra, fn _x -> %Dice{extra: true} end)
+
+    Player.update(player, %{dices: IndexMap.add(player.dices, dices), extra_dices: 0})
+  end
+
+  defp add_extra_dices(player), do: player
 end

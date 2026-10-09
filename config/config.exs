@@ -12,7 +12,7 @@ import Config
 config :orlog,
   favors: %{
     1 => %{
-      name: "Thors's Strike",
+      name: "Thor's Strike",
       description: "Deals damage after resolution phase",
       tier_description: "Deal {value} damage",
       affects: :player,
@@ -26,8 +26,8 @@ config :orlog,
     },
     2 => %{
       name: "Baldr's Invulnerability",
-      description: "Double each melee and range block dice",
-      tier_description: "Increase block by {value}",
+      description: "Add shields or helmets per block dice",
+      tier_description: "Add {value} blocks per block dice",
       affects: :player,
       trigger: :pre_resolution,
       invoke: &Game.Action.Block.increase_block/2,
@@ -43,7 +43,7 @@ config :orlog,
       tier_description: "Multiply attack by {value}",
       affects: :player,
       trigger: :pre_resolution,
-      invoke: &Game.Action.Attack.multiply_attack/2,
+      invoke: &Game.Action.Attack.multiply_melee_attack/2,
       tiers: %{
         1 => %{cost: 6, value: 1.5},
         2 => %{cost: 10, value: 2},
@@ -52,7 +52,7 @@ config :orlog,
     },
     4 => %{
       name: "Freyja's Plenty",
-      description: "Roll additional dices",
+      description: "Roll additional dices next round",
       tier_description: "Add {value} dice",
       affects: :player,
       trigger: :post_resolution,
@@ -103,7 +103,7 @@ config :orlog,
       }
     },
     8 => %{
-      name: "Idun's Rejuvenation",
+      name: "Idun's Regeneration",
       description: "Heal before resolution phase",
       tier_description: "Heal for {value}",
       affects: :player,
@@ -130,21 +130,21 @@ config :orlog,
     },
     10 => %{
       name: "Mimir's Wisdom",
-      description: "Gain tokens per damage dealt",
-      tier_description: "Gain {value} tokens",
+      description: "Gain tokens per damage dealt to you",
+      tier_description: "Gain {value} tokens per damage",
       affects: :player,
       trigger: :post_resolution,
       invoke: &Game.Action.Token.tokens_on_damage/2,
       tiers: %{
-        1 => %{cost: 4, value: 2},
-        2 => %{cost: 8, value: 5},
-        3 => %{cost: 12, value: 8}
+        1 => %{cost: 3, value: 1},
+        2 => %{cost: 5, value: 2},
+        3 => %{cost: 7, value: 3}
       }
     },
     11 => %{
       name: "Odin's Sacrifice",
-      description: "Heal before resolution phase",
-      tier_description: "Heal for {value}",
+      description: "Gain health before resolution phase",
+      tier_description: "Gain {value} health",
       affects: :player,
       trigger: :pre_resolution,
       invoke: &Game.Action.Heal.heal/2,
@@ -156,20 +156,20 @@ config :orlog,
     },
     12 => %{
       name: "Skadi's Hunt",
-      description: "Multiplies each ranged attack dice",
-      tier_description: "Multiply attack by {value}",
+      description: "Adds extra damage to each ranged attack dice",
+      tier_description: "Add {value} damage",
       affects: :player,
       trigger: :pre_resolution,
-      invoke: &Game.Action.Attack.multiply_ranged_attack/2,
+      invoke: &Game.Action.Attack.increase_ranged_attack/2,
       tiers: %{
-        1 => %{cost: 6, value: 2},
-        2 => %{cost: 10, value: 3},
-        3 => %{cost: 14, value: 4}
+        1 => %{cost: 6, value: 1},
+        2 => %{cost: 10, value: 2},
+        3 => %{cost: 14, value: 3}
       }
     },
     13 => %{
       name: "Skuld's Claim",
-      description: "Destroy opponents tokens",
+      description: "Each ranged attack dice destroys opponents tokens",
       tier_description: "Destroy {value} tokens",
       affects: :opponent,
       trigger: :pre_resolution,
@@ -186,11 +186,11 @@ config :orlog,
       tier_description: "Ignore {value} dice",
       affects: :opponent,
       trigger: :pre_resolution,
-      invoke: &Game.Action.Block.bypass_block/2,
+      invoke: &Game.Action.Block.bypass_ranged_block/2,
       tiers: %{
         1 => %{cost: 2, value: 2},
         2 => %{cost: 3, value: 3},
-        3 => %{cost: 6, value: 6}
+        3 => %{cost: 4, value: 6}
       }
     },
     15 => %{
@@ -215,7 +215,7 @@ config :orlog,
       invoke: &Game.Action.Block.bypass_melee_block/2,
       tiers: %{
         1 => %{cost: 2, value: 2},
-        2 => %{cost: 3, value: 4},
+        2 => %{cost: 4, value: 4},
         3 => %{cost: 6, value: 6}
       }
     },
@@ -231,6 +231,32 @@ config :orlog,
         2 => %{cost: 6, value: 2},
         3 => %{cost: 9, value: 3}
       }
+    },
+    18 => %{
+      name: "Freyr's Gift",
+      description: "Add to the majority of dice faces",
+      tier_description: "Add {value} to the majority face",
+      affects: :player,
+      trigger: :pre_resolution,
+      invoke: &Game.Action.Dice.increase_majority/2,
+      tiers: %{
+        1 => %{cost: 4, value: 2},
+        2 => %{cost: 6, value: 3},
+        3 => %{cost: 8, value: 4}
+      }
+    },
+    19 => %{
+      name: "Bragi's Verve",
+      description: "Gain tokens when rolling steal dice",
+      tier_description: "Gain {value} tokens per steal dice",
+      affects: :player,
+      trigger: :pre_resolution,
+      invoke: &Game.Action.Token.tokens_on_steal_dice/2,
+      tiers: %{
+        1 => %{cost: 4, value: 2},
+        2 => %{cost: 8, value: 3},
+        3 => %{cost: 12, value: 4}
+      }
     }
   }
 
@@ -239,7 +265,8 @@ config :orlog, OrlogWeb.Endpoint,
   url: [host: "localhost"],
   pubsub_server: Orlog.PubSub,
   render_errors: [formats: [html: OrlogWeb.ErrorHTML], layout: false],
-  secret_key_base: "orlog-dev-only-secret-key-base-that-is-at-least-64-bytes-long-0123456789abcdef"
+  secret_key_base:
+    "orlog-dev-only-secret-key-base-that-is-at-least-64-bytes-long-0123456789abcdef"
 
 config :phoenix, :json_library, Jason
 

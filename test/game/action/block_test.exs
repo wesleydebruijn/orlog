@@ -49,7 +49,7 @@ defmodule Game.Action.BlockTest do
                 stance: :block,
                 type: :ranged,
                 intersects: 1,
-                amount: 2
+                count: 2
               }
             }
           }
@@ -113,7 +113,7 @@ defmodule Game.Action.BlockTest do
                 stance: :block,
                 type: :melee,
                 intersects: 1,
-                amount: 2
+                count: 2
               }
             }
           }
@@ -181,14 +181,14 @@ defmodule Game.Action.BlockTest do
               face: %Face{
                 stance: :block,
                 type: :ranged,
-                amount: 2
+                count: 2
               }
             },
             2 => %Dice{
               face: %Face{
                 stance: :block,
                 type: :melee,
-                amount: 2
+                count: 2
               }
             }
           }

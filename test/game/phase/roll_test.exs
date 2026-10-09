@@ -8,6 +8,30 @@ defmodule Game.Phase.RollTest do
   }
 
   describe "action/2" do
+    test "start phase adds the extra dices of Freyja's Plenty" do
+      game = %Game{
+        players: %{
+          1 => %Player{extra_dices: 2, dices: %{1 => %Dice{keep: true, locked: true}}},
+          2 => %Player{dices: %{1 => %Dice{}}}
+        },
+        phase: 1,
+        turn: 1
+      }
+
+      actual = Phase.Roll.action(game, :start_phase)
+
+      assert actual.players[1].extra_dices == 0
+      assert actual.players[1].turns == 3
+
+      assert actual.players[1].dices == %{
+               1 => %Dice{},
+               2 => %Dice{extra: true},
+               3 => %Dice{extra: true}
+             }
+
+      assert actual.players[2].dices == %{1 => %Dice{}}
+    end
+
     test "swap dice when already rolled" do
       game = %Game{
         players: %{

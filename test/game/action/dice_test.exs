@@ -31,11 +31,9 @@ defmodule Game.Action.DiceTest do
           dices: %{
             1 => %Dice{face: %Face{stance: :attack, type: :melee}},
             2 => %Dice{face: %Face{stance: :attack, type: :ranged}},
-            3 => %Dice{face: %Face{stance: :steal, type: :token}},
-            4 => %Dice{},
-            5 => %Dice{},
-            6 => %Dice{}
-          }
+            3 => %Dice{face: %Face{stance: :steal, type: :token}}
+          },
+          extra_dices: 3
         },
         2 => %Player{health: 10}
       },
@@ -43,6 +41,7 @@ defmodule Game.Action.DiceTest do
     }
 
     assert actual == expected
+    assert Action.Dice.add_extra_dices(actual, 1).players[1].extra_dices == 4
   end
 
   test "reroll_dices/2" do
@@ -109,7 +108,7 @@ defmodule Game.Action.DiceTest do
     assert actual == expected
   end
 
-  test "increase_majority/2" do
+  test "increase_majority/2 adds to one die of the biggest group" do
     game = %Game{
       players: %{
         1 => %Player{
@@ -132,9 +131,9 @@ defmodule Game.Action.DiceTest do
         1 => %Player{
           dices: %{
             1 => %Dice{face: %Face{stance: :attack, type: :melee}},
-            2 => %Dice{face: %Face{stance: :attack, type: :ranged, amount: 3}},
+            2 => %Dice{face: %Face{stance: :attack, type: :ranged, count: 3}},
             3 => %Dice{face: %Face{stance: :steal, type: :token}},
-            4 => %Dice{face: %Face{stance: :attack, type: :ranged, amount: 3}}
+            4 => %Dice{face: %Face{stance: :attack, type: :ranged}}
           }
         },
         2 => %Player{health: 10}
@@ -143,5 +142,44 @@ defmodule Game.Action.DiceTest do
     }
 
     assert actual == expected
+  end
+
+  test "increase_majority/2 ignores disabled dice" do
+    game = %Game{
+      players: %{
+        1 => %Player{
+          dices: %{
+            1 => %Dice{face: %Face{stance: :attack, type: :ranged, disabled: true}},
+            2 => %Dice{face: %Face{stance: :attack, type: :ranged, disabled: true}},
+            3 => %Dice{face: %Face{stance: :block, type: :melee}},
+            4 => %Dice{face: %Face{stance: :attack, type: :melee}}
+          }
+        },
+        2 => %Player{}
+      },
+      turn: 1
+    }
+
+    dices = Action.Dice.increase_majority(game, 2).players[1].dices
+
+    # blocks and melee attacks tie, the lowest dice index wins
+    assert dices[1].face.count == 1
+    assert dices[2].face.count == 1
+    assert dices[3].face.count == 3
+    assert dices[4].face.count == 1
+  end
+
+  test "increase_majority/2 without usable dice" do
+    game = %Game{
+      players: %{
+        1 => %Player{
+          dices: %{1 => %Dice{face: %Face{disabled: true}}}
+        },
+        2 => %Player{}
+      },
+      turn: 1
+    }
+
+    assert Action.Dice.increase_majority(game, 2) == game
   end
 end
