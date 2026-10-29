@@ -6,15 +6,8 @@ live in memory. See `README.md` for the rules and how to run it.
 
 ## Layout
 
-- `lib/game/`: pure game logic (phases, rounds, turns, dice, favors, actions).
-  `lib/game/lobby/` holds the GenServer per game.
-- `lib/orlog_web/`: Phoenix endpoint, router, pages and the JSON websocket
-  (`game_socket.ex`) at `/ws/:game_id/:user_id`.
-- `lib/user/`: user store and name generator.
 - `config/config.exs`: the 19 god favors and their tiers. Change favor balance here.
-- `assets/js/orlog/`: client modules. `assets/vendor/` is vendored third-party code;
-  do not edit it.
-- `test/`: ExUnit tests mirroring `lib/`. `test/support/fake_action.ex` is a test helper.
+- `assets/vendor/` is vendored third-party code; do not edit it.
 
 ## Architecture
 
@@ -22,18 +15,6 @@ See [`docs/architecture.md`](docs/architecture.md) for the process tree, the web
 protocol, how phases and turns advance, and the client modules. When you change a game
 action or the shape of the lobby JSON, update `GameSocket`, `connection.js` and
 `state.js` together.
-
-## Commands
-
-```sh
-mix deps.get          # install dependencies
-mix phx.server        # run at http://localhost:4000
-mix test              # run the test suite (about 1 second)
-mix assets.build      # bundle JS/CSS with esbuild
-mix format            # format Elixir code
-```
-
-Requires Elixir 1.20 and Erlang/OTP 28.
 
 ## Testing rules
 
