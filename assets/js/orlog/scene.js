@@ -1,23 +1,32 @@
 import * as THREE from "three"
 
 const FOV = 35
-const ELEVATION = THREE.MathUtils.degToRad(58)
-const TARGET = new THREE.Vector3(0, 0, 2)
 
 // The area of the table that always has to be in view (world units)
-const HALF_WIDTH = 47
-const HALF_DEPTH = 35
+const TABLE_FIT = {
+  target: new THREE.Vector3(0, 0, 2),
+  elevation: THREE.MathUtils.degToRad(58),
+  halfWidth: 47,
+  halfDepth: 35,
+  margin: 5,
+  parallax: 1
+}
 
-/** Renderer, camera, lights and the frame loop. */
-export function createScene(canvas) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false })
-  renderer.shadowMap.enabled = true
+/**
+ * Renderer, camera, lights and the frame loop. `fit` frames a different area than the
+ * table, `transparent` lets the page show through behind the scene.
+ */
+export function createScene(canvas, { fit = TABLE_FIT, transparent = false, shadows = true } = {}) {
+  const { target, elevation, halfWidth, halfDepth, margin, parallax: sway } = fit
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: transparent })
+  renderer.shadowMap.enabled = shadows
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.toneMapping = THREE.ACESFilmicToneMapping
   renderer.toneMappingExposure = 1.05
 
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x070d0d)
+  if (!transparent) scene.background = new THREE.Color(0x070d0d)
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 1, 500)
 
@@ -27,7 +36,7 @@ export function createScene(canvas) {
   const key = new THREE.DirectionalLight(0xfff0dc, 2.3)
   key.position.set(-30, 80, 40)
   key.target.position.set(0, 0, 0)
-  key.castShadow = true
+  key.castShadow = shadows
   key.shadow.mapSize.set(2048, 2048)
   key.shadow.camera.left = -60
   key.shadow.camera.right = 60
@@ -63,8 +72,8 @@ export function createScene(canvas) {
 
     // Pull back until the play area fits both horizontally and vertically
     const tan = Math.tan(THREE.MathUtils.degToRad(FOV / 2))
-    const fitWidth = HALF_WIDTH / (tan * camera.aspect)
-    const fitDepth = (HALF_DEPTH * Math.sin(ELEVATION) + 5) / tan
+    const fitWidth = halfWidth / (tan * camera.aspect)
+    const fitDepth = (halfDepth * Math.sin(elevation) + margin) / tan
     distance = Math.max(fitWidth, fitDepth)
   }
 
@@ -73,11 +82,11 @@ export function createScene(canvas) {
     parallax.y += (parallax.ty - parallax.y) * 0.04
 
     camera.position.set(
-      TARGET.x + parallax.x * 3,
-      TARGET.y + Math.sin(ELEVATION) * distance + parallax.y * -1.5,
-      TARGET.z + Math.cos(ELEVATION) * distance
+      target.x + parallax.x * 3 * sway,
+      target.y + Math.sin(elevation) * distance + parallax.y * -1.5 * sway,
+      target.z + Math.cos(elevation) * distance
     )
-    camera.lookAt(TARGET)
+    camera.lookAt(target)
   }
 
   const listeners = []

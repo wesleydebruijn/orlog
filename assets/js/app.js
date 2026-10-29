@@ -1,6 +1,9 @@
 import "../css/app.css"
 
 import { Connection } from "./orlog/connection"
+import { createBackdrop } from "./orlog/home/backdrop"
+import { createEmbers } from "./orlog/home/embers"
+import { createRuneDie } from "./orlog/home/rune_die"
 import { createHud } from "./orlog/hud"
 import { createLobbyUi } from "./orlog/lobby"
 import { createPicking } from "./orlog/picking"
@@ -20,6 +23,28 @@ function bootHome() {
   document.getElementById("new-game").addEventListener("click", () => {
     location.href = `/game/${uuid()}`
   })
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  createBackdrop(document.getElementById("home-backdrop"), { reducedMotion })
+  if (!reducedMotion) createEmbers(document.getElementById("home-embers"))
+
+  const omen = document.getElementById("home-omen")
+  createRuneDie(document.getElementById("home-die"), {
+    reducedMotion,
+    onLand: face => {
+      omen.textContent = face.omen
+      omen.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], {
+        duration: 600,
+        easing: "ease-out"
+      })
+    }
+  })
+}
+
+// Canvas textures are drawn once and cached, so wait for the font they are lettered in
+function fontsReady() {
+  if (!document.fonts) return Promise.resolve()
+  return document.fonts.load('700 34px "Cinzel"').catch(() => {})
 }
 
 // What the table shows before the server has told us anything
@@ -108,6 +133,8 @@ function bootGame(root) {
   window.orlog = { table, connection, scene, camera, renderer, get lobby() { return lobby } }
 }
 
-const game = document.getElementById("game")
-if (game) bootGame(game)
-else if (document.getElementById("home")) bootHome()
+fontsReady().then(() => {
+  const game = document.getElementById("game")
+  if (game) bootGame(game)
+  else if (document.getElementById("home")) bootHome()
+})

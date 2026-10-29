@@ -1,8 +1,20 @@
-<main id="home" class="home" style={"background-image: url(#{~p"/images/home.jpg"})"}>
+<main id="home" class="home">
+  <canvas id="home-backdrop" class="home__canvas" aria-hidden="true"></canvas>
   <div class="home__veil"></div>
+  <canvas id="home-embers" class="home__canvas" aria-hidden="true"></canvas>
   <section class="home__content">
-    <h1 class="home__title">Orlog</h1>
+    <div class="home__die">
+      <canvas id="home-die" tabindex="0" role="button" aria-label="Cast the rune die"></canvas>
+    </div>
+    <h1 class="home__title" aria-label="Orlog">
+      <span class="rune" data-rune="ᛟ" style="--i:0" aria-hidden="true">O</span>
+      <span class="rune" data-rune="ᚱ" style="--i:1" aria-hidden="true">r</span>
+      <span class="rune" data-rune="ᛚ" style="--i:2" aria-hidden="true">l</span>
+      <span class="rune" data-rune="ᛟ" style="--i:3" aria-hidden="true">o</span>
+      <span class="rune" data-rune="ᚷ" style="--i:4" aria-hidden="true">g</span>
+    </h1>
     <p class="home__tagline">The Viking dice game from Assassin's Creed Valhalla</p>
+    <p id="home-omen" class="home__omen" aria-live="polite"></p>
     <button id="new-game" class="btn btn--primary btn--large" type="button">New game</button>
     <p class="home__hint">Share the link with a friend, cat or dog and roll for glory.</p>
   </section>

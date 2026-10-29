@@ -3,7 +3,7 @@ defmodule OrlogWeb do
   Entrypoint for the web interface: `use OrlogWeb, :controller` and `use OrlogWeb, :html`.
   """
 
-  def static_paths, do: ~w(assets images favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
     quote do
