@@ -4,7 +4,7 @@ import { RoundedBoxGeometry } from "../../vendor/three/RoundedBoxGeometry.js"
 import { faceTexture } from "./textures"
 
 export const DICE_SIZE = 4
-const geometry = new RoundedBoxGeometry(DICE_SIZE, DICE_SIZE, DICE_SIZE, 3, 0.55)
+export const DICE_GEOMETRY = new RoundedBoxGeometry(DICE_SIZE, DICE_SIZE, DICE_SIZE, 3, 0.55)
 
 // Box groups are ordered +x, -x, +y, -y, +z, -z. Whichever face lands on top carries the
 // rolled result; the other five are decoration, so a tumbling die shows a mix of symbols.
@@ -29,7 +29,7 @@ const FACE_FRAMES = [
 const NORMALS = FACE_FRAMES.map(([normal]) => normal)
 
 // Rotation that turns a face up with its symbol facing the player, like the +y face unrotated
-const SLOT_UP = FACE_FRAMES.map(([normal, right, up]) => {
+export const SLOT_UP = FACE_FRAMES.map(([normal, right, up]) => {
   const basis = new THREE.Matrix4().makeBasis(right, normal, up.clone().negate())
   return new THREE.Quaternion().setFromRotationMatrix(basis).invert()
 })
@@ -126,7 +126,7 @@ class Die {
       .map(([, face]) => faceTexture({ ...face, disabled: false }))
     this.decor.forEach((texture, slot) => (this.materials[slot].map = texture))
 
-    this.mesh = new THREE.Mesh(geometry, this.materials)
+    this.mesh = new THREE.Mesh(DICE_GEOMETRY, this.materials)
     this.mesh.castShadow = true
     this.mesh.receiveShadow = true
     this.mesh.userData = { kind: "die", seat: seat.name, id }

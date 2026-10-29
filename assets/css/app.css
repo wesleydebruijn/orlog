@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Cinzel";
+  src: url("/fonts/Cinzel-Variable.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --ink: #f2e6cb;
   --muted: #b9ad92;
@@ -94,14 +102,20 @@ p {
   display: grid;
   place-items: center;
   text-align: center;
-  background-size: cover;
-  background-position: center;
 }
 
 .home__veil {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(5, 14, 14, 0.35), rgba(3, 8, 8, 0.88));
+  background: radial-gradient(ellipse at center, rgba(5, 14, 14, 0.25), rgba(3, 8, 8, 0.75));
+}
+
+.home__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .home__content {
@@ -109,7 +123,28 @@ p {
   padding: 2rem;
 }
 
+.home__die {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto -1.5rem;
+}
+
+.home__die canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border-radius: 50%;
+  outline: none;
+}
+
+.home__die canvas:focus-visible {
+  box-shadow: 0 0 0 2px var(--gold), 0 0 30px rgba(214, 162, 58, 0.35);
+}
+
 .home__title {
+  display: flex;
+  justify-content: center;
   font-size: clamp(4rem, 14vw, 9rem);
   line-height: 1;
   margin: 0;
@@ -117,11 +152,109 @@ p {
   text-shadow: 0 0 40px rgba(214, 162, 58, 0.35), 0 4px 0 rgba(0, 0, 0, 0.6);
 }
 
+.rune {
+  position: relative;
+  transition: color 0.6s;
+  animation: carve-letter 0.9s ease-out calc(0.2s + var(--i) * 0.12s) backwards;
+}
+
+.rune::before,
+.rune::after {
+  content: attr(data-rune);
+  position: absolute;
+  inset: 0;
+  font-family: "Noto Sans Runic", "Segoe UI Historic", "Apple Symbols", serif;
+  font-weight: 400;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(255, 154, 74, 0.9), 0 0 4px rgba(255, 210, 140, 0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rune::before {
+  animation: rune-fade 0.9s ease-out calc(0.2s + var(--i) * 0.12s) backwards;
+}
+
+.rune::after {
+  transition: opacity 0.6s;
+}
+
+.rune:hover {
+  color: rgba(242, 230, 203, 0.2);
+  transition-duration: 0.15s;
+}
+
+.rune:hover::after {
+  opacity: 1;
+  transition-duration: 0.15s;
+}
+
+@keyframes carve-letter {
+  0%,
+  35% {
+    color: transparent;
+    text-shadow: none;
+  }
+}
+
+@keyframes rune-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .home__tagline {
-  margin: 0.5rem 0 2.4rem;
+  margin: 0.5rem 0 1rem;
   font-family: var(--serif);
   letter-spacing: 0.12em;
   color: var(--muted);
+}
+
+.home__omen {
+  min-height: 1.5em;
+  margin: 0 0 1.4rem;
+  font-family: var(--serif);
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255, 154, 74, 0.45);
+}
+
+.home .btn--primary:hover:not(:disabled) {
+  animation: ember-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes ember-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(255, 154, 74, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(255, 154, 74, 0.7), 0 0 6px rgba(214, 162, 58, 0.8);
+  }
+}
+
+@media (max-width: 600px), (max-height: 640px) {
+  .home__die {
+    width: 160px;
+    height: 160px;
+    margin-bottom: -1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rune,
+  .rune::before,
+  .home .btn--primary:hover:not(:disabled) {
+    animation: none;
+  }
 }
 
 .home__hint {

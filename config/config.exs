@@ -281,6 +281,7 @@ config :esbuild,
       --alias:three=./vendor/three/three.module.js
       --alias:cannon-es=./vendor/cannon-es.js
       --external:/images/*
+      --external:/fonts/*
     ),
     cd: Path.expand("../assets", __DIR__)
   ]

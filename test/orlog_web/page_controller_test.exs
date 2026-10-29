@@ -6,7 +6,19 @@ defmodule OrlogWeb.PageControllerTest do
 
   test "GET / renders the landing page" do
     conn = get(build_conn(), "/")
-    assert html_response(conn, 200) =~ "New game"
+    html = html_response(conn, 200)
+
+    assert html =~ "New game"
+    assert html =~ ~s(aria-label="Orlog")
+    assert html =~ ~s(id="home-die")
+    assert html =~ ~s(id="home-embers")
+    assert html =~ ~s(id="home-backdrop")
+    refute html =~ "home.jpg"
+  end
+
+  test "serves the self-hosted Cinzel font" do
+    conn = get(build_conn(), "/fonts/Cinzel-Variable.woff2")
+    assert response(conn, 200)
   end
 
   test "GET /game/:id embeds the game id and the favor catalogue" do
